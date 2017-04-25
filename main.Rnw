@@ -1,0 +1,239 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage[pdftex,plainpages=false,breaklinks=true,colorlinks=true,urlcolor=blue,citecolor=blue,linkcolor=blue,bookmarks=true,bookmarksopen=true,bookmarksopenlevel=3,pdfstartview=FitH,pdfview=FitH]{hyperref}
+\usepackage{authblk}
+\usepackage{amsmath}
+\usepackage{algorithmic}
+\usepackage[]{algorithm}
+
+\bibliographystyle{abbrvnat}
+
+\title{Approximate Bayesian Computation in R: from rejection to random forests}
+
+\author[1,2,*]{Miguel Navascués}
+\affil[1]{INRA, UMR CBGP, F-34988 Montferrier-sur-Lez, France}
+\affil[2]{Institut de Biologie Computationnelle, F-34090 Montpellier, France}
+\affil[*]{miguel.navascues@inra.fr}
+\date {\today}
+
+\begin{document}
+
+\maketitle
+
+<<echo=FALSE, cache=FALSE>>=
+read_chunk("src/main.r")
+@
+
+\section*{Introduction to the likelihood}
+
+\paragraph*{The experiment:} A coin is tossed 10 times and the results (heads/tails) are recorded
+
+\paragraph*{The result:} 
+
+\begin{center}
+\mbox{\includegraphics[height=1cm]{data/TailSEK.jpg}
+\includegraphics[height=1cm]{data/HeadSEK.jpg}
+\includegraphics[height=1cm]{data/HeadSEK.jpg}
+\includegraphics[height=1cm]{data/TailSEK.jpg}
+\includegraphics[height=1cm]{data/HeadSEK.jpg}
+\includegraphics[height=1cm]{data/HeadSEK.jpg}
+\includegraphics[height=1cm]{data/TailSEK.jpg}
+\includegraphics[height=1cm]{data/HeadSEK.jpg}
+\includegraphics[height=1cm]{data/HeadSEK.jpg}
+\includegraphics[height=1cm]{data/HeadSEK.jpg}}
+\end{center}
+
+<<rcode_1, cache=FALSE, tidy=TRUE>>=
+@
+
+\noindent Number of tosses (\verb+total_tosses+): \Sexpr{total_tosses}\\
+Number of heads (\verb+heads_count+): \Sexpr{heads_count}\\
+Number of tails (\verb+tails_count+): \Sexpr{tails_count}
+
+\paragraph*{The question:} Is the coin fair? = Is the probability of getting ``head'' fifty percent?
+
+\[ L(p=0.5|D) = P(D|p=0.5) \]
+
+\noindent where $p$ is the probability of getting `head'' in a coin toss, $L$ is the likelihood and $D$ is the data (\Sexpr{heads_count} heads and \Sexpr{tails_count} tails).
+
+<<rcode_2, cache=FALSE, tidy=TRUE>>=
+@
+
+\noindent Probability of combination \Sexpr{toss}: \Sexpr{p_combo}.\\
+
+That is the prbability for a given order of \Sexpr{heads_count} heads in 10 coin tosses. All ordered combinations of \Sexpr{heads_count} heads and \Sexpr{tails_count} tails have the same probability. The number of combination is given by the binomial coefficient $\binom{n}{k}=\frac{n!}{k!(n-k)!}$  (\verb+choose(n,k)+ in \verb+R+). See Wikipedia page on \href{http://en.wikipedia.org/wiki/Bernoulli_trial}{Bernoulli trial} and \href{http://en.wikipedia.org/wiki/Binomial_distribution}{Binomial distribution}.
+
+<<rcode_3, cache=FALSE, tidy=TRUE>>=
+@
+
+\noindent There are \Sexpr{combinations} combinations of \Sexpr{heads_count} head and \Sexpr{tails_count} tails.
+
+<<rcode_4, cache=FALSE, tidy=TRUE>>=
+@
+
+\noindent Likelihood of $p=\Sexpr{p_heads}$ given \Sexpr{heads_count} heads in \Sexpr{total_tosses} tosses: \Sexpr{likelihood}.\\
+
+In the case of the coin flip experiment the likelihood can be calculated from a binomial probability model (assuming coin tosses are independent and have the same probability of getting heads).
+
+<<rcode_5, cache=FALSE, tidy=TRUE>>=
+@
+
+A maximum likelihood estimate and confidence intervals can be obtained from the likelihood profile:
+
+<<rcode_5b, cache=FALSE, tidy=TRUE>>=
+@
+
+\noindent Code for figure~\ref{fig:plotLikelihood}:
+<<plotLikelihood, fig.pos="h", fig.height=4, fig.width=6, echo=TRUE, fig.cap="Likelihood profile for a flip coin experiment. Continous red line indicates maximum likelihood value and dashed red lines show 95\\%CI.">>=
+plot(x    = likelihood_profile$p,
+     y    = likelihood_profile$likelihood,
+     xlab = "p",
+     ylab = "Likelihood",
+     type = "l")
+abline(v = maxL, col = "red")
+abline(v = CI95[1], lty = 2, col = "red")
+abline(v = CI95[2], lty = 2, col = "red")
+@
+
+\section*{A is for Approximation (1 of 3: Simulation)}
+
+Lets assume that our experiment is decribed by a model that does not have an analytical solution. Likelihood can be estimated with Monte Carlo methods. In this context a simulation is the production of data from a probabilistic model using random number to decide the outcome. In the case of the flip coin experiment, we can simulate flipping the coin by using the binomial distribution:
+
+<<rcode_6, cache=FALSE, tidy=TRUE>>=
+@
+
+\noindent Simulated toss: \Sexpr{toss_simulation}. (Note it changes at each compilation of the pdf file)
+
+
+<<rcode_7, cache=FALSE, tidy=TRUE>>=
+@
+
+\noindent Estimated likelihood of $p=\Sexpr{p_heads}$ given \Sexpr{heads_count} heads in \Sexpr{total_tosses} tosses \Sexpr{likelihood_hat$likelihood}.
+
+<<rcode_8, cache=FALSE, tidy=TRUE>>=
+@
+
+\noindent Code for figure~\ref{fig:plotLikelihoodHat}:
+<<plotLikelihoodHat, fig.pos="h", fig.height=4, fig.width=6, echo=TRUE, fig.cap="Estimated likelihood profile for a flip coin experiment by simulation. Grey line shows the targeted likelihood profile.">>=
+plot(x    = likelihood_profile_approx$p,
+     y    = likelihood_profile_approx$likelihood,
+     xlab = "p",
+     ylab = "Likelihood",
+     lwd  = 2,
+     type = "l")
+lines(x   = likelihood_profile$p,
+      y   = likelihood_profile$likelihood,
+      col = "grey")
+@
+
+\section*{B is for Bayesian}
+
+\begin{algorithm}[H]
+	\caption{Exact rejection sampler}
+	\begin{algorithmic}
+	 \STATE Given $N$ the number of simulations
+		\FOR {$i=1$ to $N$} 
+			 \STATE Generate $p' \sim \pi(p)$
+			 \STATE Simulate $D' \sim f(x|p')$
+       \IF{$D'=D$} \STATE Accept $p'$ \ENDIF
+		\ENDFOR
+	 \RETURN accepted $p'$
+	\end{algorithmic}
+\end{algorithm}
+
+<<rcode_9, cache=FALSE, tidy=TRUE>>=
+@
+
+\noindent Code for figure~\ref{fig:scatterplot_coin1}:
+<<scatterplot_coin1, fig.pos="h", fig.height=4, fig.width=6, echo=TRUE, fig.cap="Simulations of coin tosses. Paramter $p$ taken from a uniform distribution.">>=
+plot(x    = sim_parameter_pi1,
+     y    = sim_data_pi1,
+     xlab = expression(italic(p)*"'"),
+     ylab = expression(italic(D)*"'"))
+sim_parameter_kept_pi1 <- sim_parameter_pi1[which(sim_data_pi1==
+                                                  heads_count)]
+sim_data_kept_pi1      <- sim_data_pi1[which(sim_data_pi1==
+                                             heads_count)]
+abline(h = heads_count, col = "red")
+points(sim_parameter_kept_pi1, sim_data_kept_pi1, col = "red")
+@
+
+\noindent Code for figure~\ref{fig:hist_coin1}:
+<<hist_coin1, fig.pos="h", fig.height=5, fig.width=6, echo=TRUE, fig.cap="Probability distribution.">>=
+hist(x      = sim_parameter_pi1,
+     breaks = seq(0,1,0.02),
+     col    = "grey",
+     freq   = F,
+     ylim   = c(0,5),
+     main   = "",
+     xlab   = expression(italic(p)),
+     ylab   = "probability density")
+hist(sim_parameter_kept_pi1, breaks=seq(0,1,0.02), col=rgb(1,0,0,0.5), freq=F, add=T)
+box()
+@
+
+<<rcode_10, cache=FALSE, tidy=TRUE>>=
+@
+
+Point estimate of parameter is $\hat{p}=\Sexpr{p_hat}$ with (\Sexpr{p_95CI}) 95\% credibility interval.
+
+However, we could consider to have a strong prior for a equilibrated probability of getting ``heads'' or ``tails''. At the end of the day we do not see anything anormal in the coin and we have read \citet{Diaconis2007}.
+
+<<rcode_11, cache=FALSE, tidy=TRUE>>=
+@
+
+\noindent Code for figure~\ref{fig:hist_coin2}:
+<<hist_coin2, fig.pos="h", fig.height=5, fig.width=6, echo=TRUE, fig.cap="Probability distribution.">>=
+hist(x      = sim_parameter_pi1,
+     breaks = seq(0,1,0.02),
+     col    = "grey",
+     freq   = F,
+     ylim   = c(0,5),
+     main   = "",
+     xlab   = expression(italic(p)),
+     ylab   = "probability density")
+hist(sim_parameter_kept_pi1, breaks=seq(0,1,0.02), col=rgb(1,0,0,0.5), freq=F, add=T)
+hist(sim_parameter_pi2, breaks=seq(0,1,0.02), col=rgb(0,0,0,0.3), freq=F, add=T)
+hist(sim_parameter_kept_pi2, breaks=seq(0,1,0.02), col=rgb(0,0,1,0.3), freq=F, add=T)
+box()
+@
+
+
+<<rcode_12, cache=FALSE, tidy=TRUE>>=
+@
+
+Point estimate of parameter is $\hat{p}=\Sexpr{p_hat}$ with (\Sexpr{p_95CI}) 95\% credibility interval.
+
+
+
+\section*{C is for Coalescent (just kidding!)}
+
+<<rcode_13, echo=F, hide=TRUE, cache=FALSE>>=
+@
+
+In order to advance we leave our toy example of the coin toss and continue with a population genetics example. We are going to study two fictitious datasets consisting in resequencing experiments of \Sexpr{sample_size} gene copies of a non recombining locus (e.g. a mitochondrial gene). Data is stored in \verb+ms+ format \citep{Hudson2002}. We will use \verb+Sampling+ \citep[file ][with some modifcications by myself]{Stadler2009a,Stadler2009b}, which is a \verb+R+ script with functions to read files in \verb+ms+ format and calculate summary statistics.
+
+<<rcode_14, cache=FALSE, tidy=TRUE>>=
+@
+
+The generating model for such data is the coalescent. We will be using the \verb+ms+ implementation in the R package \verb+phyclust+ \citep{Chen2011}. This is a choice to make the present tutorial available to different operative systems (i.e. Windows). However, in my experience, \verb+ms+ implementation in \verb+phyclust+ suffers some problems and there seem to be bugs for complex demographies. For real data analysis I use the original \verb+ms+ software in a Linux environment (see box).
+
+<<rcode_15, cache=TRUE, tidy=TRUE>>=
+@
+
+
+
+
+\section*{Acknowledgements}
+
+I was initiated to the use of \verb+R+ for ABC by M. Beaumont, L. Chikhi and V. Sousa at the Gulbenkian course MMPG08.
+
+\bibliography{references}
+
+\end{document}
+
