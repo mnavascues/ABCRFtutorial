@@ -24,7 +24,7 @@ ms.inp.multi <- function(nsam, ndraws, ms.output.file="ms.out") {
   mutations <- list()
   m <- list()
   for(draw in seq(along=marker)) {
-    if(!(draw %% 10)) cat(draw, " \n ")
+    #if(!(draw %% 10)) cat(draw, " \n ")
     if(segsites[draw] > 0) {
       haplotypes <- txt[(marker[draw] + 2):(marker[draw] + 2 + nsam - 1)]
       haplotypes <- strsplit(haplotypes, split="")

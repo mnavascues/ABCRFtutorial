@@ -25,6 +25,10 @@
 
 \maketitle
 
+\LaTeX{} version: \LaTeXe~\fmtversion
+
+
+
 <<echo=FALSE, cache=FALSE>>=
 read_chunk("src/main.r")
 @
@@ -113,7 +117,7 @@ Lets assume that our experiment is decribed by a model that does not have an ana
 <<rcode_7, cache=FALSE, tidy=TRUE>>=
 @
 
-\noindent Estimated likelihood of $p=\Sexpr{p_heads}$ given \Sexpr{heads_count} heads in \Sexpr{total_tosses} tosses \Sexpr{likelihood_hat$likelihood}.
+\noindent Estimated likelihood of $p=\Sexpr{p_heads}$ given \Sexpr{heads_count} heads in \Sexpr{total_tosses} tosses \Sexpr{likelihood_approx$likelihood}.
 
 <<rcode_8, cache=FALSE, tidy=TRUE>>=
 @
@@ -213,7 +217,7 @@ Point estimate of parameter is $\hat{p}=\Sexpr{p_hat}$ with (\Sexpr{p_95CI}) 95\
 
 \section*{C is for Coalescent (just kidding!)}
 
-<<rcode_13, echo=F, hide=TRUE, cache=FALSE>>=
+<<rcode_13, echo=F, hide=TRUE, cache=TRUE>>=
 @
 
 In order to advance we leave our toy example of the coin toss and continue with a population genetics example. We are going to study two fictitious datasets consisting in resequencing experiments of \Sexpr{sample_size} gene copies of a non recombining locus (e.g. a mitochondrial gene). Data is stored in \verb+ms+ format \citep{Hudson2002}. We will use \verb+Sampling+ \citep[file ][with some modifcications by myself]{Stadler2009a,Stadler2009b}, which is a \verb+R+ script with functions to read files in \verb+ms+ format and calculate summary statistics.
@@ -226,12 +230,19 @@ The generating model for such data is the coalescent. We will be using the \verb
 <<rcode_15, cache=TRUE, tidy=TRUE>>=
 @
 
+\section*{Further reading}
 
+There are several reviews on abc:
+
+\citet{Lintusaari2016} for application to phylogenetics
 
 
 \section*{Acknowledgements}
 
 I was initiated to the use of \verb+R+ for ABC by M. Beaumont, L. Chikhi and V. Sousa at the Gulbenkian course MMPG08.
+
+
+
 
 \bibliography{references}
 
