@@ -16,4 +16,12 @@ figure/*
 main-concordance.tex
 main.tex
 main.pdf
-
+doc/*
+results/*
+figure/*
+*.acn
+*.bbl
+*.aux
+*.glo
+*.fff
+*.ist

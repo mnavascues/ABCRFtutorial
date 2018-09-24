@@ -1,11 +1,11 @@
-flip_coin_likelihood <- function(n,k,p){
+flip.coin.likelihood <- function(n,k,p){
   q <- 1-p
   l <- n - k
   likelihood <- choose(n,k) * p^k * q^l
   return (list(p=p,likelihood=likelihood))
 }
 
-flip_coin_likelihood_approx <- function(n,k,p,rep,trace=F){
+flip.coin.likelihood.approx <- function(n,k,p,rep,trace=F){
   likelihood_approx <- array(NA,length(p))
   for (i in 1:length(p)){
     counts <- array(NA,rep)
