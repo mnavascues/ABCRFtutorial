@@ -15,6 +15,13 @@
 \usepackage[nomarkers,nofiglist,figuresonly]{endfloat}
 \usepackage[acronym]{glossaries}
 
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\rfoot{\thepage}
+\lfoot{\href{http://doi.org/10.5281/zenodo.1435503}{doi:10.5281/zenodo.1435503}}
+
+
 \newif\iflatexboolean
 
 
@@ -44,6 +51,8 @@
 \begin{document}
 
 \maketitle
+\newpage
+
 
 %\LaTeX{} version: \LaTeXe~\fmtversion
 
@@ -797,7 +806,7 @@ points(ref_table$TajD[which(sim_model=="C")],
        col="grey",pch=20)
 partition.tree(classification_tree,
                ordvars=c("TajD","FuLiD"),
-               add=T,cex=3,col="red")
+               add=T,cex=3,col=7)
 @
 
 \subsection*{Many trees: random forest}
@@ -818,7 +827,7 @@ plot(ref_table$pi,
      pch=20,log="x")
 partition.tree(regression_tree,
                ordvars=c("pi","theta"),
-               add=T,cex=1.5,col="blue",lwd=2)
+               add=T,cex=1.5,col=6,lwd=2)
 
 plot(ref_table$pi,
      log10(ref_table$theta),
@@ -826,13 +835,13 @@ plot(ref_table$pi,
      ylab=expression(log[10]*theta),
      pch=20,log="x")
 for (i in 1:100){
-  random_sample <- sample(length(theta),size=100,replace=T)
+  random_sample <- sample(length(theta),size=500,replace=T)
   ref_table_random_sample <- ref_table[random_sample,]
   regression_tree_random_sample <- tree(log10(theta) ~ pi,
                                         data=ref_table_random_sample)
   partition.tree(regression_tree_random_sample,
                  ordvars=c("pi","theta"),
-                 add=T,cex=1.5,col="red",lwd=1)
+                 add=T,cex=1.5,col=7,lwd=1)
   
 }
 @
@@ -846,11 +855,46 @@ For model choice, random forest provides you with the number of votes supporting
 <<rcode_32, cache=F, tidy=TRUE>>=
 @
 
+figure~\ref{fig:VarImportance}:
+<<VarImportance, fig.height=6, fig.width=6, echo=TRUE, fig.cap="Variable importance plot.">>=
+plot(model_RF,
+     training=ref_table)
+@
 
 
+For each simulation of the reference table we can get a prediction from the random forest (only from trees grown without that simulation). Comparing with the true value we can get the prior error rate and the confusion matrix:
+
+<<rcode_33, cache=F, tidy=TRUE>>=
+@
+
+Now we can grow a \textbf{second} random forest which will learn the relationship between the ``local'' error rate and the summary statistics. The probability of a correct classification (posterior probability) is one minus the probability of an incorrect classification (error rate). This second random forest allows to estimate the posterior probability of the \textbf{chosen} model (implemented in function {\tt \Sexpr{hi_latex('predict.abcrf()')}} from {\tt abcrf}):
+
+<<rcode_34, cache=F, tidy=TRUE>>=
+@
+
+For the posterior probability distribution of a parameter, the key thing to remember is that prediction of quantitative variables from random forest is based on the weight given by the trees to each simulation of the reference table (i.e. the rediction is a weigthed mean). The same weigths can be applied to the median and percentiles to obtain a point estimate and credibility intervals, and to plot an estimate of the distribution (e.g. an histogram):
+
+<<rcode_35, cache=F, tidy=TRUE>>=
+@
+<<rcode_36, cache=F, tidy=TRUE>>=
+@
 
 
-
+figure~\ref{fig:hist_abcrf}:
+<<hist_abcrf, fig.height=6, fig.width=6, echo=TRUE, fig.cap="Probability density estimated from ABCRF.">>=
+hist(x      = log10theta,
+     breaks = seq(-1,2,0.05),
+     col    = "grey",
+     freq   = FALSE,
+     ylim   = c(0,5),
+     main   = "",
+     xlab   = expression(log(theta)),
+     ylab   = "probability density")
+wtd.hist(x      = log10theta,
+         breaks = seq(-1,2,0.05),
+         col    = ReddishPurple_transparency, freq=FALSE, add=TRUE,
+         weight = posterior_theta_RF$weights); box()
+@
 
 
 

@@ -976,7 +976,7 @@ points(ref_table$TajD[which(sim_model=="C")],
        col="grey",pch=20)
 partition.tree(classification_tree,
                ordvars=c("TajD","FuLiD"),
-               add=T,cex=3,col="red")
+               add=T,cex=3,col=7)
 
 
 
@@ -1005,23 +1005,20 @@ plot(ref_table$pi,
      pch=20,log="x")
 partition.tree(regression_tree,
                ordvars=c("pi","theta"),
-               add=T,cex=1.5,col="blue",lwd=2)
+               add=T,cex=1.5,col=6,lwd=2)
 
 for (i in 1:100){
-  random_sample <- sample(length(theta),size=500)
+  random_sample <- sample(length(theta),size=500,replace=T)
   ref_table_random_sample <- ref_table[random_sample,]
   regression_tree_random_sample <- tree(log10(theta) ~ pi,
                                         data=ref_table_random_sample)
   partition.tree(regression_tree_random_sample,
                  ordvars=c("pi","theta"),
-                 add=T,cex=1.5,col="red",lwd=1)
+                 add=T,cex=1.5,col=7,lwd=1)
   
 }
 
-
-
 ## ---- rcode_32
-
 ref_table <- data.frame(sim_model,sim_SS)
 model_RF <- abcrf(formula = sim_model~.,
                   data    = ref_table,
@@ -1030,38 +1027,44 @@ model_RF <- abcrf(formula = sim_model~.,
                   paral   = T)
 ## ---- rcode_32end
 
-cat(paste("Prior error rate for this random forest is",
-          round(model_RF$prior.err, digits=3)))
-
-
 plot(model_RF,
      training=ref_table)
 
 
-err.abcrf(model_RF,
-          training=ref_table,
-          paral=T)
+cat(paste("Prior error rate for this random forest is",
+          round(model_RF$prior.err, digits=3)))
 
+## ---- rcode_33
+# GLOBAL ERROR
+as.factor(sim_model[1:20])
+model_RF$model.rf$predictions[1:20]
+sum(as.character(model_RF$model.rf$predictions)!=sim_model)/length(sim_model)
+model_RF$model.rf$confusion.matrix
+# LOCAL ERROR
+as.numeric(as.character(model_RF$model.rf$predictions[1:20])!=sim_model[1:20])
+local_error <- as.numeric(as.character(model_RF$model.rf$predictions)!=sim_model)
+## ---- rcode_33end
 
+# Probability of correct = 1 - probability of incorrect
 
+# Now we train a second forest to predict the error and
+# make classification error prediction on observed data
+# implemented in predict.abcrf :
 
-predict(object=model_RF$model.rf,
-        data=as.data.frame(rbind(target1_SS,target2_SS)))$predictions
-rowSums(predict(object=model_RF$model.rf,predict.all = TRUE,
-        data=as.data.frame(rbind(target1_SS,target2_SS)))$predictions==1)
-
-
+## ---- rcode_34
 model_selection_result_RF <- predict(object         = model_RF,
                                      obs            = as.data.frame(rbind(target1_SS,target2_SS)),
                                      training       = ref_table,
-                                     ntree          = 500,
+                                     ntree          = 1000,
                                      paral          = T,
                                      paral.predict  = T)
 (model_selection_result_RF)
+## ---- rcode_34end
 
 
 
 
+## ---- rcode_35
 
 log10theta <- log10(sim_theta)
 sim_SS <- cbind(sim1_S,sim1_pi,sim1_NH,
@@ -1072,17 +1075,42 @@ RFmodel_theta <- regAbcrf(formula = log10theta~.,
                            data    = ref_table,
                            ntree   = 1000,
                            paral   = T)
+## ---- rcode_35end
 
 
 plot(RFmodel_theta)
-err.regAbcrf(object   = RFmodel_theta,
-             training = ref_table,
-             paral    = T)
+#err.regAbcrf(object   = RFmodel_theta,
+#             training = ref_table,
+#             paral    = T)
+## ---- rcode_36
 posterior_theta_RF <- predict(object    = RFmodel_theta,
                               obs       = as.data.frame(target1_SS),
                               training  = ref_table,
-                              paral     = T)
+                              paral     = T,
+                              rf.weights = T)
 (posterior_theta_RF)
+## ---- rcode_36end
+
+
+hist(x      = log10theta,
+     breaks = seq(-1,2,0.05),
+     col    = "grey",
+     freq   = FALSE,
+     ylim   = c(0,5),
+     main   = "",
+     xlab   = expression(log(theta)),
+     ylab   = "probability density")
+wtd.hist(x      = log10theta,
+         breaks = seq(-1,2,0.05),
+         col    = ReddishPurple_transparency, freq=FALSE, add=TRUE,
+         weight = posterior_theta_RF$weights)
+wtd.hist(x      = log10(sim_theta_adjusted_1),
+         breaks = seq(-1.5,2,0.05),
+         col    = Blue_transparency, freq=FALSE, add=TRUE,
+         weight = sim_weights_1)
+
+
+
 densityPlot(object    = RFmodel_theta,
             obs       = as.data.frame(target1_SS),
             training  = ref_table,
