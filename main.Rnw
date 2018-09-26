@@ -172,7 +172,7 @@ That is the prbability for a given order of \Sexpr{heads_count} heads in 10 coin
 
 \noindent Likelihood of $p=\Sexpr{p_heads}$ given \Sexpr{heads_count} heads in \Sexpr{total_tosses} tosses: \Sexpr{likelihood}.\\
 
-In the case of the coin flip experiment the likelihood can be calculated from a binomial probability model (assuming coin tosses are independent and have the same probability of getting heads). We can load file {\tt flip\_coin\_likelihood.r} that contains some functions to calculate this likelihood (i.e. the code lines presented above wraped in a function: {\tt \Sexpr{hi_latex('flip.coin.likelihood(n,k,p)')}}:
+In the case of the coin flip experiment the likelihood can be calculated from a binomial probability model (assuming coin tosses are independent and have the same probability of getting heads). We can load file {\tt flip\_coin\_likelihood.r} that contains some functions to calculate this likelihood (i.e.~the code lines presented above wraped in a function: {\tt \Sexpr{hi_latex('flip.coin.likelihood(n,k,p)')}}:
 
 
 <<rcode_5, cache=FALSE, tidy=TRUE>>=
@@ -837,7 +837,27 @@ for (i in 1:100){
 }
 @
 
-\subsection*{Application to ABC: model choice}
+\subsection*{Getting posterior probabilities from RF}
+
+As we have seen above, Random Forest allows you to classify your observation in a category (i.e. model choice) and obtain an estimate of a quantitative variable (i.e. parameter estimation). But these values are not associated to posterior probabilities. The package {\tt abcrf} \citep{Marin2017} implements the development that allow to get these probabilities using random forest.
+
+For model choice, random forest provides you with the number of votes supporting each of the models (number of votes = number of trees leading to a given model). However, the number of votes is not necessary a good quantitative measure of the incertitude of the model choice. \Citet{Pudlo2016} developped the approach to estimate the posterior probability. First, a random forest is grown for model choice:
+
+<<rcode_32, cache=F, tidy=TRUE>>=
+@
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

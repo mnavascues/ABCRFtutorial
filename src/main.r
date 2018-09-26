@@ -1020,16 +1020,23 @@ for (i in 1:100){
 
 
 
+## ---- rcode_32
 
 ref_table <- data.frame(sim_model,sim_SS)
 model_RF <- abcrf(formula = sim_model~.,
                   data    = ref_table,
                   lda     = F,
-                  ntree   = 500,
+                  ntree   = 1000,
                   paral   = T)
+## ---- rcode_32end
+
+cat(paste("Prior error rate for this random forest is",
+          round(model_RF$prior.err, digits=3)))
+
+
 plot(model_RF,
      training=ref_table)
-model_RF$prior.err
+
 
 err.abcrf(model_RF,
           training=ref_table,
