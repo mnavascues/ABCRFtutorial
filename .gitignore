@@ -15,7 +15,6 @@ add.*
 figure/*
 main-concordance.tex
 main.tex
-main.pdf
 doc/*
 results/*
 figure/*
@@ -25,3 +24,4 @@ figure/*
 *.glo
 *.fff
 *.ist
+data/abc_sims*

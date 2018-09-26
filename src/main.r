@@ -850,7 +850,7 @@ sim2_FuLiD    <- sim2_FuLiD[which(sim2_S!=0)]
 ref_table_params <- ref_table_params[which(sim2_S!=0),]
 sim2_S        <- sim2_S[which(sim2_S!=0)]
 
-## ---- rcode_26_end
+## ---- rcode_26end
 
 plot(sim2_S,sim2_pi,xlab="S",ylab=expression(pi),log="xy")
 points(sim1_S,sim1_pi,col="grey")
@@ -863,20 +863,24 @@ points(target2_FuLiD,target2_pi,col=6,cex=3,pch="*")
 
 
 
+
+
+## ---- rcode_27
+nsim <- min(length(sim1_S),length(sim2_S))
+
+sim_model    <- c(array("C",nsim),array("V",nsim))
+sim_S        <- c(sim1_S[1:nsim],sim2_S[1:nsim])
+sim_pi       <- c(sim1_pi[1:nsim],sim2_pi[1:nsim])
+sim_NH       <- c(sim1_NH[1:nsim],sim2_NH[1:nsim])
+sim_TajimasD <- c(sim1_TajimasD[1:nsim],sim2_TajimasD[1:nsim])
+sim_FayWuH   <- c(sim1_FayWuH[1:nsim],sim2_FayWuH[1:nsim])
+sim_FuLiD    <- c(sim1_FuLiD[1:nsim],sim2_FuLiD[1:nsim])
+## ---- rcode_27end
+
+
+
 # Model choice
-
-
-sim_model    <- c(array("C",9000),array("V",9000))
-sim_S        <- c(sim1_S[1:9000],sim2_S[1:9000])
-sim_pi       <- c(sim1_pi[1:9000],sim2_pi[1:9000])
-sim_NH       <- c(sim1_NH[1:9000],sim2_NH[1:9000])
-sim_TajimasD <- c(sim1_TajimasD[1:9000],sim2_TajimasD[1:9000])
-sim_FayWuH   <- c(sim1_FayWuH[1:9000],sim2_FayWuH[1:9000])
-sim_FuLiD    <- c(sim1_FuLiD[1:9000],sim2_FuLiD[1:9000])
-
-
-
-
+## ---- rcode_28
 tolerance <- 0.1
 target1_SS <- cbind(target1_S,target1_pi,target1_NH,target1_TajimasD,target1_FayWuH,target1_FuLiD)
 target2_SS <- cbind(target2_S,target2_pi,target2_NH,target2_TajimasD,target2_FayWuH,target2_FuLiD)
@@ -899,6 +903,19 @@ abc_model_choice2 <- postpr(target=target2_SS,
                             method="mnlogistic")
 
 abc_model_choice2$pred                           
+## ---- rcode_28end
+
+cat("The best model for Dataset 1 is",
+    names(which(abc_model_choice1$pred==max(abc_model_choice1$pred))),
+    "(C for constant, V for varable population size), with a posterior probability of",
+    max(abc_model_choice1$pred))
+
+cat("The best model for Dataset 2 is",
+    names(which(abc_model_choice2$pred==max(abc_model_choice2$pred))),
+    "(C for constant, V for varable population size), with a posterior probability of",
+    max(abc_model_choice2$pred))
+
+
 
 
 
@@ -911,7 +928,7 @@ abc_model_choice2$pred
 
 # CART
 #------
-
+## ---- rcode_29
 theta  <- ref_table_params[,"theta1"]
 TajD   <- sim2_TajimasD
 pi     <- sim2_pi
@@ -919,6 +936,8 @@ ref_table <- data.frame(theta,TajD,pi)
 
 regression_tree <- tree(theta ~ TajD + pi,
                         data=ref_table)
+
+## ---- rcode_29end
 
 plot(regression_tree)
 text(regression_tree,cex=0.75)
@@ -934,12 +953,15 @@ partition.tree(regression_tree,
                ordvars=c("TajD","pi"),
                add=T,cex=1)
 
-
+## ---- rcode_30
 TajD   <- sim_SS[,"TD"]
 FuLiD  <- sim_SS[,"FLD"]
 ref_table <- data.frame(sim_model,TajD,FuLiD)
+
 classification_tree <- tree(sim_model ~ TajD + FuLiD,
-                       data=ref_table)
+                            data=ref_table)
+## ---- rcode_30end
+
 
 plot(classification_tree)
 text(classification_tree,cex=0.75)
@@ -963,12 +985,16 @@ partition.tree(classification_tree,
 
 # Explain Bagging (note out-of-bag)
 
-theta     <- ref_table_params[,"theta0"]
-pi        <- sim2_pi
+## ---- rcode_31
+theta     <- sim_theta
+pi        <- sim1_pi
 
 ref_table <- data.frame(theta,pi)
 regression_tree <- tree(log10(theta) ~ pi,
                         data=ref_table)
+
+## ---- rcode_31end
+
 plot(regression_tree)
 text(regression_tree,cex=0.75)
 
@@ -982,7 +1008,7 @@ partition.tree(regression_tree,
                add=T,cex=1.5,col="blue",lwd=2)
 
 for (i in 1:100){
-  random_sample <- sample(length(theta),size=100,replace=T)
+  random_sample <- sample(length(theta),size=500)
   ref_table_random_sample <- ref_table[random_sample,]
   regression_tree_random_sample <- tree(log10(theta) ~ pi,
                                         data=ref_table_random_sample)
@@ -995,9 +1021,7 @@ for (i in 1:100){
 
 
 
-# DO NOT USE FWH statistics, abcrf crashes, don't know why
-
-ref_table <- data.frame(sim_model,sim_SS[,-5])
+ref_table <- data.frame(sim_model,sim_SS)
 model_RF <- abcrf(formula = sim_model~.,
                   data    = ref_table,
                   lda     = F,
@@ -1011,8 +1035,6 @@ err.abcrf(model_RF,
           training=ref_table,
           paral=T)
 
-###################################################
-# HERE BE DRAGONS
 
 
 
