@@ -1,5 +1,5 @@
 ##############################################################################
-# A Biologist Guide to Approximate Bayesian Computation in Population Genetics
+# A Beginners Guide to Approximate Bayesian Computation in Population Genetics
 ##############################################################################
 
 # Miguel Navascués
@@ -270,7 +270,7 @@ seq_data[[1]]$nss
 seq_data[[1]]$mutations
 seq_data[[1]]$sample[1:5,1:10]
 
-cat(paste("Data set 2:\n",
+cat(paste("Data set 1:\n",
           "Sample size:",sample_size,"\n",
           "Number of polymorphic sites:",target1_S,"\n",
           "Number of haplotypes:",target1_NH,"\n"))
@@ -472,6 +472,7 @@ plot(sim_SS_kept,
      xlab="SS'",
      ylab="weight")
 abline(v=target_SS,col=7)
+
 
 plot(x    = log10(sim_theta),
      y    = sim_SS,
@@ -1007,8 +1008,19 @@ partition.tree(regression_tree,
                ordvars=c("pi","theta"),
                add=T,cex=1.5,col=6,lwd=2)
 
+pi_cut_max<-0
+for (i in seq_len(nrow(regression_tree$frame))){
+  pi_cut <- as.numeric(strsplit(regression_tree$frame$splits[i,"cutleft"],split="<")$cutleft[2])
+  if (!is.na(pi_cut)){
+    if (pi_cut>pi_cut_max) pi_cut_max <- pi_cut
+  }
+}
+mean(log10(ref_table$theta[which(ref_table$pi>pi_cut_max)]))
+
+
+
 for (i in 1:100){
-  random_sample <- sample(length(theta),size=500,replace=T)
+  random_sample <- sample(length(theta),size=300,replace=T)
   ref_table_random_sample <- ref_table[random_sample,]
   regression_tree_random_sample <- tree(log10(theta) ~ pi,
                                         data=ref_table_random_sample)

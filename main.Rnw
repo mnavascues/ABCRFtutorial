@@ -18,6 +18,8 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
+\lhead{Guide to ABC}
+\rhead{M. Navascués}
 \rfoot{\thepage}
 \lfoot{\href{http://doi.org/10.5281/zenodo.1435503}{doi:10.5281/zenodo.1435503}}
 
@@ -835,7 +837,7 @@ plot(ref_table$pi,
      ylab=expression(log[10]*theta),
      pch=20,log="x")
 for (i in 1:100){
-  random_sample <- sample(length(theta),size=500,replace=T)
+  random_sample <- sample(length(theta),size=300,replace=T)
   ref_table_random_sample <- ref_table[random_sample,]
   regression_tree_random_sample <- tree(log10(theta) ~ pi,
                                         data=ref_table_random_sample)
@@ -872,7 +874,7 @@ Now we can grow a \textbf{second} random forest which will learn the relationshi
 <<rcode_34, cache=F, tidy=TRUE>>=
 @
 
-For the posterior probability distribution of a parameter, the key thing to remember is that prediction of quantitative variables from random forest is based on the weight given by the trees to each simulation of the reference table (i.e. the rediction is a weigthed mean). The same weigths can be applied to the median and percentiles to obtain a point estimate and credibility intervals, and to plot an estimate of the distribution (e.g. an histogram):
+For the posterior probability distribution of a parameter, the key thing to remember is that prediction of quantitative variables from random forest is based on the weight given by the trees to each simulation of the reference table (i.e. the rediction is a weigthed mean). The same weigths can be applied to the median and percentiles to obtain a point estimate and credibility intervals, and to plot an estimate of the distribution (e.g. an histogram) \citep{Raynal2017}:
 
 <<rcode_35, cache=F, tidy=TRUE>>=
 @
