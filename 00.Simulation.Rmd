@@ -4,7 +4,7 @@
 # Click on "Run Document" in RStudio to run this worksheet. #
 #                                                           #
 #############################################################
-title: "Quick Introduction to Bayesian Statistics"
+title: "Quick Introduction to Simulation"
 author: "Miguel de Navascués"
 output: learnr::tutorial
 runtime: shiny_prerendered
@@ -12,204 +12,100 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 library(learnr)
-# knitr::opts_chunk$set(echo = FALSE, comment = "")
 ```
 
-## Question, model, experiment, data
+## What is a simulation?
 
-**The question**: We have a coin that we use to choose randomly between two alternatives. Is the coin fair?
+Discuss:
 
-**The [model](http://en.wikipedia.org/wiki/Bernoulli_trial)**: For each coin toss there is a probability $p$ of getting *heads* and $q=1-p$ of getting *tails*. Under this model, the question can be formulated as: is $p=q=0.5$?
+- What is a computer simulation?
+- What are the sources of randomness?
+- How are random numbers produced in a computer?
 
+## Simulation of a coin toss
 
-**The experiment**: A coin is tossed 10 times and the results (*heads/tails*, plough/cereal in this case) are recorded.
+Simulate a ten coin tosses ($n=10$) using R function `sample(_____)` and probability of getting head $p$. Use a seed for random number generator so your simulation is reproducible:
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/10_lire_1975_O.jpg/240px-10_lire_1975_O.jpg" alt="heads" style="height: 80px; width:80px;"/>
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/10_lire_1975_R.jpg/240px-10_lire_1975_R.jpg" alt="tails" style="height: 80px; width:80px;"/>
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/10_lire_1975_R.jpg/240px-10_lire_1975_R.jpg" alt="tails" style="height: 80px; width:80px;"/>
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/10_lire_1975_R.jpg/240px-10_lire_1975_R.jpg" alt="tails" style="height: 80px; width:80px;"/>
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/10_lire_1975_O.jpg/240px-10_lire_1975_O.jpg" alt="heads" style="height: 80px; width:80px;"/>
-
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/10_lire_1975_R.jpg/240px-10_lire_1975_R.jpg" alt="tails" style="height: 80px; width:80px;"/>
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/10_lire_1975_O.jpg/240px-10_lire_1975_O.jpg" alt="heads" style="height: 80px; width:80px;"/>
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/10_lire_1975_R.jpg/240px-10_lire_1975_R.jpg" alt="tails" style="height: 80px; width:80px;"/>
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/10_lire_1975_R.jpg/240px-10_lire_1975_R.jpg" alt="tails" style="height: 80px; width:80px;"/>
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/10_lire_1975_O.jpg/240px-10_lire_1975_O.jpg" alt="heads" style="height: 80px; width:80px;"/>
-
-**The data**: The sequence of coin tosses is: H, T, T, T, H, T, H, T, T, H. That is `h=4` and `t=6`.
-
-## Likelihood
-
-The likelihood that $p=q=0.5$ given our data ($D=(h=4,t=6)$) is the probability of the data under the model with $p=q=0.5$:
-
-\[ L(p=0.5|D) = P(D|p=0.5) \]
-
-How do you calculate that probability?
-
-```{r likelihood, exercise=TRUE}
-p<-0.5; h<-4; t<-6 
-_____
+```{r simulation_coin_toss, exercise=TRUE}
+n <- 10
+p <- 0.5
+coin_toss <- sample(x=c("H","T"),size=_____, replace=_____, prob=_____)
+coin_toss
 ```
 
-```{r likelihood-hint-1}
-p<-0.5; h<-4; t<-6 
-_____ * p^h * _____ 
+```{r simulation_coin_toss-hint}
+n <- 10
+p <- 0.5
+coin_toss <- sample(x=c("H","T"),size=n, replace=T, prob=c(p,1-p))
+coin_toss
 ```
 
-```{r likelihood-hint-2}
-p<-0.5; h<-4; t<-6 
-_____ * p^h * (1-p)^t 
+```{r simulation_coin_toss-solution}
+set.seed(123456)
+n <- 10
+p <- 0.5
+coin_toss <- sample(x=c("H","T"),size=n, replace=T, prob=c(p,1-p))
+coin_toss
 ```
 
-```{r likelihood-solution}
-p<-0.5; h<-4; t<-6 
-choose(h+t, h) * p^h * (1-p)^t
+Simulate directly the number of heads ($h'$) using `rbinom(_____)`:
+
+```{r simulation_coin_toss_rbinom, exercise=TRUE}
+n <- 10
+p <- 0.5
+num_of_sim = 1
+h_prime <- rbinom(n=_____,size=_____,prob=_____)
+h_prime
 ```
 
-This value in itself does not solve your question, you need to compare with the likelihood for other values of $p$. Create a function that calculates the likelihood and plot the likelihood values for `p=seq(0,1,0.01)`. 
-
-```{r likelihood_function, exercise=TRUE}
-flip_coin_likelihood <- function(p,h,t){
-  likelihood <- _____
-  return (list(p=p,l=likelihood))
-}
-likelihood_profile <- _____
-plot(x = likelihood_profile$_____,
-     y = likelihood_profile$_____,
-     xlab = "p", ylab = "Likelihood", type = "l")
+```{r simulation_coin_toss_rbinom-solution}
+n <- 10
+p <- 0.5
+num_of_sim = 1
+h_prime <- rbinom(n=num_of_sim,size=n,prob=p)
+h_prime
 ```
 
-```{r likelihood_function-solution}
-flip_coin_likelihood <- function(p,h,t){
-  likelihood <- choose(h+t,h) * p^h * (1-p)^t
-  return (list(p=p,l=likelihood))
-}
-likelihood_profile <- flip_coin_likelihood(p=seq(0,1,0.01),h=4,t=6)
-plot(x = likelihood_profile$p,
-     y = likelihood_profile$l,
-     xlab = "p", ylab = "Likelihood", type = "l", col = "#009E73")
-```
-
-From the likelihood profile we can obtain which is the value of $p$ that explain the best the observed data ([maximum likelihood estimate](http://en.wikipedia.org/wiki/Maximum_likelihood_estimation)).
 
 
-```{r eval=TRUE, echo=FALSE}
-flip_coin_likelihood <- function(p,h,t){
-  likelihood <- choose(h+t,h) * p^h * (1-p)^t
-  return (list(p=p,l=likelihood))
-}
-```
+## Simulation of population genetic data
+
+Simulation via the coalescent. For convenience, we will use the R package `phyclust` that includes a version of coalescent simulator ms in this tutorial. In practice, use of other simulators (msprime, fastsimcoal or the original implementation of ms) is recommended.
 
 ```{r eval=TRUE, echo=TRUE}
-likelihood_profile <- flip_coin_likelihood(p=seq(0,1,0.01),h=4,t=6)
+library("phyclust", quietly=T)
 ```
 
-```{r maximum_likelihood_function, exercise=TRUE}
-maxL <- _____(likelihood_profile$l)
-p_hat <- likelihood_profile$p[which(likelihood_profile$l==_____)]
-p_hat
+Simulate with `ms(_____)` a sample of $n=10$ mitochondrial DNA sequences of $l=10000$bp in a population of size $N=10000$ with mutation rate (per bp) $\mu=10^{-8}$:
+
+```{r coalescent_sim, exercise=TRUE}
+n<-10
+l<-10000
+N<-10000
+u<-1e-8
+num_of_sim<-1
+_____
+ms(nsam=_____,nreps=_____,opt=_____)
 ```
 
-```{r maximum_likelihood_function-solution}
-maxL <- max(likelihood_profile$l)
-p_hat <- likelihood_profile$p[which(likelihood_profile$l==maxL)]
-p_hat
-```
-
-
-For this simple model it is possible to derive an analytical solution for the maximum likelihood estimator of $p$:
-
-\[ \hat{p}=h/(h+t) \]
-
-What about our initial question? Is the coin fair? From the likelihood profile we can also calculate whether the maximum likelihood estimate for $p$ is significantly better that $p=0.5$ (*via* the [confidence interval](http://en.wikipedia.org/wiki/Confidence_interval#Methods_of_derivation)). Based on the likelihood-ratio test (with $\alpha=0.05$):
-
-```{r eval=TRUE, echo=FALSE}
-maxL <- max(likelihood_profile$l)
-```
-
-```{r confidence_interval, exercise=TRUE}
-CI95  <- likelihood_profile$p[which(likelihood_profile$l > exp(log(maxL)-1.92))]
-CI95  <- CI95[c(1,length(CI95))]
-CI95
-```
-
-According to this results, we cannot reject the hypothesis that $p=0.5$ (with $\alpha=0.05$). What would happen for a larger number of coin tosses? What about `h=20` and `t=30`? Or `h=400` and `t=600`? Explore this and other values below:
-
-```{r explore_binomial_likelihood, exercise=TRUE}
-h=_____
-t=_____
-likelihood_profile <- flip_coin_likelihood(p=seq(0,1,0.001),h=h,t=t)
-maxL <- max(likelihood_profile$l)
-p_hat <- likelihood_profile$p[which(likelihood_profile$l==maxL)]
-CI95  <- likelihood_profile$p[which(likelihood_profile$l > exp(log(maxL)-1.92))]
-CI95  <- CI95[c(1,length(CI95))]
-plot(x = likelihood_profile$p,
-     y = likelihood_profile$l,
-     xlab = "p", ylab = "Likelihood", type = "l", col = "#009E73")
-abline(v=p_hat, col="#009E73")
-abline(v=CI95[1], col="#009E73",lt=2)
-abline(v=CI95[2], col="#009E73",lt=2)
-abline(v=0.5, col="#0072B2")
-
-```
-
-## Bayesian statistics
-
-The posterior probability is the probability of the parameter $p$ given the data $D$: $P(p|D)$. Using Bayes' Theorem: 
-
-\[P(p|D)=\frac{P(D|p)P(p)}{P(D)}\]
-
-where $P(D|p)=L(p|D)$ is the likelihood and $P(p)$ is the prior probability. The marginal likelihood, $P(D)$, is constant and does not need to be calculated: $P(p|D)\propto L(p|D)P(p)$.
-
-In this simple case (coin flipping experiment) there is an analytical solution for the posterior when using a conjugate prior such as the beta distribution, $\mathrm{B}(\alpha, \beta)$. Thus, the posterior distribution is $\mathrm{B}(\alpha+h, \beta+t)$. Note that the uniform distribution $\mathrm{U}(0,1)$ is the same as beta distribution $\mathrm{B}(1,1)$.
-
-In Bayesian statistics a point estimate of the parameters is often given by the median posterior probability and credibility intervals by the quantile probabilities.
-
-Explore the statistical analysis of the coin toss experiment. How does the results change when the prior parameters change? What is the interpretation of the prior? i.e. what is the interpretation of $\alpha$ and $\beta$?
-
-```{r explore_binomial_posterior, exercise=TRUE}
-h=4 # heads
-t=6 # tails
-a=1 # alpha
-b=1 # beta
-p=seq(0,1,0.001)
-
-plot(p, y = dbeta(p,a,b), # prior probability
-     xlab = "p", ylab = "Probability density", type = "l", ylim=c(0,5))
-lines(p, y = dbeta(p,a+h,b+t), # posterior probability
-      col = "#D55E00")
-quant <- qbeta(c(0.5,0.025,0.975),a+h,b+t)
-abline(v=quant[1], col="#D55E00")
-abline(v=quant[2], col="#D55E00",lt=2)
-abline(v=quant[3], col="#D55E00",lt=2)
-abline(v=0.5, col="#0072B2")
+```{r coalescent_sim-hint}
+n<-10
+l<-10000
+N<-10000
+u<-1e-8
+num_of_sim<-1
+theta <- _____
+ms(nsam=_____,nreps=_____,opt=paste("-t",theta))
 ```
 
 
-## Likelihood *vs.* Posterior probability
-
-Explore the difference between the likelihood and the posterior probability. Note the scale difference. What happens to the likelihood and posterior probability values when the amount of data ($h+t$) increases? What happens to the likelihood when the prior changes? Note: you might need to change the scale (`ylim=c(0,_____)`) depending on the values you explore.
-
-```{r explore_likelihood_vs_posterior, exercise=TRUE}
-h=4 # heads
-t=6 # tails
-a=1 # alpha
-b=1 # beta
-
-p=seq(0,1,0.001)
-plot(p, y = dbeta(p,a,b), # prior probability
-     xlab = "p", ylab = "Probability density/Likelihood", type = "l", ylim=c(0,3))
-lines(p, y = dbeta(p,a+h,b+t), # posterior probability
-      col = "#D55E00")
-
-lines(p, y = flip_coin_likelihood(p,h,t)$l, # likelihood
-      col = "#009E73")
-
+```{r coalescent_sim-solution}
+n<-10
+l<-10000
+N<-10000
+u<-1e-8
+num_of_sim<-1
+theta <- 2*N*u*l # note that l*u is an approximation!
+ms(nsam=n,nreps=num_of_sim,opt=paste("-t",theta))
 ```
-
-
-
-
-
-
 
