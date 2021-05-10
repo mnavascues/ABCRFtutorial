@@ -215,7 +215,7 @@ l<-10000
 N<-10000
 u<-1e-8
 num_of_sim<-1
-theta <- 2*N*u*l # note that l*u is an approximation!
+theta <- 2*N*u*l 
 msout <- ms(nsam=n,nreps=num_of_sim,opt=paste("-t",theta))
 sim_data <- read.ms.output(____)
 _____
@@ -227,7 +227,7 @@ l<-10000
 N<-10000
 u<-1e-8
 num_of_sim<-1
-theta <- 2*N*u*l # note that l*u is an approximation!
+theta <- 2*N*u*l 
 msout <- ms(nsam=n,nreps=num_of_sim,opt=paste("-t",theta))
 sim_data <- read.ms.output(txt=msout)
 sim_data$_____
@@ -241,7 +241,7 @@ l<-10000
 N<-10000
 u<-1e-8
 num_of_sim<-1
-theta <- 2*N*u*l # note that l*u is an approximation!
+theta <- 2*N*u*l
 msout <- ms(nsam=n,nreps=num_of_sim,opt=paste("-t",theta))
 sim_data <- read.ms.output(txt=msout)
 sim_data$segsites
