@@ -58,7 +58,8 @@ read.ms.output <- function( txt=NA, file.ms.output=NA ) {
     
     ## THE OUTPUT TEXT FOR EACH DRAW SHOULD CONTAIN THE WORD "segsites"
     marker <- grep("segsites", txt)
-    stopifnot(length(marker) == ndraws)
+    #stopifnot(length(marker) == ndraws)
+    ndraws <- length(marker)
 
     ## GET NUMBERS OF SEGREGATING SITES IN EACH DRAW
     segsites <- sapply(strsplit(txt[marker], split=" "), function(vec) as.integer(vec[2]) )

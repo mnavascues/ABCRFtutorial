@@ -47,7 +47,7 @@ Reddish_Purple <- "#CC79A7"
 
 
 
-## Approximation 1
+## Approximation 1: Simulation
 
 Approximate Bayesian Computation is a likelihood-free model-based inference approach. The idea behind likelihood-free methods is that the analytical/numerical calculating of the likelihood is substituted by an estimate of the likelihood based on simulations.
 
@@ -115,7 +115,7 @@ lines(x = l_profile_true$p,
 ```
 
 
-Posterior probabilities can be also estimated through the use of simulations using the **rejection algorithm**. The following procedure produces a sample from the posterior probability distribution:
+Posterior probabilities can be also estimated through the use of simulations using the **rejection algorithm**. The following procedure produces a sample from the posterior probability distribution (remember that $P(p|D)\propto L(p|D)P(p)$):
 
 ***
 
@@ -241,7 +241,7 @@ lines(seq(0,1,0.001),dbeta(x=seq(0,1,0.001),a+h,b+t),
 
 ### Exercise 5
 
-Get a point estimate and 
+Get a point estimate and the 95% credibility interval:
 
 ```{r coin_toss_credibility_interval, exercise=TRUE, exercise.setup="flip_coin_posterior_approx"}
 h=4;t=6;a=1;b=1;num_of_sim=1000
@@ -270,24 +270,128 @@ p_hat; p_95CI
 For data $h=4$ and $t=6$, and prior $\mathrm{Beta}(\alpha=1,\beta=1)$ the median is `r qbeta(0.5,1+4,1+6)` and the 95% credibility interval is (`r qbeta(c(0.025,0.975),1+4,1+6)`).
 
 
-## Approximation 2
+## Approximation 2: Summary Statistics
 
-We are going to consider now population genetics data. We have two data sets of mitochondrial DNA sequences for 50 individuals of two different hermaphrodite species (*actually, it is fake data*). The data is in two files named `dataset1.txt` and `dataset2.txt` in ms format.
+We are going to consider now population genetics data. We have two data sets of mitochondrial DNA sequences for 50 individuals of two different hermaphrodite species (*actually, it is fake data*). The data is in two files named `dataset1.txt` and `dataset2.txt` in *ms* format.
 
 ### Exercise 6
 
-Explore the data. How many polymorphic sites are there?
+Explore the data. How many polymorphic sites are there? (you can use functions `S()`, `NH()`, `PI()` and `TajimaD()`) How would you apply the rejection algorithm?
 
-```{r explore_genetic_data, exercise=TRUE}
+```{r explore_genetic_data, exercise=TRUE, exercise.lines=6, exercise.setup = "summary_statistics"}
 dataset1 <- read.ms.output(file="/change/to/your/path/dataset1.txt")
 dataset2 <- read.ms.output(file="/home/miguel/Work/Teaching/ABCRF tutorial/dataset2.txt")
 ```
 
+```{r summary_statistics}
+S<-function(a) {return(a$segsites)}
+NH<-function(a) {
+  NH<-vector(length=a$nreps)
+  for(i in seq_len(a$nreps)) {
+    NH[i] <- nrow(unique(a$gametes[[i]]))
+  }
+  return(NH)
+}
+PI<-function(a) {
+  PI<-vector(mode='numeric', length=a$nreps)
+  for(i in seq_len(a$nreps)) {
+    if(a$segsites[i]>0){
+      for(j in seq_len(a$segsites[i])) {
+         if(a$segsites[i]>1) {
+          loc<-sum(a$gametes[[i]][,j])
+        } else {
+          loc<-sum(a$gametes[[i]])
+        }
+        PI[i] <- PI[i] + 2*loc*(a$nsam-loc)
+      }
+    }
+  }
+  return(PI/(a$nsam*(a$nsam-1)))
+}
+thetaW<-function(a) {
+  a1<-sum(1/(1:(a$nsam-1)))
+  return(a$segsites/a1)
+}
+TajimaD<-function(a) {
+  a1<-sum(1/(1:(a$nsam-1)))
+  a2<-sum(1/((1:(a$nsam-1))^2))
+  b1<-(a$nsam+1)/3/(a$nsam-1)
+  b2<-2*(a$nsam^2+a$nsam+3)/(9*a$nsam*(a$nsam-1))
+  c1<-b1-1/a1
+  c2<-b2-(a$nsam+2)/(a1*a$nsam)+a2/(a1^2)
+  temp <- c1/a1*a$segsites + c2/(a1^2+a2)*a$segsites*(a$segsites-1)
+  return( (PI(a)-thetaW(a))/sqrt(temp) )
+}
+```
+
+We could try to apply the same rejection algorithm described above, but the structure of the data is more complex and an exact match would occur rarely in simulations. So we use the second approximation of ABC, instead of the data we use summary statistics ($S$) from the data to classify the simulation as a match to the observation. It is said now that we are approximating the likelihood of $p$ given the summary statistic, $L(p|S)$, rather than the likelihood of $p$ given the data, $L(p|D)$.
+
+***
+
+**Algorithm 2** Exact rejection sampler on summary statistics
+
+* Calculate $S$ from $D$  
+* Given $N$ the number of simulations  
+* **for** i = 1 to N **do**  
+  + Generate $p'\sim\pi(p)$  
+  + Simulate $D'\sim f(p')$  
+  + Calculate $S'$ from $D'$  
+  + **if** $S'=S$ **then**  
+    - Accept $p'$  
+  + **end if**  
+* **end for**  
+* **return** accepted $p'$  
+
+***
+
+### Exercise 7
+
+Simulate sequence data with `ms` (from `phyclust` package) using the standard coalescent model (single population of constant size). Simulate with $\theta$ values taken from a log-uniform prior probability distribution (option `"-t tbs"`).
+
+```{r rejection_algortihm_sumstats, exercise=TRUE, exercise.setup = "summary_statistics"}
+sample_size = 50
+num_of_sim = 10 # use larger number at your own risk /!\
+theta_prime <- 10^runif(num_of_sim,min=-1,max=2)
+msout <- ms(nsam = sample_size,
+            opt = "-t tbs",
+            tbs.matrix = cbind(theta_prime))
+msout <- read.ms.output(txt=msout)
+S_prime  <- S(msout)
+PI_prime  <- PI(msout)
+```
+
+Simulation can be very time consuming, for the following exercises we will be using a set of simulations which have already been run and summary statistics calculated from them (this is called the **reference table**). This reference table has been produced with the following code:
+
+```{r eval=FALSE, echo=TRUE}
+sample_size = 50
+num_of_sim = 1000000
+theta_prime <- 10^runif(num_of_sim,min=-1,max=2)
+msout <- ms(nsam = sample_size,
+            opt = "-t tbs",
+            tbs.matrix = cbind(theta_prime))
+msout <- read.ms.output(txt=msout)
+S_prime  <- S(msout)
+PI_prime <- PI(msout)
+NH_prime <- NH(msout)
+TD_prime <- TajimaD(msout)
+ref_table <- data.frame(theta=theta_prime,
+                        S=S_prime,
+                        PI=PI_prime,
+                        NH=NH_prime,
+                        TD=TD_prime)
+saveRDS(ref_table,file="ref_table_1.RDS")
+```
 
 
 
+### Exercise 8
+
+```{r eval=FALSE, echo=TRUE}
+target <- data.frame(S  = c(50,23),
+                     PI = c(11.56163,1.354286),
+                     row.names = c("dataset1","dataset2"))
+```
 
 
-
-## Approximation 3
+## Approximation 3: Tolerance
 
