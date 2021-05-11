@@ -29,7 +29,7 @@ Discuss:
 Simulate a ten coin tosses ($n=10$) using R function `sample(_____)` and probability of getting head $p$. Use a seed for random number generator so your simulation is reproducible:
 
 
-```{r simulation_coin_toss, exercise=TRUE}
+```{r simulation_coin_toss, exercise=TRUE, exercise.lines=5}
 n <- 10
 p <- 0.5
 coin_toss <- sample(x=c("H","T"),size=_____, replace=_____, prob=_____)
