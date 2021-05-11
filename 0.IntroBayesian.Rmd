@@ -14,6 +14,23 @@ runtime: shiny_prerendered
 library(learnr)
 ```
 
+## Setup
+
+[Colorblind friendly palette](http://jfly.iam.u-tokyo.ac.jp/color/):
+
+```{r color_setup, include=TRUE}
+Orange         <- "#E69F00"
+Sky_Blue       <- "#56B4E9" 
+Bluish_Green   <- "#009E73"
+Yellow         <- "#F0E442"
+Blue           <- "#0072B2"
+Vermillion     <- "#D55E00"
+Reddish_Purple <- "#CC79A7"
+```
+
+
+
+
 ## Question, model, experiment, data
 
 **The question**: We have a coin that we use to choose randomly between two alternatives. Is the coin fair?
@@ -43,6 +60,8 @@ The likelihood that $p=q=0.5$ given our data ($D=(h=4,t=6)$) is the probability 
 
 \[ L(p=0.5|D) = P(D|p=0.5) \]
 
+### Exercise 1
+
 How do you calculate that probability?
 
 ```{r likelihood, exercise=TRUE}
@@ -65,6 +84,8 @@ p<-0.5; h<-4; t<-6
 choose(h+t, h) * p^h * (1-p)^t
 ```
 
+### Exercise 2
+
 This value in itself does not solve your question, you need to compare with the likelihood for other values of $p$. Create a function that calculates the likelihood and plot the likelihood values for `p=seq(0,1,0.01)`. 
 
 ```{r likelihood_function, exercise=TRUE}
@@ -75,7 +96,7 @@ flip_coin_likelihood <- function(p,h,t){
 likelihood_profile <- _____
 plot(x = likelihood_profile$_____,
      y = likelihood_profile$_____,
-     xlab = "p", ylab = "Likelihood", type = "l")
+     xlab = "p", ylab = "Likelihood", type = "l", col = Bluish_Green)
 ```
 
 ```{r likelihood_function-solution}
@@ -86,10 +107,12 @@ flip_coin_likelihood <- function(p,h,t){
 likelihood_profile <- flip_coin_likelihood(p=seq(0,1,0.01),h=4,t=6)
 plot(x = likelihood_profile$p,
      y = likelihood_profile$l,
-     xlab = "p", ylab = "Likelihood", type = "l", col = "#009E73")
+     xlab = "p", ylab = "Likelihood", type = "l", col = Bluish_Green)
 ```
 
-From the likelihood profile we can obtain which is the value of $p$ that explain the best the observed data ([maximum likelihood estimate](http://en.wikipedia.org/wiki/Maximum_likelihood_estimation)).
+### Exercise 3
+
+From the likelihood profile we can obtain which is the value of $p$ that explain the best the observed data: the [maximum likelihood estimate](http://en.wikipedia.org/wiki/Maximum_likelihood_estimation). Which is the MLE estimate  of $p$ ($\hat{p}$):
 
 
 ```{r eval=TRUE, echo=FALSE}
@@ -126,13 +149,16 @@ What about our initial question? Is the coin fair? From the likelihood profile w
 maxL <- max(likelihood_profile$l)
 ```
 
-```{r confidence_interval, exercise=TRUE}
+```{r confidence_interval, eval=TRUE, echo=TRUE}
 CI95  <- likelihood_profile$p[which(likelihood_profile$l > exp(log(maxL)-1.92))]
 CI95  <- CI95[c(1,length(CI95))]
 CI95
 ```
 
 According to this results, we cannot reject the hypothesis that $p=0.5$ (with $\alpha=0.05$). What would happen for a larger number of coin tosses? What about `h=20` and `t=30`? Or `h=400` and `t=600`? Explore this and other values below:
+
+
+### Exercise 4
 
 ```{r explore_binomial_likelihood, exercise=TRUE}
 h=_____
@@ -144,11 +170,11 @@ CI95  <- likelihood_profile$p[which(likelihood_profile$l > exp(log(maxL)-1.92))]
 CI95  <- CI95[c(1,length(CI95))]
 plot(x = likelihood_profile$p,
      y = likelihood_profile$l,
-     xlab = "p", ylab = "Likelihood", type = "l", col = "#009E73")
-abline(v=p_hat, col="#009E73")
-abline(v=CI95[1], col="#009E73",lt=2)
-abline(v=CI95[2], col="#009E73",lt=2)
-abline(v=0.5, col="#0072B2")
+     xlab = "p", ylab = "Likelihood", type = "l", col = Bluish_Green)
+abline(v=p_hat, col=Bluish_Green)
+abline(v=CI95[1], col=Bluish_Green,lt=2)
+abline(v=CI95[2], col=Bluish_Green,lt=2)
+abline(v=0.5, col=Sky_Blue)
 
 ```
 
@@ -164,6 +190,9 @@ In this simple case (coin flipping experiment) there is an analytical solution f
 
 In Bayesian statistics a point estimate of the parameters is often given by the median posterior probability and credibility intervals by the quantile probabilities.
 
+
+### Exercise 5
+
 Explore the statistical analysis of the coin toss experiment. How does the results change when the prior parameters change? What is the interpretation of the prior? i.e. what is the interpretation of $\alpha$ and $\beta$?
 
 ```{r explore_binomial_posterior, exercise=TRUE}
@@ -176,16 +205,19 @@ p=seq(0,1,0.001)
 plot(p, y = dbeta(p,a,b), # prior probability
      xlab = "p", ylab = "Probability density", type = "l", ylim=c(0,5))
 lines(p, y = dbeta(p,a+h,b+t), # posterior probability
-      col = "#D55E00")
+      col = Vermillion)
 quant <- qbeta(c(0.5,0.025,0.975),a+h,b+t)
-abline(v=quant[1], col="#D55E00")
-abline(v=quant[2], col="#D55E00",lt=2)
-abline(v=quant[3], col="#D55E00",lt=2)
-abline(v=0.5, col="#0072B2")
+abline(v=quant[1], col=Vermillion)
+abline(v=quant[2], col=Vermillion,lt=2)
+abline(v=quant[3], col=Vermillion,lt=2)
+abline(v=0.5, col=Sky_Blue)
 ```
 
 
 ## Likelihood *vs.* Posterior probability
+
+### Exercise 6
+
 
 Explore the difference between the likelihood and the posterior probability. Note the scale difference. What happens to the likelihood and posterior probability values when the amount of data ($h+t$) increases? What happens to the likelihood when the prior changes? Note: you might need to change the scale (`ylim=c(0,_____)`) depending on the values you explore.
 
@@ -199,16 +231,25 @@ p=seq(0,1,0.001)
 plot(p, y = dbeta(p,a,b), # prior probability
      xlab = "p", ylab = "Probability density/Likelihood", type = "l", ylim=c(0,3))
 lines(p, y = dbeta(p,a+h,b+t), # posterior probability
-      col = "#D55E00")
+      col = Vermillion)
 
 lines(p, y = flip_coin_likelihood(p,h,t)$l, # likelihood
-      col = "#009E73")
+      col = Bluish_Green)
 
 ```
 
 
+## *All models are wrong*
 
+Until this point we have considered that the binomial model describes well the reality of our coin. However, in addition to heads and tails there are other possible outcomes when tossing a coin, e.g. falling and staying on its side.
 
+### Exercise 7
+
+ Analyze the data under a model that considers three outcomes (i.e. heads/tails/side):
+
+```{r multinomial, exercise=TRUE, , exercise.lines=15}
+h=4;t=6;s=0
+```
 
 
 

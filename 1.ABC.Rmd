@@ -1,0 +1,193 @@
+---
+#############################################################
+#                                                           #
+# Click on "Run Document" in RStudio to run this worksheet. #
+#                                                           #
+#############################################################
+title: "Aproximate Bayesian Computation"
+author: "Miguel de Navascués"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+```
+
+## Setup
+
+[Colorblind friendly palette](http://jfly.iam.u-tokyo.ac.jp/color/):
+
+```{r color_setup, include=TRUE}
+Orange         <- "#E69F00"
+Sky_Blue       <- "#56B4E9" 
+Bluish_Green   <- "#009E73"
+Yellow         <- "#F0E442"
+Blue           <- "#0072B2"
+Vermillion     <- "#D55E00"
+Reddish_Purple <- "#CC79A7"
+```
+
+## Approximation 1
+
+Approximate Bayesian Computation belongs is a likelihood-free model-based inference approach. The idea behind likelihood-free methods is that instead of calculating the likelihood is substituted by estimation of the likelihood based on simulations.
+
+### Exercise 1
+
+For the coin toss experiment, estimate the likelihood of $p=0.5$ for $h=4$ and $t=6$ using simulations:
+
+```{r simulation_coin_toss_rbinom, exercise=TRUE}
+h = 4; t = 6; p = 0.5
+n <- h+t
+num_of_sim = _____
+h_prime <- rbinom(n=num_of_sim,size=n,prob=p)
+_____
+```
+
+```{r simulation_coin_toss_rbinom-hint}
+h = 4; t = 6; p = 0.5
+n <- h+t
+num_of_sim = 100
+h_prime <- rbinom(n=num_of_sim,size=n,prob=p)
+_____(h_prime==h)/_____
+```
+
+```{r simulation_coin_toss_rbinom-solution}
+h = 4; t = 6; p = 0.5
+n <- h+t
+num_of_sim = 100
+h_prime <- rbinom(n=num_of_sim,size=n,prob=p)
+sum(h_prime==h)/num_of_sim
+```
+
+The true value (for $p=0.5$, $h=4$ and $t=6$) is `r choose(10, 4) * 0.5^10`. Is the estimate reasonable? How can the estimate be improved?
+
+
+### Exercise 2
+
+Plot the likelihood profile from using simulation-based estimates of the likelihood. Compare the results with the analytical solution. Why should we bother about a (slower, less accurate) simulation-based solution?
+
+```{r eval=TRUE, echo=TRUE}
+flip_coin_likelihood_true <- function(p,h,t){
+  likelihood <- choose(h+t,h) * p^h * (1-p)^t
+  return (list(p=p,l=likelihood))
+}
+```
+
+
+```{r likelihood_function, exercise=TRUE, exercise.lines=17}
+flip_coin_likelihood_approx <- function(p,h,t,num_of_sim){
+  likelihood <- array(dim=length(p))
+  for (i in seq_along(p)){
+    likelihood[i] <- _____  # simulate with binomial distribution
+  }
+  return (list(p=p,l=likelihood))
+}
+h = 4; t = 6; num_of_sim = 1000
+p = seq(0,1,0.01)
+l_profile_true   <- flip_coin_likelihood_true(p,h,t)
+l_profile_approx <- flip_coin_likelihood_approx(p,h,t,num_of_sim)
+plot(x = l_profile_approx$p,
+     y = l_profile_approx$l,
+     xlab = "p", ylab = "Likelihood", type = "l", col = Bluish_Green, lwd=2)
+lines(x = l_profile_true$p,
+      y = l_profile_true$l,
+      col = Bluish_Green)
+```
+
+```{r likelihood_function-solution}
+flip_coin_likelihood_approx <- function(p,h,t,num_of_sim){
+  likelihood <- array(dim=length(p))
+  for (i in seq_along(p)){
+    likelihood[i] <- sum(rbinom(n=num_of_sim,size=h+t,prob=p[i])==h)/num_of_sim  
+  }
+  return (list(p=p,l=likelihood))
+}
+h = 4; t = 6; num_of_sim = 1000
+p = seq(0,1,0.01)
+l_profile_true   <- flip_coin_likelihood_true(p,h,t)
+l_profile_approx <- flip_coin_likelihood_approx(p,h,t,num_of_sim)
+plot(x = l_profile_approx$p,
+     y = l_profile_approx$l,
+     xlab = "p", ylab = "Likelihood", type = "l", col = Bluish_Green, lwd=2)
+lines(x = l_profile_true$p,
+      y = l_profile_true$l,
+      col = Bluish_Green)
+```
+
+Posterior probabilities can be also estimated through the use of simulations using the **rejection algorithm**. The following procedure produces a sample from the posterior probability distribution:
+
+***
+
+**Algorithm 1** Exact rejection sampler
+
+* Given $N$ the number of simulations
+* **for** $i=1$ to $N$ **do**
+  + Generate $p'\sim\pi(p)$
+  + Simulate $D'\sim f(p')$
+  + **if** $D'=D$ **then**
+    - Accept $p'$
+  + **end if**
+* **end for** 
+* **return** accepted $p'$ 
+
+***
+
+### Exercise 3
+
+Obtain a sample from the posterior probability distribution with the rejection algorithm:
+
+```{r exact_rejection_sampling, exercise=TRUE, exercise.lines=8}
+h=4; t=6
+a=1; b=1; num_of_sim=1000
+p_prime <- _____ # sample from prior distribution (use a beta)
+d_prime <- _____ # simulate coin tosses (with binomial)
+p_prime_accept <- _____ # keep the values that are equal to the observed data
+p_prime_accept
+```
+
+```{r exact_rejection_sampling-hint-1}
+h=4; t=6
+a=1; b=1; num_of_sim=1000
+p_prime <- rbeta(num_of_sim,a,b)
+d_prime <- _____ # simulate coin tosses (with binomial)
+p_prime_accept <- _____ # keep the values that are equal to the observed data
+p_prime_accept
+```
+
+```{r exact_rejection_sampling-hint-2}
+h=4; t=6
+a=1; b=1; num_of_sim=1000
+p_prime <- rbeta(num_of_sim,a,b)
+d_prime <- rbinom(n    = num_of_sim,
+                  size = h+t,
+                  prob = p_prime)
+p_prime_accept <- _____ # keep the values that are equal to the observed data
+p_prime_accept
+```
+
+
+```{r exact_rejection_sampling-solution}
+h=4; t=6
+a=1; b=1; num_of_sim=1000
+p_prime <- rbeta(num_of_sim,a,b)
+d_prime <- rbinom(n    = num_of_sim,
+                  size = h+t,
+                  prob = p_prime)
+p_prime_accept <- p_prime[which(d_prime==h)]
+p_prime_accept
+```
+
+
+
+
+
+## Approximation 2
+
+
+
+
+
+
+## Approximation 3
+
