@@ -12,6 +12,23 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 library(learnr)
+library("phyclust", quietly=T)
+source("readms.output.R", local =T)
+Orange         <- "#E69F00"
+Sky_Blue       <- "#56B4E9" 
+Bluish_Green   <- "#009E73"
+Yellow         <- "#F0E442"
+Blue           <- "#0072B2"
+Vermillion     <- "#D55E00"
+Reddish_Purple <- "#CC79A7"
+Black_transparency         <- rgb(  0,  0,  0,100,maxColorValue=255)
+Orange_transparency        <- rgb(230,159,  0,100,maxColorValue=255)
+SkyBlue_transparency       <- rgb( 86,180,233,100,maxColorValue=255)
+BluishGreen_transparency   <- rgb(  0,158,115,100,maxColorValue=255)
+Yellow_transparency        <- rgb(240,228, 66,100,maxColorValue=255)
+Blue_transparency          <- rgb(  0,114,178,100,maxColorValue=255)
+Vermillion_transparency    <- rgb(213, 94,  0,100,maxColorValue=255)
+ReddishPurple_transparency <- rgb(204,121,167,100,maxColorValue=255)
 ```
 
 ## Setup
@@ -28,9 +45,11 @@ Vermillion     <- "#D55E00"
 Reddish_Purple <- "#CC79A7"
 ```
 
+
+
 ## Approximation 1
 
-Approximate Bayesian Computation belongs is a likelihood-free model-based inference approach. The idea behind likelihood-free methods is that instead of calculating the likelihood is substituted by estimation of the likelihood based on simulations.
+Approximate Bayesian Computation is a likelihood-free model-based inference approach. The idea behind likelihood-free methods is that the analytical/numerical calculating of the likelihood is substituted by an estimate of the likelihood based on simulations.
 
 ### Exercise 1
 
@@ -65,37 +84,13 @@ The true value (for $p=0.5$, $h=4$ and $t=6$) is `r choose(10, 4) * 0.5^10`. Is 
 
 ### Exercise 2
 
-Plot the likelihood profile from using simulation-based estimates of the likelihood. Compare the results with the analytical solution. Why should we bother about a (slower, less accurate) simulation-based solution?
+Plot the likelihood profile from using simulation-based estimates of the likelihood. Compare the results with the analytical solution. Why should we bother about a (slower, less accurate) simulation-based solution? For this exercise you have available two functions: `flip_coin_likelihood()` and `flip_coin_likelihood_approx()` (see source code for details).
 
-```{r eval=TRUE, echo=TRUE}
-flip_coin_likelihood_true <- function(p,h,t){
+```{r likelihood_function-setup}
+flip_coin_likelihood <- function(p,h,t){
   likelihood <- choose(h+t,h) * p^h * (1-p)^t
   return (list(p=p,l=likelihood))
 }
-```
-
-
-```{r likelihood_function, exercise=TRUE, exercise.lines=17}
-flip_coin_likelihood_approx <- function(p,h,t,num_of_sim){
-  likelihood <- array(dim=length(p))
-  for (i in seq_along(p)){
-    likelihood[i] <- _____  # simulate with binomial distribution
-  }
-  return (list(p=p,l=likelihood))
-}
-h = 4; t = 6; num_of_sim = 1000
-p = seq(0,1,0.01)
-l_profile_true   <- flip_coin_likelihood_true(p,h,t)
-l_profile_approx <- flip_coin_likelihood_approx(p,h,t,num_of_sim)
-plot(x = l_profile_approx$p,
-     y = l_profile_approx$l,
-     xlab = "p", ylab = "Likelihood", type = "l", col = Bluish_Green, lwd=2)
-lines(x = l_profile_true$p,
-      y = l_profile_true$l,
-      col = Bluish_Green)
-```
-
-```{r likelihood_function-solution}
 flip_coin_likelihood_approx <- function(p,h,t,num_of_sim){
   likelihood <- array(dim=length(p))
   for (i in seq_along(p)){
@@ -103,9 +98,13 @@ flip_coin_likelihood_approx <- function(p,h,t,num_of_sim){
   }
   return (list(p=p,l=likelihood))
 }
+```
+
+
+```{r likelihood_function, exercise=TRUE}
 h = 4; t = 6; num_of_sim = 1000
 p = seq(0,1,0.01)
-l_profile_true   <- flip_coin_likelihood_true(p,h,t)
+l_profile_true   <- flip_coin_likelihood(p,h,t)
 l_profile_approx <- flip_coin_likelihood_approx(p,h,t,num_of_sim)
 plot(x = l_profile_approx$p,
      y = l_profile_approx$l,
@@ -114,6 +113,7 @@ lines(x = l_profile_true$p,
       y = l_profile_true$l,
       col = Bluish_Green)
 ```
+
 
 Posterior probabilities can be also estimated through the use of simulations using the **rejection algorithm**. The following procedure produces a sample from the posterior probability distribution:
 
@@ -178,11 +178,111 @@ p_prime_accept <- p_prime[which(d_prime==h)]
 p_prime_accept
 ```
 
+### Exercise 4
+
+Use `flip_coin_posterior_approx()` function (see source code for details) to crate a sample from the posterior probability distribution. Create a scatter plot to show the parameter value $p'$ and data $D'$ for all simulations. Highlight simulations that match observed data $D$. Then, use the sample of the posterior probability to plot an estimate of the posterior probability (hint: use `hist()`).
+
+```{r flip_coin_posterior_approx}
+flip_coin_posterior_approx <- function(h,t,a,b,num_of_sim){
+  p_prime <- rbeta(num_of_sim,a,b)
+  d_prime <- rbinom(num_of_sim,h+t,p_prime)
+  p_prime_accept <- p_prime[which(d_prime==h)]
+  d_prime_accept <- d_prime[which(d_prime==h)]
+  return(list(p_prime=p_prime,
+              d_prime=d_prime,
+              p_prime_accept=p_prime_accept,
+              d_prime_accept=d_prime_accept))
+}
+```
 
 
+```{r plot_posterior_approx, exercise=TRUE, exercise.lines=20, exercise.setup="flip_coin_posterior_approx"}
+h=4;t=6;a=1;b=1;num_of_sim=1000
+res <- flip_coin_posterior_approx(h,t,a,b,num_of_sim)
+
+```
+
+```{r plot_posterior_approx-hint}
+h=4;t=6;a=1;b=1;num_of_sim=1000
+res <- flip_coin_posterior_approx(h,t,a,b,num_of_sim)
+plot(res$p_prime,res$d_prime,
+     xlab = expression(italic(p)*"'"),
+     ylab = expression(italic(D)*"'"))
+abline(h = h, col = Reddish_Purple)
+points(res$p_prime_accept, res$d_prime_accept, col = Vermillion)
+
+```
+
+
+
+```{r plot_posterior_approx-solution}
+h=4;t=6;a=1;b=1;num_of_sim=1000
+res <- flip_coin_posterior_approx(h,t,a,b,num_of_sim)
+plot(res$p_prime,res$d_prime,
+     xlab = expression(italic(p)*"'"),
+     ylab = expression(italic(D)*"'"))
+abline(h = h, col = Reddish_Purple)
+points(res$p_prime_accept, res$d_prime_accept, col = Vermillion)
+hist(res$p_prime,
+     breaks = seq(0,1,0.02),
+     col = "grey",
+     freq = FALSE,
+     ylim = c(0,5),
+     main = "", xlab = expression(italic(p)),
+     ylab = "probability density")
+hist(res$p_prime_accept,
+     breaks = seq(0,1,0.02),
+     col = Vermillion_transparency,
+     freq = FALSE, add = TRUE); box()
+lines(seq(0,1,0.001),dbeta(x=seq(0,1,0.001),a+h,b+t),
+      col = Vermillion, lwd = 3)
+```
+
+
+### Exercise 5
+
+Get a point estimate and 
+
+```{r coin_toss_credibility_interval, exercise=TRUE, exercise.setup="flip_coin_posterior_approx"}
+h=4;t=6;a=1;b=1;num_of_sim=1000
+res <- flip_coin_posterior_approx(h,t,a,b,num_of_sim)
+p_hat  <- _____
+p_95CI <- _____
+p_hat; p_95CI
+```
+
+```{r coin_toss_credibility_interval-hint}
+h=4;t=6;a=1;b=1;num_of_sim=1000
+res <- flip_coin_posterior_approx(h,t,a,b,num_of_sim)
+p_hat  <- _____(res$p_prime_accept)
+p_95CI <- quantile(_____,probs=c(0.025,0.975))
+p_hat; p_95CI
+```
+
+```{r coin_toss_credibility_interval-solution}
+h=4;t=6;a=1;b=1;num_of_sim=1000
+res <- flip_coin_posterior_approx(h,t,a,b,num_of_sim)
+p_hat  <- median(res$p_prime_accept)
+p_95CI <- quantile(res$p_prime_accept,probs=c(0.025,0.975))
+p_hat; p_95CI
+```
+
+For data $h=4$ and $t=6$, and prior $\mathrm{Beta}(\alpha=1,\beta=1)$ the median is `r qbeta(0.5,1+4,1+6)` and the 95% credibility interval is (`r qbeta(c(0.025,0.975),1+4,1+6)`).
 
 
 ## Approximation 2
+
+We are going to consider now population genetics data. We have two data sets of mitochondrial DNA sequences for 50 individuals of two different hermaphrodite species (*actually, it is fake data*). The data is in two files named `dataset1.txt` and `dataset2.txt` in ms format.
+
+### Exercise 6
+
+Explore the data. How many polymorphic sites are there?
+
+```{r explore_genetic_data, exercise=TRUE}
+dataset1 <- read.ms.output(file="/change/to/your/path/dataset1.txt")
+dataset2 <- read.ms.output(file="/home/miguel/Work/Teaching/ABCRF tutorial/dataset2.txt")
+```
+
 
 
 
