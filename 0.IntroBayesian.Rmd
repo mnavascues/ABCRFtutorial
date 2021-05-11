@@ -10,15 +10,25 @@ output: learnr::tutorial
 runtime: shiny_prerendered
 ---
 
-```{r setup, include=FALSE}
-library(learnr)
-```
-
 ## Setup
 
-[Colorblind friendly palette](http://jfly.iam.u-tokyo.ac.jp/color/):
+```{r setup, include=FALSE}
+library(learnr)
+Orange         <- "#E69F00"
+Sky_Blue       <- "#56B4E9" 
+Bluish_Green   <- "#009E73"
+Yellow         <- "#F0E442"
+Blue           <- "#0072B2"
+Vermillion     <- "#D55E00"
+Reddish_Purple <- "#CC79A7"
+flip_coin_likelihood <- function(p,h,t){
+  likelihood <- choose(h+t,h) * p^h * (1-p)^t
+  return (list(p=p,l=likelihood))
+}
+```
 
-```{r color_setup, include=TRUE}
+[Colorblind friendly palette](http://jfly.iam.u-tokyo.ac.jp/color/):
+```{r color, include=TRUE, eval=TRUE}
 Orange         <- "#E69F00"
 Sky_Blue       <- "#56B4E9" 
 Bluish_Green   <- "#009E73"
@@ -28,15 +38,11 @@ Vermillion     <- "#D55E00"
 Reddish_Purple <- "#CC79A7"
 ```
 
-
-
-
 ## Question, model, experiment, data
 
 **The question**: We have a coin that we use to choose randomly between two alternatives. Is the coin fair?
 
 **The [model](http://en.wikipedia.org/wiki/Bernoulli_trial)**: For each coin toss there is a probability $p$ of getting *heads* and $q=1-p$ of getting *tails*. Under this model, the question can be formulated as: is $p=q=0.5$?
-
 
 **The experiment**: A coin is tossed 10 times and the results (*heads/tails*, plough/cereal in this case) are recorded.
 
@@ -115,24 +121,17 @@ plot(x = likelihood_profile$p,
 From the likelihood profile we can obtain which is the value of $p$ that explain the best the observed data: the [maximum likelihood estimate](http://en.wikipedia.org/wiki/Maximum_likelihood_estimation). Which is the MLE estimate  of $p$ ($\hat{p}$):
 
 
-```{r eval=TRUE, echo=FALSE}
-flip_coin_likelihood <- function(p,h,t){
-  likelihood <- choose(h+t,h) * p^h * (1-p)^t
-  return (list(p=p,l=likelihood))
-}
-```
-
 ```{r eval=TRUE, echo=TRUE}
 likelihood_profile <- flip_coin_likelihood(p=seq(0,1,0.01),h=4,t=6)
 ```
 
-```{r maximum_likelihood_function, exercise=TRUE}
+```{r maximum_likelihood, exercise=TRUE}
 maxL <- _____(likelihood_profile$l)
 p_hat <- likelihood_profile$p[which(likelihood_profile$l==_____)]
 p_hat
 ```
 
-```{r maximum_likelihood_function-solution}
+```{r maximum_likelihood-solution}
 maxL <- max(likelihood_profile$l)
 p_hat <- likelihood_profile$p[which(likelihood_profile$l==maxL)]
 p_hat
@@ -145,7 +144,7 @@ For this simple model it is possible to derive an analytical solution for the ma
 
 What about our initial question? Is the coin fair? From the likelihood profile we can also calculate whether the maximum likelihood estimate for $p$ is significantly better that $p=0.5$ (*via* the [confidence interval](http://en.wikipedia.org/wiki/Confidence_interval#Methods_of_derivation)). Based on the likelihood-ratio test (with $\alpha=0.05$):
 
-```{r eval=TRUE, echo=FALSE}
+```{r get_maxL, eval=TRUE, echo=FALSE}
 maxL <- max(likelihood_profile$l)
 ```
 
@@ -155,10 +154,11 @@ CI95  <- CI95[c(1,length(CI95))]
 CI95
 ```
 
-According to this results, we cannot reject the hypothesis that $p=0.5$ (with $\alpha=0.05$). What would happen for a larger number of coin tosses? What about `h=20` and `t=30`? Or `h=400` and `t=600`? Explore this and other values below:
-
+According to this results, we cannot reject the hypothesis that $p=0.5$ (with $\alpha=0.05$). 
 
 ### Exercise 4
+
+What would happen for a larger number of coin tosses? What about `h=20` and `t=30`? Or `h=400` and `t=600`? Explore this and other values below:
 
 ```{r explore_binomial_likelihood, exercise=TRUE}
 h=_____
@@ -196,10 +196,7 @@ In Bayesian statistics a point estimate of the parameters is often given by the 
 Explore the statistical analysis of the coin toss experiment. How does the results change when the prior parameters change? What is the interpretation of the prior? i.e. what is the interpretation of $\alpha$ and $\beta$?
 
 ```{r explore_binomial_posterior, exercise=TRUE}
-h=4 # heads
-t=6 # tails
-a=1 # alpha
-b=1 # beta
+h=4;t=6;a=1;b=1
 p=seq(0,1,0.001)
 
 plot(p, y = dbeta(p,a,b), # prior probability
@@ -222,10 +219,7 @@ abline(v=0.5, col=Sky_Blue)
 Explore the difference between the likelihood and the posterior probability. Note the scale difference. What happens to the likelihood and posterior probability values when the amount of data ($h+t$) increases? What happens to the likelihood when the prior changes? Note: you might need to change the scale (`ylim=c(0,_____)`) depending on the values you explore.
 
 ```{r explore_likelihood_vs_posterior, exercise=TRUE}
-h=4 # heads
-t=6 # tails
-a=1 # alpha
-b=1 # beta
+h=4;t=6;a=1;b=1
 
 p=seq(0,1,0.001)
 plot(p, y = dbeta(p,a,b), # prior probability
