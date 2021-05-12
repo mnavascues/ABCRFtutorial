@@ -1,0 +1,98 @@
+---
+#############################################################
+#                                                           #
+# Click on "Run Document" in RStudio to run this worksheet. #
+#                                                           #
+#############################################################
+title: "ABC flavours"
+author: "Miguel de Navascués"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+## Setup (just for information)
+
+```{r setup, include=TRUE}
+library(learnr)
+library(phyclust, quietly=T)
+library(abc, quietly=T) 
+library(weights, quietly=T)
+```
+
+## Regression ABC
+
+### Exercise 1
+
+```{r abc_regression, exercise=TRUE}
+target <- data.frame(S  = c(50,23),
+                     PI = c(11.56163,1.354286),
+                     NH = c(21,18),
+                     TD = c(0.123358,-2.386268),
+                     row.names = c("dataset1","dataset2"))
+ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+
+num_of_sims <- 10000 # use a subset of simulation from a total of 1 000 000
+
+SS          <- target$PI[1]
+SS_prime    <- ref_table$PI[seq_len(num_of_sims)]
+theta_prime <- ref_table$theta[seq_len(num_of_sims)]
+
+tolerance <- 0.2
+abc_result <- abc(target = SS,
+                  param = theta_prime,
+                  sumstat = SS_prime,
+                  tol = tolerance,
+                  transf = "log",
+                  method = "loclinear")
+
+theta_prime_accept     <- as.vector(abc_result$unadj.values)
+theta_prime_accept_reg <- as.vector(abc_result$adj.values)
+SS_prime_accept        <- abc_result$ss
+local_regression <- lm(log10(theta_prime_accept)~SS_prime_accept,
+                       weights=abc_result$weights)
+plot(log10(theta_prime), SS_prime,
+     xlab = expression(log[10](theta*"'")),
+     ylab = "SS'",
+     ylim = c(0,30))
+abline(h = SS, col = "blue")
+points(log10(theta_prime_accept), SS_prime_accept, col = "blue")
+abline(a = -local_regression$coefficients[1]/local_regression$coefficients[2],
+       b = 1/local_regression$coefficients[2],
+       col = "yellow",
+       lwd = 3)
+points(x = log10(theta_prime_accept)[1:10],
+       y = SS_prime_accept[1:10],col = "yellow")
+arrows(x0 = log10(theta_prime_accept)[1:10],
+       y0 = SS_prime_accept[1:10],
+       x1 = log10(theta_prime_accept_reg)[1:10],
+       y1 = SS,
+       col = "yellow",
+       length = 0.1)
+hist(x = log10(theta_prime),
+     breaks = seq(-1,2,0.05),
+     col = "grey",
+     freq = FALSE,
+     ylim = c(0,4),
+     main = "",
+     xlab = expression(log(theta)),
+     ylab = "probability density")
+hist(x = log10(theta_prime_accept),
+     breaks = seq(-1,2,0.05),
+     col = "blue", freq=FALSE, add=TRUE )
+wtd.hist(x = log10(theta_prime_accept_reg),
+         breaks = seq(-1.5,2,0.05),
+         col = "yellow", freq=FALSE, add=TRUE,
+         weight = abc_result$weights); box()
+
+
+```
+
+
+## ABC *via* Random Forests
+
+## Other flavours
+
+See `EasyABC` package.
+
+* SMC-ABC
+* MCMC-ABC

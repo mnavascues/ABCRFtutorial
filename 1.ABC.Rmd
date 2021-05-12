@@ -4,7 +4,7 @@
 # Click on "Run Document" in RStudio to run this worksheet. #
 #                                                           #
 #############################################################
-title: "Aproximate Bayesian Computation"
+title: "Approximate Bayesian Computation"
 author: "Miguel de Navascués"
 output: learnr::tutorial
 runtime: shiny_prerendered
@@ -15,6 +15,7 @@ runtime: shiny_prerendered
 ```{r setup, include=TRUE}
 library(learnr)
 library(phyclust, quietly=T)
+library(abc, quietly=T)
 
 # functions for the coin toss experiment analysis
 flip_coin_likelihood <- function(p,h,t){
@@ -305,7 +306,7 @@ We could try to apply the same rejection algorithm described above, but the stru
 
 * Calculate $S$ from $D$  
 * Given $N$ the number of simulations  
-* **for** i = 1 to N **do**  
+* **for** $i = 1$ to $N$ **do**  
   + Generate $p'\sim\pi(p)$  
   + Simulate $D'\sim f(p')$  
   + Calculate $S'$ from $D'$  
@@ -419,7 +420,85 @@ hist(x = log10(theta_prime_accept),
      add = TRUE); box()
 ```
 
-
-
 ## Approximation 3: Tolerance
+
+Summarizing the data into summary statistics is not enough. The third kind of approximation in ABC is to introduce some tolerance so simulations that are closer to the observed data are accepted:
+
+***
+
+**Algorithm 3** Rejection sampler on summary statistics with tolerance
+
+* Calculate $S$ from $D$  
+* Given $N$ the number of simulations  
+* **for** $i = 1$ to $N$ **do**  
+  + Generate $p'\sim\pi(p)$  
+  + Simulate $D'\sim f(p')$  
+  + Calculate $S'$ from $D'$  
+  + **if** distance$(S',S)<\delta$ **then**  
+    - Accept $p'$  
+  + **end if**  
+* **end for**  
+* **return** accepted $p'$  
+
+***
+
+Note that, in practice, a proportion of simulations closest to the observation is accepted and this proportion is decided *a priori*. The $\delta$ is fixed *a posteriori* by the furthest simulation within the set of accepted simulations.
+
+From this moment, for convenience, we will start using the package `abc`.
+
+```{r eval=FALSE, echo=TRUE}
+library(abc)
+```
+
+
+### Exercise 9
+
+Using function `abc()` (from `abc` package), apply the rejection algorithm using one summary statistic. Start with the number of segregating sites and the number of haplotypes (`S`, `NH`), then try $\pi$ (`PI`). Explore the effect of changing the tolerance level (proportion of simulations kept).
+
+```{r rejection_algortihm_tolerance, exercise=TRUE, exercise.lines=35}
+target <- data.frame(S  = c(50,23),
+                     PI = c(11.56163,1.354286),
+                     NH = c(21,18),
+                     TD = c(0.123358,-2.386268),
+                     row.names = c("dataset1","dataset2"))
+ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+
+num_of_sims <- 10000 # use a subset of simulation from a total of 1 000 000
+
+SS          <- target$S[1]
+SS_prime    <- ref_table$S[seq_len(num_of_sims)]
+theta_prime <- ref_table$theta[seq_len(num_of_sims)]
+
+tolerance <- 0.05
+abc_result <- abc(target = SS,
+                  param = theta_prime,
+                  sumstat = SS_prime,
+                  tol = tolerance,
+                  method = "rejection")
+theta_prime_accept <- as.vector(abc_result$unadj.values)
+SS_prime_accept <- abc_result$ss
+
+plot(log10(theta_prime),SS_prime,
+     xlab = expression(log[10](theta*"'")),
+     ylab = "S'",
+     ylim = c(0,100))
+abline(h = SS, col = "blue")
+points(log10(theta_prime_accept), SS_prime_accept, col = "blue")
+hist(log10(theta_prime),
+     breaks = seq(-1,2,0.05),
+     col = "grey",
+     freq = FALSE,
+     ylim = c(0,4),
+     main = "", xlab = expression(log[10](theta)),
+     ylab = "probability density")
+hist(x = log10(theta_prime_accept),
+     breaks = seq(-1,2,0.05),
+     col = "blue",
+     freq = FALSE,
+     add = TRUE); box()
+
+
+
+```
+
 
