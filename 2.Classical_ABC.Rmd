@@ -4,11 +4,13 @@
 # Click on "Run Document" in RStudio to run this worksheet. #
 #                                                           #
 #############################################################
-title: "ABC flavours"
+title: "Classical ABC"
 author: "Miguel de Navascués"
 output: learnr::tutorial
 runtime: shiny_prerendered
+bibliography: references.bib
 ---
+
 
 ## Setup (just for information)
 
@@ -21,7 +23,11 @@ library(weights, quietly=T)
 
 ## Regression ABC
 
+An additional local regression step was introduced to the rejection algorithm [@Beaumont2002]
+
+
 ### Exercise 1
+
 
 ```{r abc_regression, exercise=TRUE}
 target <- data.frame(S  = c(50,23),
@@ -88,11 +94,14 @@ wtd.hist(x = log10(theta_prime_accept_reg),
 ```
 
 
-## ABC *via* Random Forests
 
-## Other flavours
+## Other ABC flavours
 
-See `EasyABC` package.
+See `EasyABC` and `abcrf` packages.
 
 * SMC-ABC
 * MCMC-ABC
+* ABC-RF 
+
+
+# References

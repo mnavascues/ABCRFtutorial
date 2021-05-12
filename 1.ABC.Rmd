@@ -453,7 +453,7 @@ library(abc)
 
 ### Exercise 9
 
-Using function `abc()` (from `abc` package), apply the rejection algorithm using one summary statistic. Start with the number of segregating sites and the number of haplotypes (`S`, `NH`), then try $\pi$ (`PI`). Explore the effect of changing the tolerance level (proportion of simulations kept).
+Using function `abc()` (from `abc` package), apply the rejection algorithm using one summary statistic. Start with the number of segregating sites and the number of haplotypes (`S`, `NH`), then try $\pi$ (`PI`). Explore the effect of changing the tolerance level (proportion of simulations kept), try values `0.5` and `0.001`. What would we get as posterior using tolerance values close to `1`?
 
 ```{r rejection_algortihm_tolerance, exercise=TRUE, exercise.lines=35}
 target <- data.frame(S  = c(50,23),
