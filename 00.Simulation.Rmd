@@ -10,10 +10,59 @@ output: learnr::tutorial
 runtime: shiny_prerendered
 ---
 
-```{r setup, include=FALSE}
+## Setup (just for information)
+
+
+```{r setup, include=TRUE}
 library(learnr)
-library("phyclust", quietly=T)
+library(phyclust, quietly=T)
+
+# for function read.ms.output()
 source("readms.output.R", local =T)
+
+# functions to calculate summary statistics from ms output
+S <- function(a) {return(a$segsites)}
+
+NH <- function(a) {
+  NH<-vector(length=a$nreps)
+  for(i in seq_len(a$nreps)) {
+    NH[i] <- nrow(unique(a$gametes[[i]]))
+  }
+  return(NH)
+}
+
+PI <- function(a) {
+  PI<-vector(mode='numeric', length=a$nreps)
+  for(i in seq_len(a$nreps)) {
+    if(a$segsites[i]>0){
+      for(j in seq_len(a$segsites[i])) {
+         if(a$segsites[i]>1) {
+          loc<-sum(a$gametes[[i]][,j])
+        } else {
+          loc<-sum(a$gametes[[i]])
+        }
+        PI[i] <- PI[i] + 2*loc*(a$nsam-loc)
+      }
+    }
+  }
+  return(PI/(a$nsam*(a$nsam-1)))
+}
+
+thetaW <- function(a) {
+  a1<-sum(1/(1:(a$nsam-1)))
+  return(a$segsites/a1)
+}
+
+TajimaD <- function(a) {
+  a1<-sum(1/(1:(a$nsam-1)))
+  a2<-sum(1/((1:(a$nsam-1))^2))
+  b1<-(a$nsam+1)/3/(a$nsam-1)
+  b2<-2*(a$nsam^2+a$nsam+3)/(9*a$nsam*(a$nsam-1))
+  c1<-b1-1/a1
+  c2<-b2-(a$nsam+2)/(a1*a$nsam)+a2/(a1^2)
+  temp <- c1/a1*a$segsites + c2/(a1^2+a2)*a$segsites*(a$segsites-1)
+  return( (PI(a)-thetaW(a))/sqrt(temp) )
+}
 ```
 
 ## What is a simulation?
@@ -72,15 +121,15 @@ rbinom(n=num_of_sim,size=n,prob=p)
 
 ## Simulation of population genetic data
 
-Simulation via the coalescent. For convenience, we will use the R package `phyclust` that includes a version of coalescent simulator ms in this tutorial. In practice, use of other simulators (msprime, fastsimcoal or the original implementation of ms) is recommended.
+Simulation via the coalescent. For convenience, we will use the R package `phyclust` that includes a version of coalescent simulator `ms` in this tutorial. In practice, use of other simulators (msprime, fastsimcoal or the original implementation of ms) is recommended.
 
-```{r eval=TRUE, echo=TRUE}
-library("phyclust", quietly=T)
+```{r eval=FALSE, echo=TRUE}
+library(phyclust)
 ```
 
 ### Exercise 3
 
-Simulate with `ms(_____)` a sample of $n=10$ individuals sequenced for a mitochondrial DNA locus of lenght $l=10000$bp in a population of size $N=10000$ with mutation rate (per bp) $\mu=10^{-8}$:
+Simulate with `ms()` a sample of $n=10$ individuals sequenced for a mitochondrial DNA locus of lenght $l=10000$bp in a population of size $N=10000$ with mutation rate (per bp) $\mu=10^{-8}$:
 
 ```{r coalescent_sim, exercise=TRUE}
 n<-10
@@ -113,15 +162,15 @@ theta <- 2*N*u*l # note that l*u is an approximation!
 ms(nsam=n,nreps=num_of_sim,opt=paste("-t",theta))
 ```
 
-We can put this text into a more usable form (i.e. matrix of polymorphisms, etc) using a function distributed with the original software ms:
+We can put this text into a more usable form (i.e. matrix of polymorphisms, etc) using a function distributed with the original software `ms`:
 
-```{r eval=TRUE, echo=TRUE}
-source("readms.output.R", local =T)
+```{r eval=FALSE, echo=TRUE}
+source("readms.output.R")
 ```
 
 ### Exercise 4
 
-Use `read.ms.output(_____)` function to read ms output and print only the genotype matrix (i.e. `gametes`).
+Use `read.ms.output()` function to read ms output and print only the genotype matrix (i.e. `gametes`).
 
 ```{r coalescent_sim_segsites, exercise=TRUE, exercise.lines=10}
 n<-10
@@ -164,7 +213,7 @@ sim_data$gametes
 
 ### Exercise 5
 
-Calculate summary statistics (number of segregating sites, number of haplotypes, $\pi$ and Tajima's $D$) for the simulations (use functions `S()`, `NH()`, `PI()` and `TajimaD()`, see source code):
+Calculate summary statistics (number of segregating sites, number of haplotypes, $\pi$ and Tajima's $D$) for the simulations (use functions `S()`, `NH()`, `PI()` and `TajimaD()`, see setup for details):
 
 ```{r summary_stats, exercise=TRUE, exercise.lines=15}
 n<-10
@@ -194,48 +243,6 @@ PI(sim_data)
 TajimaD(sim_data)
 ```
 
-
-
-```{r summary_stats-setup}
-S<-function(a) {return(a$segsites)}
-NH<-function(a) {
-  NH<-vector(length=a$nreps)
-  for(i in seq_len(a$nreps)) {
-    NH[i] <- nrow(unique(a$gametes[[i]]))
-  }
-  return(NH)
-}
-PI<-function(a) {
-  PI<-vector(mode='numeric', length=a$nreps)
-  for(i in seq_len(a$nreps)) {
-    if(a$segsites[i]>0){
-      for(j in seq_len(a$segsites[i])) {
-         if(a$segsites[i]>1) {
-          loc<-sum(a$gametes[[i]][,j])
-        } else {
-          loc<-sum(a$gametes[[i]])
-        }
-        PI[i] <- PI[i] + 2*loc*(a$nsam-loc)
-      }
-    }
-  }
-  return(PI/(a$nsam*(a$nsam-1)))
-}
-thetaW<-function(a) {
-  a1<-sum(1/(1:(a$nsam-1)))
-  return(a$segsites/a1)
-}
-TajimaD<-function(a) {
-  a1<-sum(1/(1:(a$nsam-1)))
-  a2<-sum(1/((1:(a$nsam-1))^2))
-  b1<-(a$nsam+1)/3/(a$nsam-1)
-  b2<-2*(a$nsam^2+a$nsam+3)/(9*a$nsam*(a$nsam-1))
-  c1<-b1-1/a1
-  c2<-b2-(a$nsam+2)/(a1*a$nsam)+a2/(a1^2)
-  temp <- c1/a1*a$segsites + c2/(a1^2+a2)*a$segsites*(a$segsites-1)
-  return( (PI(a)-thetaW(a))/sqrt(temp) )
-}
-```
 
 
 

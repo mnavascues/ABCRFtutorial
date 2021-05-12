@@ -10,33 +10,20 @@ output: learnr::tutorial
 runtime: shiny_prerendered
 ---
 
-## Setup
 
-```{r setup, include=FALSE}
+
+## Setup (just for information)
+
+```{r setup, include=TRUE}
 library(learnr)
-Orange         <- "#E69F00"
-Sky_Blue       <- "#56B4E9" 
-Bluish_Green   <- "#009E73"
-Yellow         <- "#F0E442"
-Blue           <- "#0072B2"
-Vermillion     <- "#D55E00"
-Reddish_Purple <- "#CC79A7"
+
+# function to calculate likelihood for the coin toss experiment
 flip_coin_likelihood <- function(p,h,t){
   likelihood <- choose(h+t,h) * p^h * (1-p)^t
   return (list(p=p,l=likelihood))
 }
 ```
 
-[Colorblind friendly palette](http://jfly.iam.u-tokyo.ac.jp/color/):
-```{r color, include=TRUE, eval=TRUE}
-Orange         <- "#E69F00"
-Sky_Blue       <- "#56B4E9" 
-Bluish_Green   <- "#009E73"
-Yellow         <- "#F0E442"
-Blue           <- "#0072B2"
-Vermillion     <- "#D55E00"
-Reddish_Purple <- "#CC79A7"
-```
 
 ## Question, model, experiment, data
 
@@ -100,9 +87,9 @@ flip_coin_likelihood <- function(p,h,t){
   return (list(p=p,l=likelihood))
 }
 likelihood_profile <- _____
-plot(x = likelihood_profile$_____,
-     y = likelihood_profile$_____,
-     xlab = "p", ylab = "Likelihood", type = "l", col = Bluish_Green)
+plot(likelihood_profile$_____,
+     likelihood_profile$_____,
+     xlab = "p", ylab = "Likelihood", type = "l", col="red")
 ```
 
 ```{r likelihood_function-solution}
@@ -111,9 +98,9 @@ flip_coin_likelihood <- function(p,h,t){
   return (list(p=p,l=likelihood))
 }
 likelihood_profile <- flip_coin_likelihood(p=seq(0,1,0.01),h=4,t=6)
-plot(x = likelihood_profile$p,
-     y = likelihood_profile$l,
-     xlab = "p", ylab = "Likelihood", type = "l", col = Bluish_Green)
+plot(likelihood_profile$p,
+     likelihood_profile$l,
+     xlab = "p", ylab = "Likelihood", type = "l", col="red")
 ```
 
 ### Exercise 3
@@ -170,11 +157,11 @@ CI95  <- likelihood_profile$p[which(likelihood_profile$l > exp(log(maxL)-1.92))]
 CI95  <- CI95[c(1,length(CI95))]
 plot(x = likelihood_profile$p,
      y = likelihood_profile$l,
-     xlab = "p", ylab = "Likelihood", type = "l", col = Bluish_Green)
-abline(v=p_hat, col=Bluish_Green)
-abline(v=CI95[1], col=Bluish_Green,lt=2)
-abline(v=CI95[2], col=Bluish_Green,lt=2)
-abline(v=0.5, col=Sky_Blue)
+     xlab = "p", ylab = "Likelihood", type = "l", col="red")
+abline(v=p_hat, col="red")
+abline(v=CI95[1],lt=2, col="red")
+abline(v=CI95[2],lt=2, col="red")
+abline(v=0.5)
 
 ```
 
@@ -201,13 +188,12 @@ p=seq(0,1,0.001)
 
 plot(p, y = dbeta(p,a,b), # prior probability
      xlab = "p", ylab = "Probability density", type = "l", ylim=c(0,5))
-lines(p, y = dbeta(p,a+h,b+t), # posterior probability
-      col = Vermillion)
+lines(p, y = dbeta(p,a+h,b+t), col="blue") # posterior probability
 quant <- qbeta(c(0.5,0.025,0.975),a+h,b+t)
-abline(v=quant[1], col=Vermillion)
-abline(v=quant[2], col=Vermillion,lt=2)
-abline(v=quant[3], col=Vermillion,lt=2)
-abline(v=0.5, col=Sky_Blue)
+abline(v=quant[1], col="blue")
+abline(v=quant[2], lt=2, col="blue")
+abline(v=quant[3], lt=2, col="blue")
+abline(v=0.5)
 ```
 
 
@@ -220,16 +206,11 @@ Explore the difference between the likelihood and the posterior probability. Not
 
 ```{r explore_likelihood_vs_posterior, exercise=TRUE}
 h=4;t=6;a=1;b=1
-
 p=seq(0,1,0.001)
 plot(p, y = dbeta(p,a,b), # prior probability
      xlab = "p", ylab = "Probability density/Likelihood", type = "l", ylim=c(0,3))
-lines(p, y = dbeta(p,a+h,b+t), # posterior probability
-      col = Vermillion)
-
-lines(p, y = flip_coin_likelihood(p,h,t)$l, # likelihood
-      col = Bluish_Green)
-
+lines(p, dbeta(p,a+h,b+t), col="blue") # posterior probability
+lines(p, y = flip_coin_likelihood(p,h,t)$l, col = "red")# likelihood
 ```
 
 
