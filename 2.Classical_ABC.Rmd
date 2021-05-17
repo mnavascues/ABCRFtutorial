@@ -23,18 +23,18 @@ library(weights, quietly=T)
 
 ## Regression ABC
 
-An additional local regression step was introduced to the rejection algorithm [@Beaumont2002]
-
+An additional local regression step was introduced to the rejection algorithm [@Beaumont2002]. The local regression is between the parameter values and the summary statistics from the simulations accepted in the rejection step. Parameter values from those simulations are then "adjusted" by projection using the regression. The regression algorithm allows to increase the proportion of simulations accepted correcting to some degree the "widening" of the posterior distribution.
 
 ### Exercise 1
 
+Explore the application of the regression algorithm implemented in `abc()`. Compare the posterior probability distribution estimated from adjusted and from unadjusted (original) values. Explore how this difference changes with the value of tolerance. Try also with Tajima's $D$ as summary statistic (`TD`):
 
-```{r abc_regression, exercise=TRUE}
+```{r abc_regression, exercise=TRUE, exercise.lines=30}
 target <- data.frame(S  = c(50,23),
                      PI = c(11.56163,1.354286),
                      NH = c(21,18),
                      TD = c(0.123358,-2.386268),
-                     row.names = c("dataset1","dataset2"))
+                     row.names = c("octomanati","rinocaracol"))
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
 num_of_sims <- 10000 # use a subset of simulation from a total of 1 000 000

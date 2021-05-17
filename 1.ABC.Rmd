@@ -98,6 +98,7 @@ Approximate Bayesian Computation is a likelihood-free model-based inference appr
 ### Exercise 1
 
 For the coin toss experiment, estimate the likelihood of $p=0.5$ for $h=4$ and $t=6$ using simulations:
+The true value (for $p=0.5$, $h=4$ and $t=6$) is `r choose(10, 4) * 0.5^10`. Is the estimate reasonable? How can the estimate be improved?
 
 ```{r simulation_coin_toss_rbinom, exercise=TRUE}
 h = 4; t = 6; p = 0.5
@@ -123,7 +124,6 @@ h_prime <- rbinom(n=num_of_sim,size=n,prob=p)
 sum(h_prime==h)/num_of_sim
 ```
 
-The true value (for $p=0.5$, $h=4$ and $t=6$) is `r choose(10, 4) * 0.5^10`. Is the estimate reasonable? How can the estimate be improved?
 
 
 ### Exercise 2
@@ -274,6 +274,8 @@ p_95CI <- quantile(_____,probs=c(0.025,0.975))
 p_hat; p_95CI
 ```
 
+
+
 ```{r coin_toss_credibility_interval-solution}
 h=4;t=6;a=1;b=1;num_of_sim=1000
 res <- flip_coin_posterior_approx(h,t,a,b,num_of_sim)
@@ -287,15 +289,21 @@ For data $h=4$ and $t=6$, and prior $\mathrm{Beta}(\alpha=1,\beta=1)$ the median
 
 ## Approximation 2: Summary Statistics
 
-We are going to consider now population genetics data. We have two data sets of mitochondrial DNA sequences for 50 individuals of two different hermaphrodite species (*actually, it is fake data*). The data is in two files named `dataset1.txt` and `dataset2.txt` in *ms* format.
+We are going to consider now population genetics data. We have two data sets of mitochondrial DNA sequences for 50 individuals of two different hermaphrodite species. The data is in two files named `octomanati.txt` and `rinocaracol.txt` in *ms* format.
+
+
+
+[<img src="https://upload.wikimedia.org/wikipedia/commons/4/42/Octomanati.png" alt="heads" style="height: 234px; width:352px;"/>](https://commons.wikimedia.org/wiki/File:Octomanati.png)[<img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Rinocaracol.png" alt="heads" style="height: 234px; width:352px;"/>](https://commons.wikimedia.org/wiki/File:Rinocaracol.png)
+
+Species names and images by [Javier Gamboa](https://commons.wikimedia.org/wiki/User:Javiesgm) ([CC-BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.en)).
 
 ### Exercise 6
 
 Explore the data. How many polymorphic sites are there? (you can use functions `S()`, `NH()`, `PI()` and `TajimaD()`) How would you apply the rejection algorithm?
 
 ```{r explore_genetic_data, exercise=TRUE, exercise.lines=6}
-dataset1 <- read.ms.output(file="/change/to/your/path/dataset1.txt")
-dataset2 <- read.ms.output(file="/home/miguel/Work/Teaching/ABCRF tutorial/dataset2.txt")
+octomanati_data  <- read.ms.output(file="/change/to/your/path/octomanati.txt")
+rinocaracol_data <- read.ms.output(file="/home/miguel/Work/Teaching/ABCRF tutorial/rinocaracol.txt")
 ```
 
 We could try to apply the same rejection algorithm described above, but the structure of the data is more complex and an exact match would occur rarely in simulations. So we use the second approximation of ABC, instead of the data we use summary statistics ($S$) from the data to classify the simulation as a match to the observation. It is said now that we are approximating the likelihood of $p$ given the summary statistic, $L(p|S)$, rather than the likelihood of $p$ given the data, $L(p|D)$.
@@ -367,7 +375,7 @@ target <- data.frame(S  = c(50,23),
                      PI = c(11.56163,1.354286),
                      NH = c(21,18),
                      TD = c(0.123358,-2.386268),
-                     row.names = c("dataset1","dataset2"))
+                     row.names = c("octomanati","rinocaracol"))
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
 ```
@@ -377,7 +385,7 @@ target <- data.frame(S  = c(50,23),
                      PI = c(11.56163,1.354286),
                      NH = c(21,18),
                      TD = c(0.123358,-2.386268),
-                     row.names = c("dataset1","dataset2"))
+                     row.names = c("octomanati","rinocaracol"))
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 target
 head(ref_table)
@@ -389,7 +397,7 @@ target <- data.frame(S  = c(50,23),
                      PI = c(11.56163,1.354286),
                      NH = c(21,18),
                      TD = c(0.123358,-2.386268),
-                     row.names = c("dataset1","dataset2"))
+                     row.names = c("octomanati","rinocaracol"))
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
 num_of_sims <- 10000 # use a subset of simulation from a total of 1 000 000
@@ -460,7 +468,7 @@ target <- data.frame(S  = c(50,23),
                      PI = c(11.56163,1.354286),
                      NH = c(21,18),
                      TD = c(0.123358,-2.386268),
-                     row.names = c("dataset1","dataset2"))
+                     row.names = c("octomanati","rinocaracol"))
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
 num_of_sims <- 10000 # use a subset of simulation from a total of 1 000 000
