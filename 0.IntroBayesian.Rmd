@@ -1,14 +1,14 @@
 ---
-#############################################################
-#                                                           #
-# Click on "Run Document" in RStudio to run this worksheet. #
-#                                                           #
-#############################################################
+######################################
+# Click on "Run Document" in RStudio #
+######################################
 title: "Quick Introduction to Bayesian Statistics"
 author: "Miguel de Navascués"
 output: learnr::tutorial
 runtime: shiny_prerendered
 ---
+
+This course is available at [Zenodo](http://doi.org/10.5281/zenodo.1435503).
 
 
 

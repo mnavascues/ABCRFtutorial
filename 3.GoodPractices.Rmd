@@ -1,0 +1,127 @@
+---
+######################################
+# Click on "Run Document" in RStudio #
+######################################
+title: "Good Practices in ABC"
+author: "Miguel de Navascués"
+output: learnr::tutorial
+runtime: shiny_prerendered
+bibliography: references.bib
+---
+
+This course is available at [Zenodo](http://doi.org/10.5281/zenodo.1435503).
+
+
+
+## Setup (just for information)
+
+```{r setup, include=TRUE}
+library(learnr)
+library(phyclust, quietly=T)
+library(abc, quietly=T) 
+library(weights, quietly=T)
+```
+
+## Compare prior and posterior
+
+Priors can be used to incorporate previous information
+on the parameters. In the case of our population genetics example, we could
+imagine to have some information on mutation rates (e.g. from pedigrees) and
+population sizes (from census). Since $\theta = 2N\mu$, we could draw parameters $N$
+and $\mu$ from prior probability distributions and combine them to get the prior of
+$\theta$. In order to save time I have generated a reference table from such prior with the following code:
+
+```{r eval=FALSE, echo=TRUE}
+sample_size = 50
+num_of_sim = 1000000
+
+mu_prime <- 10^runif(num_of_sim,min=-7.5,max=-6)
+N_prime <- 10^runif(num_of_sim,min=6,max=7.5)
+theta_prime <- 2*N_prime*mu_prime
+
+msout <- ms(nsam = sample_size,
+            opt = "-t tbs",
+            tbs.matrix = cbind(theta_prime))
+msout <- read.ms.output(txt=msout)
+S_prime  <- S(msout)
+PI_prime <- PI(msout)
+NH_prime <- NH(msout)
+TD_prime <- TajimaD(msout)
+ref_table <- data.frame(theta=theta_prime,
+                        S=S_prime,
+                        PI=PI_prime,
+                        NH=NH_prime,
+                        TD=TD_prime)
+saveRDS(ref_table,file="ref_table_1b.RDS")
+```
+
+
+
+
+### Exercise 1
+
+```{r unexpected_prior, exercise=TRUE, exercise.lines=30}
+target <- data.frame(S  = c(50,23),
+                     PI = c(11.56163,1.354286),
+                     NH = c(21,18),
+                     TD = c(0.123358,-2.386268),
+                     row.names = c("octomanati","rinocaracol"))
+ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1b.RDS")
+
+num_of_sims <- 100000 # use a subset of simulation from a total of 1 000 000
+
+SS          <- target[1,"TD"]
+SS_prime    <- ref_table[seq_len(num_of_sims),"TD"]
+theta_prime <- ref_table$theta[seq_len(num_of_sims)]
+
+tolerance <- 0.05
+abc_result <- abc(target = SS,
+                  param = theta_prime,
+                  sumstat = SS_prime,
+                  tol = tolerance,
+                  method = "rejection")
+
+theta_prime_accept     <- as.vector(abc_result$unadj.values)
+hist(x = log10(theta_prime_accept),
+     breaks = seq(-2,3,0.05),
+     col = "blue",
+     freq = FALSE,
+     ylim = c(0,1), xlim=c(-1,2),
+     xlab = expression(log(theta)),main="",
+     ylab = "probability density")
+```
+
+```{r unexpected_prior-solution}
+target <- data.frame(S  = c(50,23),
+                     PI = c(11.56163,1.354286),
+                     NH = c(21,18),
+                     TD = c(0.123358,-2.386268),
+                     row.names = c("octomanati","rinocaracol"))
+ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1b.RDS")
+
+num_of_sims <- 100000 # use a subset of simulation from a total of 1 000 000
+
+SS          <- target[1,"TD"]
+SS_prime    <- ref_table[seq_len(num_of_sims),"TD"]
+theta_prime <- ref_table$theta[seq_len(num_of_sims)]
+
+tolerance <- 0.05
+abc_result <- abc(target = SS,
+                  param = theta_prime,
+                  sumstat = SS_prime,
+                  tol = tolerance,
+                  method = "rejection")
+
+theta_prime_accept     <- as.vector(abc_result$unadj.values)
+hist(x = log10(theta_prime_accept),
+     breaks = seq(-2,3,0.05),
+     col = "blue",
+     freq = FALSE,
+     ylim = c(0,1), xlim=c(-1,2),
+     xlab = expression(log(theta)),,main="",
+     ylab = "probability density")
+hist(x = log10(theta_prime),
+     breaks = seq(-2,3,0.05),
+     col = "grey", freq=FALSE, add=TRUE )
+```
+

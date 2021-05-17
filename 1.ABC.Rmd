@@ -1,14 +1,16 @@
 ---
-#############################################################
-#                                                           #
-# Click on "Run Document" in RStudio to run this worksheet. #
-#                                                           #
-#############################################################
+######################################
+# Click on "Run Document" in RStudio #
+######################################
 title: "Approximate Bayesian Computation"
 author: "Miguel de Navascués"
 output: learnr::tutorial
 runtime: shiny_prerendered
 ---
+
+This course is available at [Zenodo](http://doi.org/10.5281/zenodo.1435503).
+
+
 
 ## Setup (just for information)
 
@@ -292,10 +294,12 @@ For data $h=4$ and $t=6$, and prior $\mathrm{Beta}(\alpha=1,\beta=1)$ the median
 We are going to consider now population genetics data. We have two data sets of mitochondrial DNA sequences for 50 individuals of two different hermaphrodite species. The data is in two files named `octomanati.txt` and `rinocaracol.txt` in *ms* format.
 
 
-
+<figure>
 [<img src="https://upload.wikimedia.org/wikipedia/commons/4/42/Octomanati.png" alt="heads" style="height: 234px; width:352px;"/>](https://commons.wikimedia.org/wiki/File:Octomanati.png)[<img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Rinocaracol.png" alt="heads" style="height: 234px; width:352px;"/>](https://commons.wikimedia.org/wiki/File:Rinocaracol.png)
 
-Species names and images by [Javier Gamboa](https://commons.wikimedia.org/wiki/User:Javiesgm) ([CC-BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.en)).
+<figcaption align = "center">Octomanati and rinocaracol. Names and images by [Javier Gamboa](https://commons.wikimedia.org/wiki/User:Javiesgm) ([CC-BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.en)).</figcaption>
+</figure>
+
 
 ### Exercise 6
 
@@ -425,7 +429,7 @@ hist(x = log10(theta_prime_accept),
      breaks = seq(-1,2,0.05),
      col = "blue",
      freq = FALSE,
-     add = TRUE); box()
+     add = TRUE)
 ```
 
 ## Approximation 3: Tolerance
@@ -503,10 +507,7 @@ hist(x = log10(theta_prime_accept),
      breaks = seq(-1,2,0.05),
      col = "blue",
      freq = FALSE,
-     add = TRUE); box()
-
-
-
+     add = TRUE)
 ```
 
 
