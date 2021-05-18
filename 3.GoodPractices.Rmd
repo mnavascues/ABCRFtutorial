@@ -9,17 +9,18 @@ runtime: shiny_prerendered
 bibliography: references.bib
 ---
 
-This course is available at [Zenodo](http://doi.org/10.5281/zenodo.1435503).
+These learning resources are available at [Zenodo](http://doi.org/10.5281/zenodo.1435503).
 
-
-
-## Setup (just for information)
+## Setup (tl;dr)
 
 ```{r setup, include=TRUE}
 library(learnr)
+# function ms() (Hudson's coalescent simulator)
 library(phyclust, quietly=T)
-library(abc, quietly=T) 
-library(weights, quietly=T)
+# functions for ABC
+suppressMessages(library(abc, quietly=T))
+# function for weighted histogram
+suppressMessages(library(weights, quietly=T))
 ```
 
 ## Compare prior and posterior
@@ -183,7 +184,7 @@ abline(a = 0, b = 1)
 
 ```
 
-## Goodness of fit: prior
+## Goodness of fit
 
 ```{r prior_checking, exercise=TRUE, exercise.lines=15}
 target <- data.frame(S  = c(50,23),
