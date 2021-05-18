@@ -14,7 +14,7 @@ These learning resources are available at [Zenodo](http://doi.org/10.5281/zenodo
 
 ```{r setup, include=TRUE}
 library(learnr)
-# phyclust contains Hudson ms coalescent simulator
+# function ms() (Hudson's coalescent simulator)
 library(phyclust, quietly=T)
 # function read.ms.output()
 source("readms.output.R", local =T)
