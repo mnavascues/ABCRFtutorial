@@ -1,2 +1,4 @@
 ## Course on Approximate Bayesian Computation
  by Miguel de Navascués
+
+Tutorial on approximate Bayesian computation. The objective of the tutorial is to provide an insight and an intuition on how ABC works and its potential pitfalls, to give the student the tools to put in practice an ABC analysis and to be able to critically interpret results from its own or published ABC analysis. Working within R, the methodology of this tutorial is to learn from opening up the "black box". The tutorial covers from the classical ABC (i.e. Beaumont local regression algorithm) to the modern use of machine learning approaches (ABC Random Forest).

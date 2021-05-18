@@ -24,12 +24,7 @@ library(weights, quietly=T)
 
 ## Compare prior and posterior
 
-Priors can be used to incorporate previous information
-on the parameters. In the case of our population genetics example, we could
-imagine to have some information on mutation rates (e.g. from pedigrees) and
-population sizes (from census). Since $\theta = 2N\mu$, we could draw parameters $N$
-and $\mu$ from prior probability distributions and combine them to get the prior of
-$\theta$. In order to save time I have generated a reference table from such prior with the following code:
+Priors can be used to incorporate previous information on the parameters. In the case of our population genetics example, we could imagine to have some information on mutation rates (e.g. from pedigrees) and population sizes (from census). Since $\theta = 2N\mu$, we could draw parameters $N$ and $\mu$ from prior probability distributions and combine them to get the prior of $\theta$. Assuming that our prior knowledge on *octomanati* and *rinocaracol* point us towards mitochondrial mutation rates between $3\times 10^{-8}$ and $10^{-6}$ and effective population sizes between $1$ and $30$ million individuals, I have generated a reference table from such priors with the following code:
 
 ```{r eval=FALSE, echo=TRUE}
 sample_size = 50
@@ -47,11 +42,13 @@ S_prime  <- S(msout)
 PI_prime <- PI(msout)
 NH_prime <- NH(msout)
 TD_prime <- TajimaD(msout)
+FLD_prime <- FuLiD(msout)
 ref_table <- data.frame(theta=theta_prime,
                         S=S_prime,
                         PI=PI_prime,
                         NH=NH_prime,
-                        TD=TD_prime)
+                        TD=TD_prime,
+                        FLD=FLD_prime)
 saveRDS(ref_table,file="ref_table_1b.RDS")
 ```
 
@@ -59,6 +56,8 @@ saveRDS(ref_table,file="ref_table_1b.RDS")
 
 
 ### Exercise 1
+
+Using the new reference table, plot the posterior distribution from the ABC analysis (use code provided). Is the analysis informative about $\theta$? What is the summary statistics used? Is Tajima's $D$, on its own, informative about $\theta$? What is going on? Plot the prior distribution together with the posterior. 
 
 ```{r unexpected_prior, exercise=TRUE, exercise.lines=30}
 target <- data.frame(S  = c(50,23),
@@ -118,10 +117,94 @@ hist(x = log10(theta_prime_accept),
      col = "blue",
      freq = FALSE,
      ylim = c(0,1), xlim=c(-1,2),
-     xlab = expression(log(theta)),,main="",
+     xlab = expression(log(theta)),main="",
      ylab = "probability density")
 hist(x = log10(theta_prime),
      breaks = seq(-2,3,0.05),
      col = "grey", freq=FALSE, add=TRUE )
 ```
+
+
+## Cross-validation
+
+### Exercise 2
+
+Use cross-validation function from `abc` package to evaluate the performance of the ABC method:
+
+```{r cross_validation, exercise=TRUE, exercise.lines=15}
+target <- data.frame(S  = c(50,23),
+                     PI = c(11.56163,1.354286),
+                     NH = c(21,18),
+                     TD = c(0.123358,-2.386268),
+                     row.names = c("octomanati","rinocaracol"))
+ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+
+num_of_sims <- 10000
+
+octomanati_result <- abc(target = target["octomanati",c("S","PI","NH","TD")],
+                         param = ref_table[seq_len(num_of_sims),"theta"],
+                         sumstat = ref_table[seq_len(num_of_sims),c("S","PI","NH","TD")],
+                         tol = 0.1, method = "rejection")
+
+
+
+```
+
+```{r cross_validation-solution}
+
+target <- data.frame(S  = c(50,23),
+                     PI = c(11.56163,1.354286),
+                     NH = c(21,18),
+                     TD = c(0.123358,-2.386268),
+                     row.names = c("octomanati","rinocaracol"))
+ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+
+num_of_sims <- 10000
+
+octomanati_result <- abc(target = target["octomanati",c("S","PI","NH","TD")],
+                         param = ref_table[seq_len(num_of_sims),"theta"],
+                         sumstat = ref_table[seq_len(num_of_sims),c("S","PI","NH","TD")],
+                         tol = 0.1, method = "rejection")
+
+
+
+cross_validation <- cv4abc(param = ref_table[seq_len(num_of_sims),"theta"],
+                           sumstat = ref_table[seq_len(num_of_sims),c("S","PI","NH","TD")],
+                           abc.out = octomanati_result,
+                           nval = 20,
+                           tols = 0.1)
+
+plot(log10(cross_validation$true$P1),
+     log10(cross_validation$estim$tol0.1),
+     xlab = expression(log(theta)),
+     ylab = expression(log(hat(theta))),
+     xlim = c(-1,2), ylim = c(-1,2))
+abline(a = 0, b = 1)
+
+```
+
+## Goodness of fit: prior
+
+```{r prior_checking, exercise=TRUE, exercise.lines=15}
+target <- data.frame(S  = c(50,23),
+                     PI = c(11.56163,1.354286),
+                     NH = c(21,18),
+                     TD = c(0.123358,-2.386268),
+                     row.names = c("octomanati","rinocaracol"))
+ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+
+num_of_sims <- 10000
+
+PCA_result  <- princomp(ref_table[!is.nan(ref_table$TD),c("S","PI","NH","TD")])
+PCA_target <- predict(PCA_result, target[,c("S","PI","NH","TD")])
+plot(PCA_result$scores[seq_len(num_of_sims),1],
+     PCA_result$scores[seq_len(num_of_sims),2],
+     xlab="PCA 1",ylab="PCA 2")
+points(PCA_target[,1],PCA_target[,2],col="red")
+
+```
+
+
+
+
 

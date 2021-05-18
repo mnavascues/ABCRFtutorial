@@ -8,63 +8,18 @@ output: learnr::tutorial
 runtime: shiny_prerendered
 ---
 
-This course is available at [Zenodo](http://doi.org/10.5281/zenodo.1435503).
+These learning resources are available at [Zenodo](http://doi.org/10.5281/zenodo.1435503).
 
-
-
-## Setup (just for information)
-
+## Setup (tl;dr)
 
 ```{r setup, include=TRUE}
 library(learnr)
+# phyclust contains Hudson ms coalescent simulator
 library(phyclust, quietly=T)
-
-# for function read.ms.output()
+# function read.ms.output()
 source("readms.output.R", local =T)
-
 # functions to calculate summary statistics from ms output
-S <- function(a) {return(a$segsites)}
-
-NH <- function(a) {
-  NH<-vector(length=a$nreps)
-  for(i in seq_len(a$nreps)) {
-    NH[i] <- nrow(unique(a$gametes[[i]]))
-  }
-  return(NH)
-}
-
-PI <- function(a) {
-  PI<-vector(mode='numeric', length=a$nreps)
-  for(i in seq_len(a$nreps)) {
-    if(a$segsites[i]>0){
-      for(j in seq_len(a$segsites[i])) {
-         if(a$segsites[i]>1) {
-          loc<-sum(a$gametes[[i]][,j])
-        } else {
-          loc<-sum(a$gametes[[i]])
-        }
-        PI[i] <- PI[i] + 2*loc*(a$nsam-loc)
-      }
-    }
-  }
-  return(PI/(a$nsam*(a$nsam-1)))
-}
-
-thetaW <- function(a) {
-  a1<-sum(1/(1:(a$nsam-1)))
-  return(a$segsites/a1)
-}
-
-TajimaD <- function(a) {
-  a1<-sum(1/(1:(a$nsam-1)))
-  a2<-sum(1/((1:(a$nsam-1))^2))
-  b1<-(a$nsam+1)/3/(a$nsam-1)
-  b2<-2*(a$nsam^2+a$nsam+3)/(9*a$nsam*(a$nsam-1))
-  c1<-b1-1/a1
-  c2<-b2-(a$nsam+2)/(a1*a$nsam)+a2/(a1^2)
-  temp <- c1/a1*a$segsites + c2/(a1^2+a2)*a$segsites*(a$segsites-1)
-  return( (PI(a)-thetaW(a))/sqrt(temp) )
-}
+source("ms_sumstats.R", local =T)
 ```
 
 ## What is a simulation?
@@ -215,7 +170,12 @@ sim_data$gametes
 
 ### Exercise 5
 
-Calculate summary statistics (number of segregating sites, number of haplotypes, $\pi$ and Tajima's $D$) for the simulations (use functions `S()`, `NH()`, `PI()` and `TajimaD()`, see setup for details):
+Calculate summary statistics (number of segregating sites, number of haplotypes, $\pi$ and Tajima's $D$) for the simulations. Functions `S()`, `NH()`, `PI()`, `TajimaD()` and `FuLiD()` have been loaded using:
+
+```{r eval=FALSE, echo=TRUE}
+source("ms_sumstats.R")
+```
+
 
 ```{r summary_stats, exercise=TRUE, exercise.lines=15}
 n<-10
@@ -243,6 +203,7 @@ S(sim_data)
 NH(sim_data)
 PI(sim_data)
 TajimaD(sim_data)
+FuLiD(sim_data)
 ```
 
 

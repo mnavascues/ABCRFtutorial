@@ -24,7 +24,7 @@ library(weights, quietly=T)
 
 ## Regression ABC
 
-An additional local regression step was introduced to the rejection algorithm [@Beaumont2002]. The local regression is between the parameter values and the summary statistics from the simulations accepted in the rejection step. Parameter values from those simulations are then "adjusted" by projection using the regression. The regression algorithm allows to increase the proportion of simulations accepted correcting to some degree the "widening" of the posterior distribution.
+An additional local regression step was introduced to the rejection algorithm [@Beaumont2002]. The local regression is between the parameter values and the summary statistics from the simulations accepted in the rejection step. Parameter values from those simulations are then *adjusted* by projection using the regression. The regression algorithm allows to increase the proportion of simulations accepted correcting to some degree the *widening* of the posterior distribution.
 
 ### Exercise 1
 
@@ -82,7 +82,7 @@ hist(x = log10(theta_prime),
      freq = FALSE,
      ylim = c(0,4),
      main = "",
-     xlab = expression(log(theta)),
+     xlab = expression(log[10](theta)),
      ylab = "probability density")
 hist(x = log10(theta_prime_accept),
      breaks = seq(-1,2,0.05),
@@ -121,7 +121,7 @@ hist(x = log10(theta_prime),
      freq = FALSE,
      ylim = c(0,4),
      main = "",
-     xlab = expression(log(theta)),
+     xlab = expression(log[10](theta)),
      ylab = "probability density")
 hist(x = log10(theta_prime_accept),
      breaks = seq(-1,2,0.05),
@@ -130,6 +130,9 @@ wtd.hist(x = log10(theta_prime_accept_reg),
          breaks = seq(-1.5,2,0.05),
          col = "yellow", freq=FALSE, add=TRUE,
          weight = abc_result$weights)
+
+
+
 ```
 
 
@@ -137,7 +140,7 @@ wtd.hist(x = log10(theta_prime_accept_reg),
 
 ### Exercise 2
 
-Estimate $\theta$ for octomanati and rinocaracol.
+Using ABC, estimate $\theta$ for *octomanati* and *rinocaracol*. Provide a measure of the uncertainty of the estimate:
 
 ```{r practice_abc, exercise=TRUE, exercise.lines=30}
 target <- data.frame(S  = c(50,23),
@@ -167,24 +170,15 @@ rinocaracol_result <- abc(target = target["rinocaracol",c("S","PI","NH","TD")],
                           sumstat = ref_table[,c("S","PI","NH","TD")],
                           tol = 0.01,transf = "log",method = "loclinear")
 
-hist(x = log10(ref_table[,"theta"]),
-     breaks = seq(-1,2,0.05),
-     col = "grey",
-     freq = FALSE,
-     ylim = c(0,4),
-     main = "",
-     xlab = expression(log(theta)),
-     ylab = "probability density")
-wtd.hist(x = log10(octomanati_result$adj.values),
-         breaks = seq(-1.5,2,0.05),
-         col = "yellow", freq=FALSE, add=TRUE,
-         weight = octomanati_result$weights)
-wtd.hist(x = log10(rinocaracol_result$adj.values),
-         breaks = seq(-1.5,2,0.05),
-         col = "orange", freq=FALSE, add=TRUE,
-         weight = rinocaracol_result$weights)
-
-quantile
+cat("theta estimate (point estimate and 95%CI) for octomanati")
+wtd.quantile(octomanati_result$adj.values,
+             weights = octomanati_result$weights,
+             probs = c(0.5, 0.025, 0.975))
+cat("theta estimate (point estimate and 95%CI) for rinocaracol")
+wtd.quantile(rinocaracol_result$adj.values,
+             weights = rinocaracol_result$weights,
+             probs = c(0.5, 0.025, 0.975))
+             
 
 ```
 

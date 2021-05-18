@@ -91,6 +91,48 @@ TajimaD <- function(a) {
   temp <- c1/a1*a$segsites + c2/(a1^2+a2)*a$segsites*(a$segsites-1)
   return( (PI(a)-thetaW(a))/sqrt(temp) )
 }
+
+FuLiD<-function(a) {
+  thetaS1_res <- thetaS1(a)
+  a1<-sum(1/(1:(a$nsam-1)))
+  a2<-sum(1/((1:(a$nsam-1))^2))
+  c<-(2*a$nsam*a1-4*(a$nsam-1))/((a$nsam-1)*(a$nsam-2))
+  vD<-1+a1^2/(a2+a1^2)*(c-(a$nsam+1)/(a$nsam-1))
+  uD<-a1-1-vD
+  fuliD<-vector(mode='numeric',length=a$nreps)
+  for(i in 1:a$nreps) {
+    if(a$segsites[i]) {
+      locS<-a$segsites[i]
+      loc<-uD*locS+vD*locS^2
+      fuliD[i]<-(locS-a1*thetaS1_res[i])/sqrt(loc)
+    }
+  }
+  fuliD
+}
+
+thetaS1<-function(a) {
+  thetaS1<-vector(mode='numeric', length=a$nreps)
+  for(i in 1:a$nreps) {
+    if(a$segsites[i]) {
+      for(j in 1:a$segsites[i]) {
+        if(a$segsites[i]>1) {
+          if(sum(a$gametes[[i]][,j])==1) {
+            thetaS1[i]<-thetaS1[i]+1
+          }
+        } else {
+          if(sum(a$gametes[[i]])==1) {
+            thetaS1[i]<-thetaS1[i]+1
+          }
+        }
+      }
+    }
+  }
+  thetaS1
+}
+
+
+
+
 ```
 
 ## Approximation 1: Simulation
@@ -291,19 +333,18 @@ For data $h=4$ and $t=6$, and prior $\mathrm{Beta}(\alpha=1,\beta=1)$ the median
 
 ## Approximation 2: Summary Statistics
 
-We are going to consider now population genetics data. We have two data sets of mitochondrial DNA sequences for 50 individuals of two different hermaphrodite species. The data is in two files named `octomanati.txt` and `rinocaracol.txt` in *ms* format.
+We are going to consider now population genetics data. We have two data sets of mitochondrial DNA sequences for 50 individuals of two different hermaphrodite *mammollusks*. The data is in two files named `octomanati.txt` and `rinocaracol.txt` in *ms* format.
 
 
 <figure>
 [<img src="https://upload.wikimedia.org/wikipedia/commons/4/42/Octomanati.png" alt="heads" style="height: 234px; width:352px;"/>](https://commons.wikimedia.org/wiki/File:Octomanati.png)[<img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Rinocaracol.png" alt="heads" style="height: 234px; width:352px;"/>](https://commons.wikimedia.org/wiki/File:Rinocaracol.png)
-
-<figcaption align = "center">Octomanati and rinocaracol. Names and images by [Javier Gamboa](https://commons.wikimedia.org/wiki/User:Javiesgm) ([CC-BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.en)).</figcaption>
+<figcaption align = "center">*Octomanati* and *rinocaracol*. Names and images by [Javier Gamboa](https://commons.wikimedia.org/wiki/User:Javiesgm) ([CC-BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.en)).</figcaption>
 </figure>
 
 
 ### Exercise 6
 
-Explore the data. How many polymorphic sites are there? (you can use functions `S()`, `NH()`, `PI()` and `TajimaD()`) How would you apply the rejection algorithm?
+Explore the data (you can use functions `S()`, `NH()`, `PI()`, `TajimaD()` and `FuLiD()`). How many polymorphic sites are there?  How would you apply the rejection algorithm?
 
 ```{r explore_genetic_data, exercise=TRUE, exercise.lines=6}
 octomanati_data  <- read.ms.output(file="/change/to/your/path/octomanati.txt")
@@ -360,11 +401,13 @@ S_prime  <- S(msout)
 PI_prime <- PI(msout)
 NH_prime <- NH(msout)
 TD_prime <- TajimaD(msout)
+FLD_prime <- FuLiD(msout)
 ref_table <- data.frame(theta=theta_prime,
                         S=S_prime,
                         PI=PI_prime,
                         NH=NH_prime,
-                        TD=TD_prime)
+                        TD=TD_prime,
+                        FLD=FLD_prime)
 saveRDS(ref_table,file="ref_table_1.RDS")
 ```
 

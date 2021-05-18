@@ -227,7 +227,7 @@ hist(x = log10(theta_prime),
      freq = FALSE,
      ylim = c(0,4),
      main = &quot;&quot;,
-     xlab = expression(log(theta)),
+     xlab = expression(log[10](theta)),
      ylab = &quot;probability density&quot;)
 hist(x = log10(theta_prime_accept),
      breaks = seq(-1,2,0.05),
@@ -264,7 +264,7 @@ hist(x = log10(theta_prime),
      freq = FALSE,
      ylim = c(0,4),
      main = &quot;&quot;,
-     xlab = expression(log(theta)),
+     xlab = expression(log[10](theta)),
      ylab = &quot;probability density&quot;)
 hist(x = log10(theta_prime_accept),
      breaks = seq(-1,2,0.05),
@@ -313,7 +313,7 @@ hist(x = log10(ref_table[,&quot;theta&quot;]),
      freq = FALSE,
      ylim = c(0,4),
      main = &quot;&quot;,
-     xlab = expression(log(theta)),
+     xlab = expression(log[10](theta)),
      ylab = &quot;probability density&quot;)
 wtd.hist(x = log10(octomanati_result$adj.values),
          breaks = seq(-1.5,2,0.05),
@@ -322,7 +322,15 @@ wtd.hist(x = log10(octomanati_result$adj.values),
 wtd.hist(x = log10(rinocaracol_result$adj.values),
          breaks = seq(-1.5,2,0.05),
          col = &quot;orange&quot;, freq=FALSE, add=TRUE,
-         weight = rinocaracol_result$weights)</code></pre>
+         weight = rinocaracol_result$weights)
+cat(&quot;theta estimate (point estimate and 95%CI) for octomanati&quot;)
+wtd.quantile(octomanati_result$adj.values,
+             weights = octomanati_result$weights,
+             probs = c(0.5, 0.025, 0.975))
+cat(&quot;theta estimate (point estimate and 95%CI) for rinocaracol&quot;)
+wtd.quantile(rinocaracol_result$adj.values,
+             weights = rinocaracol_result$weights,
+             probs = c(0.5, 0.025, 0.975))</code></pre>
 </div>
 </div>
 </div>
