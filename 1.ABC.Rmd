@@ -63,7 +63,12 @@ sum(h_prime==h)/num_of_sim
 
 ### Exercise 2
 
-Plot the likelihood profile from using simulation-based estimates of the likelihood. Compare the results with the analytical solution. Why should we bother about a (slower, less accurate) simulation-based solution? For this exercise you have available two functions: `flip_coin_likelihood()` and `flip_coin_likelihood_approx()` (see setup for details).
+Plot the likelihood profile from using simulation-based estimates of the likelihood. Compare the results with the analytical solution. Why should we bother about a (slower, less accurate) simulation-based solution? For this exercise you have available two functions: `flip_coin_likelihood()` and `flip_coin_likelihood_approx()` that have been loaded using:
+
+
+```{r eval=FALSE, echo=TRUE}
+source("coin_toss.R")
+```
 
 
 ```{r likelihood_function, exercise=TRUE}
@@ -191,7 +196,8 @@ lines(seq(0,1,0.001),dbeta(x=seq(0,1,0.001),a+h,b+t),
 
 ### Exercise 5
 
-Get a point estimate and the 95% credibility interval:
+Get a point estimate and the 95% credibility interval (CI). For data $h=4$ and $t=6$, and prior $\mathrm{Beta}(\alpha=1,\beta=1)$, the posterior is $\mathrm{Beta}(\alpha=5,\beta=7)$ whose median is `r qbeta(0.5,1+4,1+6)` and the 95% CI is (`r qbeta(c(0.025,0.975),1+4,1+6)`). Are the ABC point estimate and CI accurate?
+
 
 ```{r coin_toss_credibility_interval, exercise=TRUE, exercise.setup="flip_coin_posterior_approx"}
 h=4;t=6;a=1;b=1;num_of_sim=1000
@@ -219,7 +225,6 @@ p_95CI <- quantile(res$p_prime_accept,probs=c(0.025,0.975))
 p_hat; p_95CI
 ```
 
-For data $h=4$ and $t=6$, and prior $\mathrm{Beta}(\alpha=1,\beta=1)$ the median is `r qbeta(0.5,1+4,1+6)` and the 95% credibility interval is (`r qbeta(c(0.025,0.975),1+4,1+6)`).
 
 
 ## Approximation 2: Summary Statistics
@@ -241,6 +246,15 @@ Explore the data (you can use functions `S()`, `NH()`, `PI()`, `TajimaD()` and `
 octomanati_data  <- read.ms.output(file="/change/to/your/path/octomanati.txt")
 rinocaracol_data <- read.ms.output(file="/home/miguel/Work/Teaching/ABCRF tutorial/rinocaracol.txt")
 ```
+
+```{r explore_genetic_data-solution}
+octomanati_data  <- read.ms.output(file="/change/to/your/path/octomanati.txt")
+rinocaracol_data <- read.ms.output(file="/home/miguel/Work/Teaching/ABCRF tutorial/rinocaracol.txt")
+
+cat("octomanati dataset has",S(octomanati_data),"segregating sites")
+cat("rinocaracol dataset has",S(rinocaracol_data),"segregating sites")
+```
+
 
 We could try to apply the same rejection algorithm described above, but the structure of the data is more complex and an exact match would occur rarely in simulations. So we use the second approximation of ABC, instead of the data we use summary statistics ($S$) from the data to classify the simulation as a match to the observation. It is said now that we are approximating the likelihood of $p$ given the summary statistic, $L(p|S)$, rather than the likelihood of $p$ given the data, $L(p|D)$.
 
@@ -264,7 +278,7 @@ We could try to apply the same rejection algorithm described above, but the stru
 
 ### Exercise 7
 
-Simulate sequence data with `ms` (from `phyclust` package) using the standard coalescent model (single population of constant size). Simulate with $\theta$ values taken from a log-uniform prior probability distribution (option `"-t tbs"`).
+Simulate sequence data with `ms` (from `phyclust` package) using the standard coalescent model (single population of constant size). Simulate with $\theta$ values taken from a log-uniform prior probability distribution (option `"-t tbs"`). [just click `Run code`]
 
 ```{r simulation_coalescent, exercise=TRUE}
 sample_size = 50
@@ -274,8 +288,8 @@ msout <- ms(nsam = sample_size,
             opt = "-t tbs",
             tbs.matrix = cbind(theta_prime))
 msout <- read.ms.output(txt=msout)
-S_prime  <- S(msout)
-PI_prime  <- PI(msout)
+S(msout)
+PI(msout)
 ```
 
 Simulation can be very time consuming, for the following exercises we will be using a set of simulations which have already been run and summary statistics calculated from them (this is called the **reference table**). This reference table has been produced with the following code:
@@ -306,7 +320,7 @@ saveRDS(ref_table,file="ref_table_1.RDS")
 
 ### Exercise 8
 
-Apply the rejection algortihm using one summary statistic. Start with the number of segregating sites and the number of haplotypes (`S`, `NH`), then try $\pi$ (`PI`).
+Apply the rejection algorithm using one summary statistic. Start with the number of segregating sites and the number of haplotypes (`S`, `NH`), then try $\pi$ (`PI`).
 
 ```{r rejection_algortihm_sumstats, exercise=TRUE, exercise.lines=35}
 target <- data.frame(S  = c(50,23),

@@ -17,8 +17,11 @@ This course is available at [Zenodo](http://doi.org/10.5281/zenodo.1435503).
 
 ```{r setup, include=TRUE}
 library(learnr)
+# function ms() (Hudson's coalescent simulator)
 library(phyclust, quietly=T)
-library(abc, quietly=T) 
+# functions for ABC
+suppressMessages(library(abc, quietly=T))
+# function for weighted histogram
 library(weights, quietly=T)
 ```
 
