@@ -9,11 +9,9 @@ runtime: shiny_prerendered
 bibliography: references.bib
 ---
 
-This course is available at [Zenodo](http://doi.org/10.5281/zenodo.1435503).
+These learning resources are available at [Zenodo](http://doi.org/10.5281/zenodo.1435503).
 
-
-
-## Setup (just for information)
+## Setup (tl;dr)
 
 ```{r setup, include=TRUE}
 library(learnr)
@@ -22,7 +20,7 @@ library(phyclust, quietly=T)
 # functions for ABC
 suppressMessages(library(abc, quietly=T))
 # function for weighted histogram
-library(weights, quietly=T)
+suppressMessages(library(weights, quietly=T))
 ```
 
 ## Regression ABC
