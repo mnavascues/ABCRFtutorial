@@ -58,13 +58,14 @@ saveRDS(ref_table,file="ref_table_1b.RDS")
 
 ### Exercise 1
 
-Using the new reference table, plot the posterior distribution from the ABC analysis (use code provided). Is the analysis informative about $\theta$? What is the summary statistics used? Is Tajima's $D$, on its own, informative about $\theta$? What is going on? Plot the prior distribution together with the posterior. 
+Using the new reference table, plot the posterior distribution from the ABC analysis [click `Run Code`]. Is the analysis informative about $\theta$? What is the summary statistics used? Is Tajima's $D$, on its own, informative about $\theta$? What is going on? Plot the prior distribution together with the posterior. 
 
 ```{r unexpected_prior, exercise=TRUE, exercise.lines=30}
 target <- data.frame(S  = c(50,23),
                      PI = c(11.56163,1.354286),
                      NH = c(21,18),
                      TD = c(0.123358,-2.386268),
+                     FLD= c(-1.160349,-4.354524),
                      row.names = c("octomanati","rinocaracol"))
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1b.RDS")
 
