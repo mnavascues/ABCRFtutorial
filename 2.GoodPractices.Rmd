@@ -150,8 +150,6 @@ octomanati_result <- abc(target = target["octomanati",c("S","PI","NH","TD")],
                          sumstat = ref_table[seq_len(num_of_sims),c("S","PI","NH","TD")],
                          tol = 0.1, method = "rejection")
 
-
-
 cross_validation <- cv4abc(param = ref_table[seq_len(num_of_sims),"theta"],
                            sumstat = ref_table[seq_len(num_of_sims),c("S","PI","NH","TD")],
                            abc.out = octomanati_result,
