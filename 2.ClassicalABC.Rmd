@@ -36,6 +36,7 @@ target <- data.frame(S  = c(50,23),
                      PI = c(11.56163,1.354286),
                      NH = c(21,18),
                      TD = c(0.123358,-2.386268),
+                     FLD= c(-1.160349,-4.354524),
                      row.names = c("octomanati","rinocaracol"))
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
@@ -101,6 +102,7 @@ target <- data.frame(S  = c(50,23),
                      PI = c(11.56163,1.354286),
                      NH = c(21,18),
                      TD = c(0.123358,-2.386268),
+                     FLD= c(-1.160349,-4.354524),
                      row.names = c("octomanati","rinocaracol"))
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 num_of_sims <- 10000 # use a subset of simulation from a total of 1 000 000
@@ -148,6 +150,7 @@ target <- data.frame(S  = c(50,23),
                      PI = c(11.56163,1.354286),
                      NH = c(21,18),
                      TD = c(0.123358,-2.386268),
+                     FLD= c(-1.160349,-4.354524),
                      row.names = c("octomanati","rinocaracol"))
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
@@ -159,6 +162,7 @@ target <- data.frame(S  = c(50,23),
                      PI = c(11.56163,1.354286),
                      NH = c(21,18),
                      TD = c(0.123358,-2.386268),
+                     FLD= c(-1.160349,-4.354524),
                      row.names = c("octomanati","rinocaracol"))
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
