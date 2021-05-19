@@ -175,13 +175,22 @@ ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1
 
 num_of_sims <- 10000
 
-PCA_result  <- princomp(ref_table[!is.nan(ref_table$TD),c("S","PI","NH","TD")])
-PCA_target <- predict(PCA_result, target[,c("S","PI","NH","TD")])
+PCA_result  <- princomp(ref_table[,c("S","PI","NH","TD","FLD")])
+PCA_target <- predict(PCA_result, target[,c("S","PI","NH","TD","FLD")])
 plot(PCA_result$scores[seq_len(num_of_sims),1],
      PCA_result$scores[seq_len(num_of_sims),2],
      xlab="PCA 1",ylab="PCA 2")
-points(PCA_target[,1],PCA_target[,2],col="red")
+points(PCA_target[,1],PCA_target[,2],col=c("yellow","orange"))
 
+plot(PCA_result$scores[seq_len(num_of_sims),3],
+     PCA_result$scores[seq_len(num_of_sims),4],
+     xlab="PCA 3",ylab="PCA 4")
+points(PCA_target[,3],PCA_target[,4],col=c("yellow","orange"))
+
+plot(ref_table$TD[seq_len(num_of_sims)],
+     ref_table$FLD[seq_len(num_of_sims)],
+     xlab="Tajima's D",ylab="Fu and Li's D")
+points(target$TD,target$FLD,col=c("yellow","orange"))
 ```
 
 
