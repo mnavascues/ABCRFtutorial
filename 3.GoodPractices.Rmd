@@ -132,13 +132,14 @@ hist(x = log10(theta_prime),
 
 ### Exercise 2
 
-Use cross-validation function from `abc` package to evaluate the performance of the ABC method:
+Use cross-validation function `cv4abc()` from `abc` package to evaluate the performance of the ABC method. This is a time consuming task, for the purpose of this exercise, use a low cross-validation sample size (e.g. `nval=20`; note that you want a much higher number for real analyses):
 
 ```{r cross_validation, exercise=TRUE, exercise.lines=15}
 target <- data.frame(S  = c(50,23),
                      PI = c(11.56163,1.354286),
                      NH = c(21,18),
                      TD = c(0.123358,-2.386268),
+                     FLD= c(-1.160349,-4.354524),
                      row.names = c("octomanati","rinocaracol"))
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
