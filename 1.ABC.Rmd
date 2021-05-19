@@ -316,6 +316,20 @@ ref_table <- data.frame(theta=theta_prime,
 saveRDS(ref_table,file="ref_table_1.RDS")
 ```
 
+The summary statistics for our tagret species is saved as:
+
+
+```{r eval=FALSE, echo=TRUE}
+target <- data.frame(S  = c(50,23),
+                     PI = c(11.56163,1.354286),
+                     NH = c(21,18),
+                     TD = c(0.123358,-2.386268),
+                     FLD= c(-1.160349,-4.354524),
+                     row.names = c("octomanati","rinocaracol"))
+saveRDS(target,file="target.RDS")
+```
+
+
 
 
 ### Exercise 8
