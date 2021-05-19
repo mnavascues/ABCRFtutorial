@@ -167,4 +167,40 @@ wtd.quantile(rinocaracol_result$adj.values,
 
 ```
 
+## Model choice
+
+We are going to consider two models. A constant size model with parameter $\theta = 2N\mu$  and a population with one instantaneous change of size with parameters $\theta_0 = 2N_0\mu$ (present scaled mutation rate), $\tau = t\mu$ (mutation scaled time of population size change) and $\theta_1 = 2N_1\mu$ (past scaled mutation rate). We already have use the simulations for the first model (reference table in file `ref_table_1.RDS`), the reference table for the second model is available in file `ref_table_2.RDS` which has been generated with the following code:
+
+
+```{r eval=FALSE, echo=TRUE}
+sample_size <- 50
+num_of_sim <- 1000000
+
+theta0 <- 10^runif(num_of_sim,min=-1,max=2)
+theta1 <- 10^runif(num_of_sim,min=-1,max=2)
+tau    <- runif(num_of_sim,min=0,max=2)
+
+msout <- ms(nsam = sample_size,
+            opt = "-t tbs -eN tbs tbs",
+            tbs.matrix = cbind(theta0, tau/theta0, theta1/theta0))
+msout <- read.ms.output(txt=msout)
+
+S_prime  <- S(msout)
+PI_prime <- PI(msout)
+NH_prime <- NH(msout)
+TD_prime <- TajimaD(msout)
+FLD_prime <- FuLiD(msout)
+ref_table <- data.frame(theta0=theta0,
+                        theta1=theta1,
+                        tau=tau,
+                        S=S_prime,
+                        PI=PI_prime,
+                        NH=NH_prime,
+                        TD=TD_prime,
+                        FLD=FLD_prime)
+saveRDS(ref_table,file="ref_table_2.RDS")
+```
+
+
+
 # References
