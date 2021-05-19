@@ -32,12 +32,7 @@ An additional local regression step was introduced to the rejection algorithm [@
 Explore the application of the regression algorithm implemented in `abc()`. Compare the posterior probability distribution estimated from adjusted and from unadjusted (original) values. Explore how this difference changes with the value of tolerance (for instance `tolerance<-0.8`). Try also with Tajima's $D$ as summary statistic (`TD`). Try using using $\pi$ and Tajima's $D$ (i.e. `SS <-target[1,c("PI","TD")]`) and skip the scatter plot. Try using $\pi$ and some completely uninformative summary statistic (i.e. generate a fake random summary statistic using `runif()` for both reference table and target data).
 
 ```{r abc_regression, exercise=TRUE, exercise.lines=30}
-target <- data.frame(S  = c(50,23),
-                     PI = c(11.56163,1.354286),
-                     NH = c(21,18),
-                     TD = c(0.123358,-2.386268),
-                     FLD= c(-1.160349,-4.354524),
-                     row.names = c("octomanati","rinocaracol"))
+target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
 
@@ -98,13 +93,8 @@ wtd.hist(x = log10(theta_prime_accept_reg),
 ```
 
 ```{r abc_regression-solution}
-target <- data.frame(S  = c(50,23),
-                     PI = c(11.56163,1.354286),
-                     NH = c(21,18),
-                     TD = c(0.123358,-2.386268),
-                     FLD= c(-1.160349,-4.354524),
-                     row.names = c("octomanati","rinocaracol"))
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
+ef_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 num_of_sims <- 10000 # use a subset of simulation from a total of 1 000 000
 SS          <- SS <-target[1,c("PI","TD")]
 SS_prime    <- ref_table[seq_len(num_of_sims),c("PI","TD")]
@@ -146,24 +136,14 @@ wtd.hist(x = log10(theta_prime_accept_reg),
 Using ABC, estimate $\theta$ for *octomanati* and *rinocaracol*. Provide a measure of the uncertainty of the estimate:
 
 ```{r practice_abc, exercise=TRUE, exercise.lines=30}
-target <- data.frame(S  = c(50,23),
-                     PI = c(11.56163,1.354286),
-                     NH = c(21,18),
-                     TD = c(0.123358,-2.386268),
-                     FLD= c(-1.160349,-4.354524),
-                     row.names = c("octomanati","rinocaracol"))
+target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
 ```
 
 
 ```{r practice_abc-solution}
-target <- data.frame(S  = c(50,23),
-                     PI = c(11.56163,1.354286),
-                     NH = c(21,18),
-                     TD = c(0.123358,-2.386268),
-                     FLD= c(-1.160349,-4.354524),
-                     row.names = c("octomanati","rinocaracol"))
+target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
 octomanati_result <- abc(target = target["octomanati",c("S","PI","NH","TD")],

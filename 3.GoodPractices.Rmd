@@ -61,12 +61,7 @@ saveRDS(ref_table,file="ref_table_1b.RDS")
 Using the new reference table, plot the posterior distribution from the ABC analysis [click `Run Code`]. Is the analysis informative about $\theta$? What is the summary statistics used? Is Tajima's $D$, on its own, informative about $\theta$? What is going on? Plot the prior distribution together with the posterior. 
 
 ```{r unexpected_prior, exercise=TRUE, exercise.lines=30}
-target <- data.frame(S  = c(50,23),
-                     PI = c(11.56163,1.354286),
-                     NH = c(21,18),
-                     TD = c(0.123358,-2.386268),
-                     FLD= c(-1.160349,-4.354524),
-                     row.names = c("octomanati","rinocaracol"))
+target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1b.RDS")
 
 num_of_sims <- 100000 # use a subset of simulation from a total of 1 000 000
@@ -93,12 +88,7 @@ hist(x = log10(theta_prime_accept),
 ```
 
 ```{r unexpected_prior-solution}
-target <- data.frame(S  = c(50,23),
-                     PI = c(11.56163,1.354286),
-                     NH = c(21,18),
-                     TD = c(0.123358,-2.386268),
-                     FLD= c(-1.160349,-4.354524),
-                     row.names = c("octomanati","rinocaracol"))
+target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1b.RDS")
 
 num_of_sims <- 100000 # use a subset of simulation from a total of 1 000 000
@@ -135,12 +125,7 @@ hist(x = log10(theta_prime),
 Use cross-validation function `cv4abc()` from `abc` package to evaluate the performance of the ABC method. This is a time consuming task, for the purpose of this exercise, use a low cross-validation sample size (e.g. `nval=20`; note that you want a much higher number for real analyses):
 
 ```{r cross_validation, exercise=TRUE, exercise.lines=15}
-target <- data.frame(S  = c(50,23),
-                     PI = c(11.56163,1.354286),
-                     NH = c(21,18),
-                     TD = c(0.123358,-2.386268),
-                     FLD= c(-1.160349,-4.354524),
-                     row.names = c("octomanati","rinocaracol"))
+ttarget    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
 num_of_sims <- 10000
@@ -155,13 +140,7 @@ octomanati_result <- abc(target = target["octomanati",c("S","PI","NH","TD")],
 ```
 
 ```{r cross_validation-solution}
-
-target <- data.frame(S  = c(50,23),
-                     PI = c(11.56163,1.354286),
-                     NH = c(21,18),
-                     TD = c(0.123358,-2.386268),
-                     FLD= c(-1.160349,-4.354524),
-                     row.names = c("octomanati","rinocaracol"))
+target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
 num_of_sims <- 10000
@@ -191,12 +170,7 @@ abline(a = 0, b = 1)
 ## Goodness of fit
 
 ```{r prior_checking, exercise=TRUE, exercise.lines=15}
-target <- data.frame(S  = c(50,23),
-                     PI = c(11.56163,1.354286),
-                     NH = c(21,18),
-                     TD = c(0.123358,-2.386268),
-                     FLD= c(-1.160349,-4.354524),
-                     row.names = c("octomanati","rinocaracol"))
+target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
 num_of_sims <- 10000
