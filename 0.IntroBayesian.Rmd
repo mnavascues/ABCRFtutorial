@@ -99,7 +99,7 @@ plot(likelihood_profile$p,
      xlab = "p", ylab = "Likelihood", type = "l", col="red")
 ```
 
-Note: function `flip_coin_likelihood()` has been loaded with `source("coin_toss.R")` in the setup and is available for all exercise.
+Note: function `flip_coin_likelihood()` has been loaded with `source("coin_toss.R")` in the setup and is available for all exercises.
 
 ### Exercise 3
 

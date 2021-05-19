@@ -201,6 +201,48 @@ ref_table <- data.frame(theta0=theta0,
 saveRDS(ref_table,file="ref_table_2.RDS")
 ```
 
+### Exercise 3
+
+Explore the goodness of fit for this new model:
+
+```{r goodness_of_fit_model2, exercise=TRUE, exercise.lines=30}
+target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
+ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
+
+
+```
+
+```{r goodness_of_fit_model2-solution}
+target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
+ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
+
+num_of_sims <- 10000
+
+PCA_result  <- princomp(ref_table[,c("S","PI","NH","TD","FLD")])
+PCA_target <- predict(PCA_result, target[,c("S","PI","NH","TD","FLD")])
+plot(PCA_result$scores[seq_len(num_of_sims),1],
+     PCA_result$scores[seq_len(num_of_sims),2],
+     xlab="PCA 1", ylab="PCA 2")
+points(PCA_target[,1], PCA_target[,2], col=c("yellow","orange"))
+
+plot(PCA_result$scores[seq_len(num_of_sims),3],
+     PCA_result$scores[seq_len(num_of_sims),4],
+     xlab="PCA 3", ylab="PCA 4")
+points(PCA_target[,3],PCA_target[,4], col=c("yellow","orange"))
+
+plot(ref_table$TD[seq_len(num_of_sims)],
+     ref_table$FLD[seq_len(num_of_sims)],
+     xlab="Tajima's D", ylab="Fu and Li's D")
+points(target$TD, target$FLD, col=c("yellow","orange"))
+```
+
+ABC model choice follows a similar process as parameter inference: references tables are pooled together a rejection step is applied to keep the that
+
+### Exercise 4
+
+
+
+
 
 
 # References
