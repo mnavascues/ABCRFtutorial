@@ -144,13 +144,13 @@ ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1
 target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
-octomanati_result <- abc(target = target["octomanati",c("S","PI","NH","TD")],
+octomanati_result <- abc(target = target["octomanati",c("S","PI","NH","TD","FLD")],
                          param = ref_table[,"theta"],
-                         sumstat = ref_table[,c("S","PI","NH","TD")],
+                         sumstat = ref_table[,c("S","PI","NH","TD","FLD")],
                          tol = 0.01,transf = "log",method = "loclinear")
-rinocaracol_result <- abc(target = target["rinocaracol",c("S","PI","NH","TD")],
+rinocaracol_result <- abc(target = target["rinocaracol",c("S","PI","NH","TD","FLD")],
                           param = ref_table[,"theta"],
-                          sumstat = ref_table[,c("S","PI","NH","TD")],
+                          sumstat = ref_table[,c("S","PI","NH","TD","FLD")],
                           tol = 0.01,transf = "log",method = "loclinear")
 
 cat("theta estimate (point estimate and 95%CI) for octomanati")
