@@ -296,11 +296,12 @@ Simulation can be very time consuming, for the following exercises we will be us
 
 ```{r eval=FALSE, echo=TRUE}
 sample_size = 50
-num_of_sim = 1000000
+num_of_sim = 100000
 theta_prime <- 10^runif(num_of_sim,min=-1,max=2)
 msout <- ms(nsam = sample_size,
-            opt = "-t tbs",
+            opt = "-t tbs -T",
             tbs.matrix = cbind(theta_prime))
+tmrca <- theta_prime*sapply(read.tree(text = msout[grep("//",msout)+1]),get.rooted.tree.height)
 msout <- read.ms.output(txt=msout)
 S_prime  <- S(msout)
 PI_prime <- PI(msout)
@@ -308,6 +309,7 @@ NH_prime <- NH(msout)
 TD_prime <- TajimaD(msout)
 FLD_prime <- FuLiD(msout)
 ref_table <- data.frame(theta=theta_prime,
+                        tmrca=tmrca,
                         S=S_prime,
                         PI=PI_prime,
                         NH=NH_prime,

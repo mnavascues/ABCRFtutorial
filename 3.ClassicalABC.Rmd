@@ -174,17 +174,15 @@ We are going to consider two models. A constant size model with parameter $\thet
 
 ```{r eval=FALSE, echo=TRUE}
 sample_size <- 50
-num_of_sim <- 1000000
-
+num_of_sim <- 100000
 theta0 <- 10^runif(num_of_sim,min=-1,max=2)
 theta1 <- 10^runif(num_of_sim,min=-1,max=2)
 tau    <- runif(num_of_sim,min=0,max=2)
-
 msout <- ms(nsam = sample_size,
-            opt = "-t tbs -eN tbs tbs",
+            opt = "-t tbs -eN tbs tbs -T",
             tbs.matrix = cbind(theta0, tau/theta0, theta1/theta0))
+tmrca <- theta0*sapply(read.tree(text = msout[grep("//",msout)+1]),get.rooted.tree.height)
 msout <- read.ms.output(txt=msout)
-
 S_prime  <- S(msout)
 PI_prime <- PI(msout)
 NH_prime <- NH(msout)
@@ -193,6 +191,7 @@ FLD_prime <- FuLiD(msout)
 ref_table <- data.frame(theta0=theta0,
                         theta1=theta1,
                         tau=tau,
+                        tmrca=tmrca,
                         S=S_prime,
                         PI=PI_prime,
                         NH=NH_prime,
