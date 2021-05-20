@@ -1,0 +1,31 @@
+---
+######################################
+# Click on "Run Document" in RStudio #
+######################################
+title: "Beyond model choice and parameter estimation"
+author: "Miguel de Navascués"
+output: learnr::tutorial
+runtime: shiny_prerendered
+bibliography: references.bib
+---
+
+These learning resources are available at [GitHub](https://github.com/mnavascues/ABCRFtutorial) & [Zenodo](http://doi.org/10.5281/zenodo.1435503).
+
+## Setup (tl;dr)
+
+```{r setup, include=TRUE}
+library(learnr)
+# functions for ABCRF
+library(abcrf)
+# function for weighted histogram
+suppressMessages(library(weights, quietly=T))
+```
+
+## Latent variables
+
+A latent variable is a variable of the model that is not directly observable. For instance, in the case 
+
+
+
+## Parameter inference from several models
+
