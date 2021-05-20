@@ -8,7 +8,7 @@ output: learnr::tutorial
 runtime: shiny_prerendered
 ---
 
-These learning resources are available at [Zenodo](http://doi.org/10.5281/zenodo.1435503).
+These learning resources are available at [GitHub](https://github.com/mnavascues/ABCRFtutorial) & [Zenodo](http://doi.org/10.5281/zenodo.1435503).
 
 ## Setup (tl;dr)
 

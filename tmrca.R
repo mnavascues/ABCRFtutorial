@@ -37,11 +37,7 @@ theta_prime <- 10^runif(num_of_sim,min=-1,max=2)
 msout <- ms(nsam = sample_size,
             opt = "-t tbs -T",
             tbs.matrix = cbind(theta_prime))
-msout_trees <-read.tree(text = msout[grep("//",msout)+1]) 
-tmrca <- theta_prime
-for (i in seq_len(num_of_sim)){
-  tmrca[i] <- tmrca[i] * get.rooted.tree.height(msout_trees[[i]])
-}
+tmrca <- theta_prime*sapply(read.tree(text = msout[grep("//",msout)+1]),get.rooted.tree.height)
 msout <- read.ms.output(txt=msout)
 S_prime  <- S(msout)
 PI_prime <- PI(msout)

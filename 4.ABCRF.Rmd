@@ -2,7 +2,7 @@
 ######################################
 # Click on "Run Document" in RStudio #
 ######################################
-title: "Classical ABC"
+title: "ABC with Random Forests"
 author: "Miguel de Navascués"
 output: learnr::tutorial
 runtime: shiny_prerendered
