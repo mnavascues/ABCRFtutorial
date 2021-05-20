@@ -15,7 +15,7 @@ These learning resources are available at [GitHub](https://github.com/mnavascues
 
 ```{r setup, include=TRUE}
 library(learnr)
-# functions for ABCRF
+# functions for ABC
 suppressMessages(library(abc, quietly=T))
 # function for weighted histogram
 suppressMessages(library(weights, quietly=T))
