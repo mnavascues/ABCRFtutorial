@@ -16,16 +16,140 @@ These learning resources are available at [GitHub](https://github.com/mnavascues
 ```{r setup, include=TRUE}
 library(learnr)
 # functions for ABCRF
-library(abcrf)
+suppressMessages(library(abc, quietly=T))
 # function for weighted histogram
 suppressMessages(library(weights, quietly=T))
 ```
 
 ## Latent variables
 
-A latent variable is a variable of the model that is not directly observable. For instance, in the case 
+A [latent variable](https://en.wikipedia.org/wiki/Latent_variable) is a variable of the model that is not directly observable, in opposition with variables that are observable (data). For instance, in the case of the coalescent model, the Time to the Most Recent Common Ancestor (TMRCA) is a random variable: each individual realization of the process with the same parameter values can have a different TMRCA. However, the TMRCA for real data is not observable. Some latent variables can be quantities of interest, so it can be useful to estimate them. Often, these latent variables have a strong impact on the data, so they have a higher correlation with them that some parameters. For instance, the correlation between $\theta$ and $\pi$ in the reference table  of the constant model is 0.87 while the correlation between TMRCA and $\pi$ is 0.95.
+
+### Exercise 1
+
+Estimate the TMRCA for *octomanati* and *rinocaracol*. Which model will you use? Why?
+
+```{r latent_variables, exercise=TRUE, exercise.lines=30}
+target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
+ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
 
 
+```
 
-## Parameter inference from several models
+```{r latent_variables-solution}
+target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
+ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
 
+octomanati_result <- abc(target = target["octomanati",c("S","PI","NH","TD")],
+                         param = ref_table_1[,"tmrca"],
+                         sumstat = ref_table_1[,c("S","PI","NH","TD")],
+                         tol = 0.01,transf = "log",method = "loclinear")
+rinocaracol_result <- abc(target = target["rinocaracol",c("S","PI","NH","TD")],
+                          param = ref_table_2[,"tmrca"],
+                          sumstat = ref_table_2[,c("S","PI","NH","TD")],
+                          tol = 0.01,transf = "log",method = "loclinear")
+
+cat("TMRCA estimate (point estimate and 95%CI) for octomanati")
+wtd.quantile(octomanati_result$adj.values,
+             weights = octomanati_result$weights,
+             probs = c(0.5, 0.025, 0.975))
+cat("TMRCA estimate (point estimate and 95%CI) for rinocaracol")
+wtd.quantile(rinocaracol_result$adj.values,
+             weights = rinocaracol_result$weights,
+             probs = c(0.5, 0.025, 0.975))
+    
+```
+
+## Inference from several models
+
+In some cases model choice might not give a clear result of one superior model over the rest of the models considered. If several models explain fairly well the observed data, which one should be used for parameter inference? Common *features* of the models can be inferred by pooling the reference tables from different models. These common features can be parameters (e.g. ancestral $\theta$ in a divergence model with several population), latent variables (e.g. TMRCA) or derived parameters from the primary parameters (e.g. $\theta_{\mathrm{present}}$, which takes the value of $\theta$ for the constant size model and the value of $\theta_0$ for the population size change model).
+
+### Exercise 2
+
+Estimate again the TMRCA for *octomanati* using both models. Does it change substantially from using only one model?
+
+```{r tmrca_from_2_models, exercise=TRUE, exercise.lines=30}
+target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
+ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
+```
+
+
+```{r tmrca_from_2_models-solution}
+target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
+ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
+
+ref_table <- rbind(ref_table_1[,c("tmrca","S","PI","NH","TD","FLD")],
+                   ref_table_2[,c("tmrca","S","PI","NH","TD","FLD")])
+
+octomanati_result <- abc(target = target["octomanati",c("S","PI","NH","TD","FLD")],
+                         param = ref_table[,"tmrca"],
+                         sumstat = ref_table[,c("S","PI","NH","TD","FLD")],
+                         tol = 0.01,transf = "log",method = "loclinear")
+
+cat("TMRCA estimate (point estimate and 95%CI) for octomanati")
+wtd.quantile(octomanati_result$adj.values,
+             weights = octomanati_result$weights,
+             probs = c(0.5, 0.025, 0.975))
+```
+
+### Exercise 3
+
+From the primary parameters in the reference table for the two models considered (constant population size and population size change) calculate derived parameters $\theta_t$ for $t\in(0,0.25,0.5,0.75,1,1.25,1.5,1.75,2)$ for each simulation. Estimate those derived parameters for *octomanati* and *rinocaracol*. Plot the $\hat\theta_t$ against $t$ (use a line plot).
+
+```{r skylineplot, exercise=TRUE, exercise.lines=30}
+target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
+ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
+
+
+```
+
+```{r skylineplot-solution}
+target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
+ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
+
+ref_table <- rbind(ref_table_1[,c("S","PI","NH","TD","FLD")],
+                   ref_table_2[,c("S","PI","NH","TD","FLD")])
+
+tt <- seq(0,2,0.25) 
+for (i in seq_along(tt)){
+  temp_theta_t <- ref_table_2$theta0
+  temp_theta_t[ref_table_2$tau<tt[i]] <- ref_table_2$theta1[ref_table_2$tau<tt[i]]
+  temp_theta_t <- c(ref_table_1$theta,temp_theta_t)
+  ref_table <- cbind(ref_table,temp_theta_t)
+}
+colnames(ref_table) <- c("S","PI","NH","TD","FLD","theta_t0.00",
+                         "theta_t0.25","theta_t0.50","theta_t0.75","theta_t1.00",
+                         "theta_t1.25","theta_t1.50","theta_t1.75","theta_t2.00")
+
+
+octomanati_result <- abc(target = target["octomanati",c("S","PI","NH","TD","FLD")],
+                         param = ref_table[,c("theta_t0.00",
+                         "theta_t0.25","theta_t0.50","theta_t0.75","theta_t1.00",
+                         "theta_t1.25","theta_t1.50","theta_t1.75","theta_t2.00")],
+                         sumstat = ref_table[,c("S","PI","NH","TD","FLD")],
+                         tol = 0.01,transf = "log",method = "loclinear")
+rinocaracol_result <- abc(target = target["rinocaracol",c("S","PI","NH","TD","FLD")],
+                          param = ref_table[,c("theta_t0.00",
+                         "theta_t0.25","theta_t0.50","theta_t0.75","theta_t1.00",
+                         "theta_t1.25","theta_t1.50","theta_t1.75","theta_t2.00")],
+                          sumstat = ref_table[,c("S","PI","NH","TD","FLD")],
+                          tol = 0.01,transf = "log",method = "loclinear")
+
+octomanati_skyline <- apply(octomanati_result$adj.values, 2, wtd.quantile,
+                            weights = octomanati_result$weights, probs = 0.5)
+rinocaracol_skyline <- apply(rinocaracol_result$adj.values, 2, wtd.quantile,
+                             weights = rinocaracol_result$weights, probs = 0.5)
+
+plot(tt,log10(octomanati_skyline),
+     ylim=c(-1,2), # prior limits
+     type="l",col="blue",lwd=2,
+     ylab=expression(log[10]*theta),
+     xlab="time (in number of mutations)")
+lines(tt,log10(rinocaracol_skyline), col="red", lwd=2)
+```
