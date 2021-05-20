@@ -19,8 +19,6 @@ library(learnr)
 library(phyclust, quietly=T)
 # functions for ABC
 suppressMessages(library(abc, quietly=T))
-# function for weighted histogram
-suppressMessages(library(weights, quietly=T))
 ```
 
 ## Compare prior and posterior

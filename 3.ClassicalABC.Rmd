@@ -15,8 +15,6 @@ These learning resources are available at [GitHub](https://github.com/mnavascues
 
 ```{r setup, include=TRUE}
 library(learnr)
-# function ms() (Hudson's coalescent simulator)
-library(phyclust, quietly=T)
 # functions for ABC
 suppressMessages(library(abc, quietly=T))
 # function for weighted histogram
