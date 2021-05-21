@@ -27,7 +27,7 @@ source("ms_sumstats.R", local =T)
 Discuss:
 
 - What is a computer simulation?
-- What are the sources of randomness?
+- What are the sources of randomness in a simulation?
 - How are random numbers produced in a computer?
 
 ## Simulation of a coin toss
@@ -80,10 +80,6 @@ rbinom(n=num_of_sim,size=n,prob=p)
 
 Simulation via the coalescent. For convenience, we will use the R package `phyclust` that includes a version of coalescent simulator `ms` in this tutorial. In practice, use of other simulators (msprime, fastsimcoal or the original implementation of ms) is recommended.
 
-```{r eval=FALSE, echo=TRUE}
-library(phyclust)
-```
-
 ### Exercise 3
 
 Simulate with `ms()` a sample of $n=10$ individuals sequenced for a mitochondrial DNA locus of lenght $l=10000$bp in a population of size $N=10000$ with mutation rate (per bp) $\mu=10^{-8}$:
@@ -115,11 +111,11 @@ l<-10000
 N<-10000
 u<-1e-8
 num_of_sim<-1
-theta <- 2*N*u*l # note that l*u is an approximation!
+theta <- 2*N*u*l 
 ms(nsam=n,nreps=num_of_sim,opt=paste("-t",theta))
 ```
 
-We can put this text into a more usable form (i.e. matrix of polymorphisms, etc) using a function distributed with the original software `ms`:
+We can put this text into a more usable form (i.e. matrix of polymorphisms, etc) using a function distributed with the original software `ms` and that we have loaded in the setup with:
 
 ```{r eval=FALSE, echo=TRUE}
 source("readms.output.R")

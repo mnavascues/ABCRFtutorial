@@ -408,12 +408,7 @@ Summarizing the data into summary statistics is not enough. The third kind of ap
 
 Note that, in practice, a proportion of simulations closest to the observation is accepted and this proportion is decided *a priori*. The $\delta$ is fixed *a posteriori* by the furthest simulation within the set of accepted simulations.
 
-From this moment, for convenience, we will start using the package `abc`.
-
-```{r eval=FALSE, echo=TRUE}
-library(abc)
-```
-
+From this moment, for convenience, we will start using the package `abc` that has been loaded in the setup.
 
 ### Exercise 9
 
