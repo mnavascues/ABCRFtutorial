@@ -1,5 +1,5 @@
 ---
-title: Crash Course on Approximate Bayesian Computation
+title: Crash Course on Approximate Bayesian Computation in Population Genetics
 author: Miguel de Navascués
 date: 21 May 2021
 ---
