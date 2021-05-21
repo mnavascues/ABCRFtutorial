@@ -104,17 +104,16 @@ Note: function `flip_coin_likelihood()` has been loaded with `source("coin_toss.
 From the likelihood profile we can obtain which is the value of $p$ that explain the best the observed data: the [maximum likelihood estimate](http://en.wikipedia.org/wiki/Maximum_likelihood_estimation). Which is the MLE estimate  of $p$ ($\hat{p}$):
 
 
-```{r eval=TRUE, echo=TRUE}
-likelihood_profile <- flip_coin_likelihood(p=seq(0,1,0.01),h=4,t=6)
-```
 
 ```{r maximum_likelihood, exercise=TRUE}
+likelihood_profile <- flip_coin_likelihood(p=seq(0,1,0.01),h=4,t=6)
 maxL <- _____(likelihood_profile$l)
 p_hat <- likelihood_profile$p[which(likelihood_profile$l==_____)]
 p_hat
 ```
 
 ```{r maximum_likelihood-solution}
+likelihood_profile <- flip_coin_likelihood(p=seq(0,1,0.01),h=4,t=6)
 maxL <- max(likelihood_profile$l)
 p_hat <- likelihood_profile$p[which(likelihood_profile$l==maxL)]
 p_hat
@@ -127,11 +126,10 @@ For this simple model there is an analytical solution for the maximum likelihood
 
 What about our initial question? Is the coin fair? From the likelihood profile we can also calculate whether the maximum likelihood estimate for $p$ is significantly better that $p=0.5$ (*via* the [confidence interval](http://en.wikipedia.org/wiki/Confidence_interval#Methods_of_derivation)). Based on the likelihood-ratio test (with $\alpha=0.05$):
 
-```{r get_maxL, eval=TRUE, echo=FALSE}
-maxL <- max(likelihood_profile$l)
-```
 
 ```{r confidence_interval, eval=TRUE, echo=TRUE}
+likelihood_profile <- flip_coin_likelihood(p=seq(0,1,0.01),h=4,t=6)
+maxL <- max(likelihood_profile$l)
 CI95  <- likelihood_profile$p[which(likelihood_profile$l > exp(log(maxL)-1.92))]
 CI95  <- CI95[c(1,length(CI95))]
 CI95
