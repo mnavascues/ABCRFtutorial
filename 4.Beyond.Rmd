@@ -142,14 +142,18 @@ rinocaracol_result <- abc(target = target["rinocaracol",c("S","PI","NH","TD","FL
                           tol = 0.01,transf = "log",method = "loclinear")
 
 octomanati_skyline <- apply(octomanati_result$adj.values, 2, wtd.quantile,
-                            weights = octomanati_result$weights, probs = 0.5)
+                            weights = octomanati_result$weights, probs = c(0.5,0.025,0.975))
 rinocaracol_skyline <- apply(rinocaracol_result$adj.values, 2, wtd.quantile,
-                             weights = rinocaracol_result$weights, probs = 0.5)
+                             weights = rinocaracol_result$weights, probs = c(0.5,0.025,0.975))
 
-plot(tt,log10(octomanati_skyline),
+plot(tt,log10(octomanati_skyline[1,]),
      ylim=c(-1,2), # prior limits
      type="l",col="blue",lwd=2,
      ylab=expression(log[10]*theta),
      xlab="time (in number of mutations)")
-lines(tt,log10(rinocaracol_skyline), col="red", lwd=2)
+lines(tt,log10(octomanati_skyline[2,]), col="blue", lty=2)
+lines(tt,log10(octomanati_skyline[3,]), col="blue", lty=2)
+lines(tt,log10(rinocaracol_skyline[1,]), col="red", lwd=2)
+lines(tt,log10(rinocaracol_skyline[2,]), col="red", lty=2)
+lines(tt,log10(rinocaracol_skyline[3,]), col="red", lty=2)
 ```
