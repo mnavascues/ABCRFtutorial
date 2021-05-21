@@ -337,7 +337,7 @@ saveRDS(target,file="target.RDS")
 
 ### Exercise 8
 
-Apply the rejection algorithm using one summary statistic. Start with the number of segregating sites and the number of haplotypes (`S`, `NH`), then try $\pi$ (`PI`).
+Apply the rejection algorithm using one summary statistic on the *mammollusk* data. Start with the number of segregating sites and the number of haplotypes (`S`, `NH`), then try $\pi$ (`PI`). How many simulations are being accepted? Make the same plots as in exercise 4 to help you explore.
 
 ```{r rejection_algortihm_sumstats, exercise=TRUE, exercise.lines=35}
 target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
@@ -345,12 +345,42 @@ ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1
 
 ```
 
-```{r rejection_algortihm_sumstats-hint}
+```{r rejection_algortihm_sumstats-hint-1}
 target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 target
 head(ref_table)
 ```
+
+
+
+```{r rejection_algortihm_sumstats-hint-2}
+target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
+ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+
+num_of_sims <- 10000 # use a subset of simulation from a total of 1 000 000
+
+SS          <- target$S[1]
+SS_prime    <- ref_table$S[seq_len(num_of_sims)]
+theta_prime <- ref_table$theta[seq_len(num_of_sims)]
+theta_prime_accept <- theta_prime[which(SS_prime==SS)] 
+SS_prime_accept <- SS_prime[which(SS_prime==SS)] 
+
+cat("This is a sample of the posterior (using S):")
+(theta_prime_accept)
+
+SS          <- target$PI[1]
+SS_prime    <- ref_table$PI[seq_len(num_of_sims)]
+theta_prime <- ref_table$theta[seq_len(num_of_sims)]
+theta_prime_accept <- theta_prime[which(SS_prime==SS)] 
+SS_prime_accept <- SS_prime[which(SS_prime==SS)] 
+
+cat("This is a sample of the posterior (using PI):")
+(theta_prime_accept)
+
+
+```
+
 
 
 ```{r rejection_algortihm_sumstats-solution}
@@ -359,8 +389,8 @@ ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1
 
 num_of_sims <- 10000 # use a subset of simulation from a total of 1 000 000
 
-SS          <- target$S[1]
-SS_prime    <- ref_table$S[seq_len(num_of_sims)]
+SS          <- target$PI[1]
+SS_prime    <- ref_table$PI[seq_len(num_of_sims)]
 theta_prime <- ref_table$theta[seq_len(num_of_sims)]
 theta_prime_accept <- theta_prime[which(SS_prime==SS)] 
 SS_prime_accept <- SS_prime[which(SS_prime==SS)] 
