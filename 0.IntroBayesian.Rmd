@@ -210,11 +210,11 @@ lines(p, y = flip_coin_likelihood(p,h,t)$l, col = "red")# likelihood
 
 ## *All models are wrong*
 
-Until this point we have considered that the binomial model describes well the reality of our coin. However, in addition to heads and tails there are other possible outcomes when tossing a coin, e.g. falling and staying on its side.
+Until this point we have considered that the binomial model describes well the reality of our coin. However, in addition to heads and tails there are other possible outcomes when tossing a coin, e.g. the coin stays on its side, falls into a drainage grate...
 
 ### Exercise 7
 
- Analyze the data under a model that considers three outcomes (i.e. heads/tails/side):
+Analyze the data under a model that considers three outcomes (i.e. heads/tails/side):
 
 ```{r multinomial, exercise=TRUE, , exercise.lines=15}
 h=4;t=6;s=0

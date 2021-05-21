@@ -32,7 +32,7 @@ Approximate Bayesian Computation is a likelihood-free model-based inference appr
 
 ### Exercise 1
 
-For the coin toss experiment, estimate the likelihood of $p=0.5$ for $h=4$ and $t=6$ using simulations:
+For the coin toss experiment, estimate the likelihood of $p=0.5$ for $h=4$ and $t=6$ using simulations.
 The true value (for $p=0.5$, $h=4$ and $t=6$) is `r choose(10, 4) * 0.5^10`. Is the estimate reasonable? How can the estimate be improved?
 
 ```{r simulation_coin_toss_rbinom, exercise=TRUE}
@@ -63,7 +63,7 @@ sum(h_prime==h)/num_of_sim
 
 ### Exercise 2
 
-Plot the likelihood profile from using simulation-based estimates of the likelihood. Compare the results with the analytical solution. Why should we bother about a (slower, less accurate) simulation-based solution? For this exercise you have available two functions: `flip_coin_likelihood()` and `flip_coin_likelihood_approx()` that have been loaded using:
+Plot the likelihood profile from using simulation-based estimates of the likelihood by running the code provided. Compare the results with the analytical solution. Why should we bother about a (slower, less accurate) simulation-based solution? For this exercise you have two functions available, `flip_coin_likelihood()` and `flip_coin_likelihood_approx()`, that have been loaded using:
 
 
 ```{r eval=FALSE, echo=TRUE}
@@ -318,7 +318,7 @@ ref_table <- data.frame(theta=theta_prime,
 saveRDS(ref_table,file="ref_table_1.RDS")
 ```
 
-The summary statistics for our tagret species is saved as:
+The summary statistics for our two target species has been calculated with the same functions. It has been saved as:
 
 
 ```{r eval=FALSE, echo=TRUE}
