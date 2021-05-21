@@ -64,7 +64,7 @@ wtd.quantile(rinocaracol_result$adj.values,
 
 ## Inference from several models
 
-In some cases model choice might not give a clear result of one superior model over the rest of the models considered. If several models explain fairly well the observed data, which one should be used for parameter inference? Common *features* of the models can be inferred by pooling the reference tables from different models. These common features can be parameters (e.g. ancestral $\theta$ in a divergence model with several population), latent variables (e.g. TMRCA) or derived parameters from the primary parameters (e.g. $\theta_{\mathrm{present}}$, which takes the value of $\theta$ for the constant size model and the value of $\theta_0$ for the population size change model).
+In some cases model choice might not give a clear result of one superior model over the rest of the models considered. If several models explain fairly well the observed data, which one should be used for parameter inference? Common *features* of the models can be inferred by pooling the reference tables from different models. These common features can be parameters (e.g. ancestral $\theta$ in a divergence model with several population), latent variables (e.g. TMRCA) or derived parameters/constants from the primary parameters (e.g. $\theta_{\mathrm{present}}$, which takes the value of $\theta$ for the constant size model and the value of $\theta_0$ for the population size change model).
 
 ### Exercise 2
 
