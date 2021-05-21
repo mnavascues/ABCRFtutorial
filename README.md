@@ -18,3 +18,18 @@ The code has been tested with R (3.6.3) and RStudio (1.4.1106) on Ubuntu (20.04.
 * phyclust (0.1-30)
 * tree (1.0-40)
 * weights (1.0)
+
+### Instructions
+
+Each learning unit is contained in a RMarkdown file. Opening it with RStudio en clicking on `Run Document` button will generate an interactive file with the lessons and exercises. Currently the are the following units available:
+
+* 0.IntroBayesian.Rmd (Quick Introduction to Bayesian Statistics)
+* 00.Simulation.Rmd (Quick Introduction to Simulation)
+* 1.ABC.Rmd (The Three Approximations in ABC)
+* 2.GoodPractices.Rmd (Good Practices in ABC)
+* 3.ClassicalABC.Rmd (Classical ABC)
+* 4.Beyond.Rmd (Beyond model choice and parameter estimation)
+
+(units on ABCRF are in progress)
+
+
