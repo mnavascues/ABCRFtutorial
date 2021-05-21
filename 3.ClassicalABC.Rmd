@@ -27,7 +27,7 @@ An additional local regression step was introduced to the rejection algorithm [@
 
 ### Exercise 1
 
-Explore the application of the regression algorithm implemented in `abc()`. Compare the posterior probability distribution estimated from adjusted and from unadjusted (original) values. Explore how this difference changes with the value of tolerance (for instance `tolerance<-0.8`). Try also with Tajima's $D$ as summary statistic (`TD`). Try using using $\pi$ and Tajima's $D$ (i.e. `SS <-target[1,c("PI","TD")]`) and skip the scatter plot. Try using $\pi$ and some completely uninformative summary statistic (i.e. generate a fake random summary statistic using `runif()` for both reference table and target data).
+Explore the application of the regression algorithm implemented in `abc()`. Compare the posterior probability distribution estimated from adjusted and from unadjusted (original) values. Explore how this difference changes with the value of tolerance (for instance `tolerance<-0.8`). Try also with Tajima's $D$ as summary statistic (`TD`). Try using using $\pi$ and Tajima's $D$ (i.e. `SS <-target[1,c("PI","TD")]`) and skip the scatter plot. Try using $\pi$ and some completely uninformative summary statistic (i.e. generate a fake random summary statistic using `runif()` for both reference table and target data). Do you think a linear regression makes sense in this case? Open the help for `abc()` function and read about the option `method="neuralnet"`.
 
 ```{r abc_regression, exercise=TRUE, exercise.lines=30}
 target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
