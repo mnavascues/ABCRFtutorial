@@ -19,147 +19,18 @@ library(learnr)
 library(abcrf)
 # function for weighted histogram
 suppressMessages(library(weights, quietly=T))
-# functions for CARTs
-library(tree)
 ```
 
-## Classification and regression trees
+## Limitations of classical ABC
 
-Random forests are a machine learning method for regression and classification. Its name comes from the fact of being constituted of "trees". These trees are *classification and regression trees* or CARTs. So first we will make some exercises to better understand what CARTs are.
+The classical approaches in ABC that we have explored present two application challenges: 
 
-### Exercise 1
+* Trade-off between number of simulations and tolerance (only partially solved by regression ABC)
+* Choice of summary statistics: which and how many to add? are they informative? See also: [curse of dimensionality](https://en.wikipedia.org/wiki/Curse_of_dimensionality).
 
-Explore CARTs using `tree()` function from `tree` package. First make a regression tree for parameter $\theta_1$ from Tajima's $D$ and $\pi$. Then make a classification tree for model from Tajima's $D$ and Fu and Li's $D$.
-
-```{r cart_regression, exercise=TRUE, exercise.lines=30}
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
-
-regression_tree <- tree(theta1 ~ TD + PI, data=ref_table)
-
-plot(regression_tree)
-text(regression_tree,cex=0.75)
-
-par(bg = 'aliceblue')
-plot(ref_table$TD,
-     ref_table$PI,
-     xlab="Tajima's D",
-     ylab=expression(pi),
-     col=grey(1-ref_table$theta1/max(ref_table$theta1)),
-     pch=20)
-
-# for whatever reason this part gives an error here but runs fine in an R console, try there
-partition.tree(regression_tree,
-               ordvars=c("TD","PI"),
-               add=T,cex=1)
-```
+The use of Random forests in ABC has 
 
 
-```{r cart_classification, exercise=TRUE, exercise.lines=30}
-ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
-ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
+## Exercises on ABC with Random Forest
 
-num_of_sims <- 10000
-
-model <- c(rep("constant population size",num_of_sims),rep("population size change",num_of_sims))
-sumstats <- rbind(ref_table_1[seq_len(num_of_sims),c("S","PI","NH","TD","FLD")],
-                  ref_table_2[seq_len(num_of_sims),c("S","PI","NH","TD","FLD")])
-ref_table <-cbind(model,sumstats)
-
-classification_tree <- tree(model ~ TD + FLD, data=ref_table)
-
-plot(classification_tree)
-text(classification_tree,cex=0.75)
-
-plot(ref_table$TD[which(model=="population size change")],
-     ref_table$FLD[which(model=="population size change")],
-     xlab="Tajima's D",
-     ylab="Fu and Li's D",
-     pch=20)
-points(ref_table$TD[which(model=="constant population size")],
-       ref_table$FLD[which(model=="constant population size")],
-       col="grey",pch=20)
-# for whatever reason this part gives an error here but runs fine in an R console, try there
-partition.tree(classification_tree,
-               ordvars=c("TD","FLD"),
-               add=T,cex=1.5,col="red")
-```
-
-## Forest
-
-### Exercise 2
-
-```{r many_trees, exercise=TRUE, exercise.lines=30}
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
-
-ref_table <- ref_table[ref_table$PI!=0,] # just for plotting convenience
-
-regression_tree <- tree(log(theta) ~ PI, data=ref_table)
-
-plot(regression_tree)
-text(regression_tree,cex=0.75)
-
-plot(ref_table$PI,
-     log(ref_table$theta),
-     xlab=expression(pi),
-     ylab=expression(log[10]*theta),
-     pch=20, log="x")
-
-# for whatever reason this part gives an error here but runs fine in an R console, try there
-partition.tree(regression_tree,
-               ordvars=c("PI","theta"),
-               add=T,cex=1.5,col="red",lwd=2)
-
-plot(ref_table$PI,
-     log10(ref_table$theta),
-     xlab=expression(pi),
-     ylab=expression(log[10]*theta),
-     pch=20,log="x")
-for (i in 1:100){
-        random_sample <- sample(nrow(ref_table),size=500,replace=T)
-        ref_table_random_sample <- ref_table[random_sample,]
-        regression_tree_random_sample <- tree(log10(theta) ~ PI, data=ref_table_random_sample)
-        partition.tree(regression_tree_random_sample,
-                       ordvars=c("PI","theta"),
-                       add=T,cex=1.5,col=7,lwd=1)
-}
-```
-
-
-## ABC with Random Forest
-
-As we have seen above, Random Forest allows you to classify your observation in a category (i.e. model choice) and obtain an estimate of a quantitative variable (i.e. parameter estimation). But these values are not associated to posterior probabilities. The package `abcrf` [Marin et al., 2017] implements the development that allow to get these probabilities using random forest. For model choice, random forest provides you with the number of votes supporting each of the models (number of votes = number of trees leading to a given model). However, the number of votes is not necessary a good quantitative measure of the incertitude of the model choice. Pudlo et al. [2016] developed the approach to estimate the posterior probability. First, a random forest is
-grown for model choice:
-
-### Exercise 3
-
-```{r abcrf_model_choice, exercise=TRUE, exercise.lines=30}
-target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
-ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
-
-num_of_sims <- 10000
-
-model <- c(rep("constant population size",num_of_sims),rep("population size change",num_of_sims))
-sumstats <- rbind(ref_table_1[seq_len(num_of_sims),c("S","PI","NH","TD","FLD")],
-                  ref_table_2[seq_len(num_of_sims),c("S","PI","NH","TD","FLD")])
-ref_table <-cbind(model,sumstats)
-
-model_RF <- abcrf(formula = model~.,
-                  data = ref_table,
-                  ntree = 1000,
-                  lda=F,paral = T)
-plot(model_RF, training=ref_table)
-
-model_selection_result_RF <- predict(object= model_RF,
-                                     obs = target,
-                                     training = ref_table,
-                                     ntree = 1000,
-                                     paral = T,
-                                     paral.predict = T)
-(model_selection_result_RF)
-
-
-
-
-```
 
