@@ -32,4 +32,7 @@ Each learning unit is contained in a RMarkdown file. Opening it with RStudio en 
 
 (units on ABCRF are in progress)
 
+### todo
+
+* Version in Python of some materials using msprime as simulator, tskit for calculating summary statistics and ranger for abcrf, maybe in a jupyter notebook
 
