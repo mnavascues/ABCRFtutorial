@@ -138,7 +138,6 @@ ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table
 ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
 
 num_of_sims <- 10000
-
 model <- c(rep("constant population size",num_of_sims),rep("population size change",num_of_sims))
 sumstats <- rbind(ref_table_1[seq_len(num_of_sims),c("S","PI","NH","TD","FLD")],
                   ref_table_2[seq_len(num_of_sims),c("S","PI","NH","TD","FLD")])

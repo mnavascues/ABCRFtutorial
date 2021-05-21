@@ -28,9 +28,93 @@ The classical approaches in ABC that we have explored present two application ch
 * Trade-off between number of simulations and tolerance (only partially solved by regression ABC)
 * Choice of summary statistics: which and how many to add? are they informative? See also: [curse of dimensionality](https://en.wikipedia.org/wiki/Curse_of_dimensionality).
 
-The use of Random forests in ABC has 
+The use of Random Forests in ABC (ABCRF) has provided a solution for both problems since it does not require a tolerance (there is no rejection step) and informative summary statistics are selected automatically. ABCRF is probably the most efficient way of doing ABC at present. In this unit we will learn how to use ABCRF as implemented in the `abcrf()` package. Next unit will explore how ABCRF works to avoid a "black box" use of this approach.
+
+## Exercises on ABCRF
+
+### Exercise on model choice with ABCRF
+
+The function to perform model selection is `abcrf()`, run the code provided to find the best model for *octomanati* and *rinocaracol*. The results contain a confusion matrix that allows to have an evaluation of the performance of the method. What do you think about the performance in this case? How does that compare with the actual posterior probabilities estimated for *octomanati* and *rinocaracol*? Is it worth to repeat the analysis increasing the number of trees in the random forest?
+
+```{r model_choice, exercise=TRUE, exercise.lines=30}
+target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
+ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
+
+num_of_sims <- 10000
+
+model <- c(rep("constant population size",num_of_sims),rep("population size change",num_of_sims))
+sumstats <- rbind(ref_table_1[seq_len(num_of_sims),c("S","PI","NH","TD","FLD")],
+                  ref_table_2[seq_len(num_of_sims),c("S","PI","NH","TD","FLD")])
+ref_table <-cbind(model,sumstats)
+
+# classification (equivalent to regression step)
+model_RF <- abcrf(formula = model~.,
+                  data = ref_table,
+                  ntree = 1000, paral = T)
+
+# result from out-of-bag error (equivalent to cross-validation)
+model_RF$model.rf$confusion.matrix
+# can the error rate be improved by increasing the number of trees?
+err.abcrf(model_RF, training = ref_table, paral = T)
 
 
-## Exercises on ABC with Random Forest
+model_selection_result_RF <- predict(object= model_RF,
+                                     obs = target,
+                                     training = ref_table,
+                                     ntree = 1000,
+                                     paral = T,
+                                     paral.predict = T)
+(model_selection_result_RF)
+```
 
+### Exercise on parameter inference
 
+Estimate parameter $\theta$ from the model of constant population size for *octomanati* using the code provided (it uses function `regAbcrf()`). Increase the number of trees if necessary. Are the estimates very different from the ones obtained with classical regression ABC (unit 3)? The values of $\theta$ from the whole reference table are used to plot the histogram of its posterior probability distribution, why?
+
+```{r parameter_inference, exercise=TRUE, exercise.lines=30}
+target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
+ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+
+num_of_sims <- 10000
+ref_table <- ref_table_1[seq_len(num_of_sims),c("theta","S","PI","NH","TD","FLD")]
+
+RFmodel_theta <- regAbcrf(formula = log10(theta)~.,
+                          data = ref_table,
+                          ntree = 1000,
+                          paral = T)
+
+# out-of-bag estimates (equivalent to cross-validation)
+plot(log10(ref_table$theta),
+     RFmodel_theta$model.rf$predictions,
+     xlab=expression(log[10]*theta),
+     ylab=expression("out-of-bag "*log[10]*hat(theta)))
+abline(a=0,b=1,col="red")
+# can the error be lowered by increasing the number of trees?
+err.regAbcrf(RFmodel_theta,training=ref_table,paral=T)
+
+posterior_theta_RF <- predict(object = RFmodel_theta,
+                              obs = target[1,],
+                              training = ref_table,
+                              paral = T,
+                              rf.weights = T) # this option so weights are in the output
+
+cat("theta point estimate for octomanati")
+10^posterior_theta_RF$med
+cat("theta 95%CI for octomanati")
+10^posterior_theta_RF$quantiles
+
+hist(log10(ref_table$theta),
+     breaks = seq(-1,2,0.05),
+     col = "grey",
+     freq = FALSE,
+     ylim = c(0,5),
+     main = "",
+     xlab = expression(log[10]*theta),
+     ylab = "probability density")
+wtd.hist(log10(ref_table$theta),
+         breaks = seq(-1,2,0.05),
+         col = "yellow", freq=FALSE, add=TRUE,
+         weight = posterior_theta_RF$weights);
+
+```
