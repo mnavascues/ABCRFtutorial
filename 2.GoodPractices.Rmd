@@ -141,8 +141,12 @@ abline(a = 0, b = 1)
 
 
 ## Evaluation of the posterior: comparison with prior
+#### (after applying ABC to the data)
 
-Priors can be used to incorporate previous information on the parameters. In the case of our population genetics example, we could imagine to have some information on mutation rates (e.g. from pedigrees) and population sizes (from census). Since $\theta = 2N\mu$, we could draw parameters $N$ and $\mu$ from prior probability distributions and combine them to get the prior of $\theta$. Assuming that our prior knowledge on *octomanati* and *rinocaracol* point us towards mitochondrial mutation rates between $3\times 10^{-6}$ and $10^{-4}$ per bp per generation (sequence length of 100bp) and effective population sizes between $1$ and $30$ million individuals, I have generated a reference table from such priors with the following code:
+The posterior probability combines the previous information (prior probability) with the new information provided by the data. If the data is not informative about the parameter of the model (respect to the information already present in the prior) there will be no or little difference between the distribution of prior and posterior probabilities. Therefore, it is imperative to verify that the posterior distribution changes with respect to the data. Otherwise, we could extract some concussions from the resulting posterior distribution unaware that our experiment and data did not provide any new insight to the question we are addressing.
+
+
+This is important because priors can be used to incorporate previous information on the parameters. In the case of our population genetics example, we have some information on mutation rates (from pedigrees) and population sizes (from census) in *octomanati* and *rinocaracol*. Since $\theta = 2N\mu$, we could draw parameters $N$ and $\mu$ from prior probability distributions and combine them to get the prior of $\theta$. Our prior knowledge on *octomanati* and *rinocaracol* point us towards mitochondrial mutation rates between $3\times 10^{-6}$ and $10^{-4}$ per bp per generation (sequence length of 100bp) and effective population sizes between $1$ and $30$ million individuals. I have generated a reference table from such priors with the following code:
 
 ```{r eval=FALSE, echo=TRUE}
 sample_size = 50
