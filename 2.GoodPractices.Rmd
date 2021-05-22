@@ -22,11 +22,11 @@ suppressMessages(library(abc, quietly=T))
 ```
 
 ## Evaluation of the model and prior: Goodness of fit
+#### (after generating the reference table & before running ABC)
 
 
 As discussed in the previous unit, the threshold distance for the rejection algorithm is not set *a priori*. Instead a proportion of simulations closer to the observed (tolerance) is decided *a priori* and the furthest simulation among the ones kept defines *a posteriori* the threshold distance. This can be problematic. If the model and priors used for the simulation generate simulated data very different from observation, the ABC approach will still chose a proportion of them that are the "less different". It is therefore imperative not to apply the ABC method blindly and verify that simulations produce data comparable with the observation.
 
-#### (after generating the reference table & before running ABC)
 
 
 ### Exercise 1
@@ -80,10 +80,10 @@ points(target$TD,target$FLD,col=c("yellow","orange"))
 ```
 
 ## Evaluation of the method: Cross-validation
+#### (after running ABC & before applying to the data)
 
 Evaluating the performance of the method can be done by dividing the reference table into a *training set* used for ABC and a *testing set* from which inferences will be obtained and compared to the true values. Alternatively, it is possible to do a *leave-one-out* cross-validation: one simulation is taken out from the reference table and the rest of the simulations are used to apply the ABC estimation on that simulation. This is repeated a large number of times and the estimates and true values are compared. 
 
-#### (after running ABC & before applying to the data)
 
 
 ### Exercise 2
@@ -166,7 +166,6 @@ saveRDS(ref_table,file="ref_table_1b.RDS")
 
 
 
-#### (after applying ABC to the data)
 
 
 
