@@ -297,14 +297,15 @@ Simulate sequence data with `ms` (from `phyclust` package) using the standard co
 
 ```{r simulation_coalescent, exercise=TRUE}
 sample_size = 50
-num_of_sim = 10 # use larger number at your own risk /!\
+num_of_sim = 10
 theta_prime <- 10^runif(num_of_sim,min=-1,max=2)
+cat("theta values are:");theta_prime
 msout <- ms(nsam = sample_size,
             opt = "-t tbs",
             tbs.matrix = cbind(theta_prime))
 msout <- read.ms.output(txt=msout)
-S(msout)
-PI(msout)
+cat("number of segregating sites are:");S(msout)
+cat("pi values are:");PI(msout)
 ```
 
 Simulation can be very time consuming, for the following exercises we will be using a set of simulations which have already been run and summary statistics calculated from them (this is called the **reference table**). This reference table has been produced with the following code:
@@ -352,7 +353,10 @@ saveRDS(target,file="target.RDS")
 
 ### Exercise 8
 
-Apply the rejection algorithm using one summary statistic on the *mammollusk* data. Start with the number of segregating sites and the number of haplotypes (`S`, `NH`), then try $\pi$ (`PI`). How many simulations are being accepted? Make the same plots as in exercise 4 to help you explore.
+Apply the rejection algorithm using one summary statistic on the *mammollusk* data.
+
+* Start with the number of segregating sites and the number of haplotypes (`S`, `NH`), then try $\pi$ (`PI`). How many simulations are being accepted?
+* Make the same plots as in exercise 4 to help you explore.
 
 ```{r rejection_algortihm_sumstats, exercise=TRUE, exercise.lines=35}
 target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
