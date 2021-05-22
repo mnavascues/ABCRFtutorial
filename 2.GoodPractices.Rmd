@@ -21,48 +21,80 @@ library(phyclust, quietly=T)
 suppressMessages(library(abc, quietly=T))
 ```
 
-
 ## Evaluation of the model and prior: Goodness of fit
+
+
+As discussed in the previous unit, the threshold distance for the rejection algorithm is not set *a priori*. Instead a proportion of simulations closer to the observed (tolerance) is decided *a priori* and the furthest simulation among the ones kept defines *a posteriori* the threshold distance. This can be problematic. If the model and priors used for the simulation generate simulated data very different from observation, the ABC approach will still chose a proportion of them that are the "less different". It is therefore imperative not to apply the ABC method blindly and verify that simulations produce data comparable with the observation.
+
+#### (after generating the reference table & before running ABC)
+
 
 ### Exercise 1
 
+Compare the simulations in the reference table with the data from *octomanati* and *rinocaracol*:
 
-```{r prior_checking, exercise=TRUE, exercise.lines=15}
+* Use Principal Component Analysis (`princomp()`) and plot different PCs (i.e. change code `pc<-c(3,4)`) of the simulations.
+* Project target data in the plot (`princomp()`). Are simulations generating data similar to the target data? 
+* Compare the summary statistics values between target and simulations. Which are the summary statistics that do not fit? 
+* Propose some other model and discuss why do you think it would solve this problem.
+
+```{r prior_checking, exercise=TRUE, exercise.lines=20}
 target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
 num_of_sims <- 10000
 
+# Principal Component Analysis
 PCA_result  <- princomp(ref_table[,c("S","PI","NH","TD","FLD")])
+pc<-c(1,2) 
+plot(PCA_result$scores[seq_len(num_of_sims),pc[1]],
+     PCA_result$scores[seq_len(num_of_sims),pc[2]],
+     xlab=paste("PCA",pc[1]),ylab=paste("PCA",pc[2]))
+# projection of target data
 PCA_target <- predict(PCA_result, target[,c("S","PI","NH","TD","FLD")])
-plot(PCA_result$scores[seq_len(num_of_sims),1],
-     PCA_result$scores[seq_len(num_of_sims),2],
-     xlab="PCA 1",ylab="PCA 2")
-points(PCA_target[,1],PCA_target[,2],col=c("yellow","orange"))
+points(PCA_target[,pc[1]],PCA_target[,pc[2]],col=c("yellow","orange"))
 
-plot(PCA_result$scores[seq_len(num_of_sims),3],
-     PCA_result$scores[seq_len(num_of_sims),4],
-     xlab="PCA 3",ylab="PCA 4")
-points(PCA_target[,3],PCA_target[,4],col=c("yellow","orange"))
-
-plot(ref_table$TD[seq_len(num_of_sims)],
-     ref_table$FLD[seq_len(num_of_sims)],
-     xlab="Tajima's D",ylab="Fu and Li's D")
-points(target$TD,target$FLD,col=c("yellow","orange"))
 ```
 
 
+```{r prior_checking-solution}
+target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
+ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+
+num_of_sims <- 10000
+# Principal Component Analysis
+PCA_result  <- princomp(ref_table[,c("S","PI","NH","TD","FLD")])
+pc<-c(1,2) 
+plot(PCA_result$scores[seq_len(num_of_sims),pc[1]],
+     PCA_result$scores[seq_len(num_of_sims),pc[2]],
+     xlab=paste("PCA",pc[1]),ylab=paste("PCA",pc[2]))
+# projection of target data
+PCA_target <- predict(PCA_result, target[,c("S","PI","NH","TD","FLD")])
+points(PCA_target[,pc[1]],PCA_target[,pc[2]],col=c("yellow","orange"))
+
+plot(ref_table$TD[seq_len(num_of_sims)],
+     ref_table$FLD[seq_len(num_of_sims)],
+     xlab="Tajima's D",ylab="Fu and Li's D",
+     xlim=c(-3,4),ylim=c(-5,3))
+points(target$TD,target$FLD,col=c("yellow","orange"))
+```
 
 ## Evaluation of the method: Cross-validation
 
+Evaluating the performance of the method can be done by dividing the reference table into a *training set* used for ABC and a *testing set* from which inferences will be obtained and compared to the true values. Alternatively, it is possible to do a *leave-one-out* cross-validation: one simulation is taken out from the reference table and the rest of the simulations are used to apply the ABC estimation on that simulation. This is repeated a large number of times and the estimates and true values are compared. 
+
+#### (after running ABC & before applying to the data)
 
 
 ### Exercise 2
 
 Use cross-validation function `cv4abc()` from `abc` package to evaluate the performance of the ABC method. This is a time consuming task, for the purpose of this exercise, use a low cross-validation sample size (e.g. `nval=20`; note that you want a much higher number for real analyses):
 
-```{r cross_validation, exercise=TRUE, exercise.lines=15}
-ttarget    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
+* Are the estimates OK?
+* How would you provide an objective comparison (rather than a visual comparison) of the true and estimated values? ([hint](https://en.wikipedia.org/wiki/Estimator))
+
+```{r cross_validation, exercise=TRUE, exercise.lines=25}
+target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
 ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
 num_of_sims <- 10000
@@ -134,9 +166,17 @@ saveRDS(ref_table,file="ref_table_1b.RDS")
 
 
 
+#### (after applying ABC to the data)
+
+
+
 ### Exercise 3
 
-Using the new reference table, plot the posterior distribution from the ABC analysis [click `Run Code`]. Is the analysis informative about $\theta$? What is the summary statistics used? Is Tajima's $D$, on its own, informative about $\theta$? What is going on? Add to the plot the histogram with the prior probability distribution. 
+Using the new reference table, plot the posterior distribution from the ABC analysis [click `Run Code`]:
+
+* Is the analysis informative about $\theta$?
+* What is the summary statistics used? Is Tajima's $D$, on its own, informative about $\theta$? What is going on?
+* Add to the plot the histogram with the prior probability distribution. 
 
 ```{r unexpected_prior, exercise=TRUE, exercise.lines=30}
 target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
