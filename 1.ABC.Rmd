@@ -33,7 +33,9 @@ Approximate Bayesian Computation is a likelihood-free model-based inference appr
 ### Exercise 1
 
 For the coin toss experiment, estimate the likelihood of $p=0.5$ for $h=4$ and $t=6$ using simulations.
-The true value (for $p=0.5$, $h=4$ and $t=6$) is `r choose(10, 4) * 0.5^10`. Is the estimate reasonable? How can the estimate be improved?
+
+* The true value (for $p=0.5$, $h=4$ and $t=6$) is `r choose(10, 4) * 0.5^10`. Is the estimate reasonable?
+* How can the estimate be improved?
 
 ```{r simulation_coin_toss_rbinom, exercise=TRUE}
 h = 4; t = 6; p = 0.5
@@ -63,7 +65,12 @@ sum(h_prime==h)/num_of_sim
 
 ### Exercise 2
 
-Plot the likelihood profile from using simulation-based estimates of the likelihood by running the code provided. Compare the results with the analytical solution. Why should we bother about a (slower, less accurate) simulation-based solution? For this exercise you have two functions available, `flip_coin_likelihood()` and `flip_coin_likelihood_approx()`, that have been loaded using:
+Plot the likelihood profile from using simulation-based estimates of the likelihood by running the code provided.
+
+* Compare the results with the analytical solution.
+* Why should we bother about a (slower, less accurate) simulation-based solution?
+
+For this exercise you have two functions available, `flip_coin_likelihood()` and `flip_coin_likelihood_approx()`, that have been loaded using:
 
 
 ```{r eval=FALSE, echo=TRUE}
@@ -148,7 +155,11 @@ p_prime_accept
 
 ### Exercise 4
 
-Use `flip_coin_posterior_approx()` function (see setup for details) to crate a sample from the posterior probability distribution. Create a scatter plot to show the parameter value $p'$ and data $D'$ for all simulations. Highlight simulations that match observed data $D$. Then, use the sample of the posterior probability to plot an estimate of the posterior probability (hint: use `hist()`).
+Use `flip_coin_posterior_approx()` function to crate a sample from the posterior probability distribution.
+
+* Create a scatter plot to show the parameter value $p'$ and data $D'$ for all simulations.
+* Highlight simulations that match observed data $D$.
+* Then, use the sample of the posterior probability to plot an estimate of the posterior probability distribution (hint: use `hist()`).
 
 
 ```{r plot_posterior_approx, exercise=TRUE, exercise.lines=20, exercise.setup="flip_coin_posterior_approx"}
@@ -196,7 +207,9 @@ lines(seq(0,1,0.001),dbeta(x=seq(0,1,0.001),a+h,b+t),
 
 ### Exercise 5
 
-Get a point estimate and the 95% credibility interval (CI). For data $h=4$ and $t=6$, and prior $\mathrm{Beta}(\alpha=1,\beta=1)$, the posterior is $\mathrm{Beta}(\alpha=5,\beta=7)$ whose median is `r qbeta(0.5,1+4,1+6)` and the 95% CI is (`r qbeta(c(0.025,0.975),1+4,1+6)`). Are the ABC point estimate and CI accurate?
+Get a point estimate and the 95% credibility interval (CI).
+
+* For data $h=4$ and $t=6$, and prior $\mathrm{Beta}(\alpha=1,\beta=1)$, the posterior is $\mathrm{Beta}(\alpha=5,\beta=7)$ whose median is `r qbeta(0.5,1+4,1+6)` and the 95% CI is (`r qbeta(c(0.025,0.975),1+4,1+6)`). Are the ABC point estimate and CI accurate?
 
 
 ```{r coin_toss_credibility_interval, exercise=TRUE, exercise.setup="flip_coin_posterior_approx"}
@@ -240,7 +253,9 @@ We are going to consider now population genetics data. We have two data sets of 
 
 ### Exercise 6
 
-Explore the data (you can use functions `S()`, `NH()`, `PI()`, `TajimaD()` and `FuLiD()`). How many polymorphic sites are there?  How would you apply the rejection algorithm?
+Explore the data (you can use functions `S()`, `NH()`, `PI()`, `TajimaD()` and `FuLiD()`).
+
+* How many polymorphic sites are there?  How would you apply the rejection algorithm?
 
 ```{r explore_genetic_data, exercise=TRUE, exercise.lines=6}
 octomanati_data  <- read.ms.output(file="/change/to/your/path/octomanati.txt")
