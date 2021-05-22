@@ -21,102 +21,41 @@ library(phyclust, quietly=T)
 suppressMessages(library(abc, quietly=T))
 ```
 
-## Compare prior and posterior
 
-Priors can be used to incorporate previous information on the parameters. In the case of our population genetics example, we could imagine to have some information on mutation rates (e.g. from pedigrees) and population sizes (from census). Since $\theta = 2N\mu$, we could draw parameters $N$ and $\mu$ from prior probability distributions and combine them to get the prior of $\theta$. Assuming that our prior knowledge on *octomanati* and *rinocaracol* point us towards mitochondrial mutation rates between $3\times 10^{-8}$ and $10^{-6}$ and effective population sizes between $1$ and $30$ million individuals, I have generated a reference table from such priors with the following code:
-
-```{r eval=FALSE, echo=TRUE}
-sample_size = 50
-num_of_sim = 1000000
-
-mu_prime <- 10^runif(num_of_sim,min=-7.5,max=-6)
-N_prime <- 10^runif(num_of_sim,min=6,max=7.5)
-theta_prime <- 2*N_prime*mu_prime
-
-msout <- ms(nsam = sample_size,
-            opt = "-t tbs",
-            tbs.matrix = cbind(theta_prime))
-msout <- read.ms.output(txt=msout)
-S_prime  <- S(msout)
-PI_prime <- PI(msout)
-NH_prime <- NH(msout)
-TD_prime <- TajimaD(msout)
-FLD_prime <- FuLiD(msout)
-ref_table <- data.frame(theta=theta_prime,
-                        S=S_prime,
-                        PI=PI_prime,
-                        NH=NH_prime,
-                        TD=TD_prime,
-                        FLD=FLD_prime)
-saveRDS(ref_table,file="ref_table_1b.RDS")
-```
-
-
-
+## Evaluation of the model and prior: Goodness of fit
 
 ### Exercise 1
 
-Using the new reference table, plot the posterior distribution from the ABC analysis [click `Run Code`]. Is the analysis informative about $\theta$? What is the summary statistics used? Is Tajima's $D$, on its own, informative about $\theta$? What is going on? Plot the prior distribution together with the posterior. 
 
-```{r unexpected_prior, exercise=TRUE, exercise.lines=30}
+```{r prior_checking, exercise=TRUE, exercise.lines=15}
 target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1b.RDS")
+ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
-num_of_sims <- 100000 # use a subset of simulation from a total of 1 000 000
+num_of_sims <- 10000
 
-SS          <- target[1,"TD"]
-SS_prime    <- ref_table[seq_len(num_of_sims),"TD"]
-theta_prime <- ref_table$theta[seq_len(num_of_sims)]
+PCA_result  <- princomp(ref_table[,c("S","PI","NH","TD","FLD")])
+PCA_target <- predict(PCA_result, target[,c("S","PI","NH","TD","FLD")])
+plot(PCA_result$scores[seq_len(num_of_sims),1],
+     PCA_result$scores[seq_len(num_of_sims),2],
+     xlab="PCA 1",ylab="PCA 2")
+points(PCA_target[,1],PCA_target[,2],col=c("yellow","orange"))
 
-tolerance <- 0.05
-abc_result <- abc(target = SS,
-                  param = theta_prime,
-                  sumstat = SS_prime,
-                  tol = tolerance,
-                  method = "rejection")
+plot(PCA_result$scores[seq_len(num_of_sims),3],
+     PCA_result$scores[seq_len(num_of_sims),4],
+     xlab="PCA 3",ylab="PCA 4")
+points(PCA_target[,3],PCA_target[,4],col=c("yellow","orange"))
 
-theta_prime_accept     <- as.vector(abc_result$unadj.values)
-hist(x = log10(theta_prime_accept),
-     breaks = seq(-2,3,0.05),
-     col = "blue",
-     freq = FALSE,
-     ylim = c(0,1), xlim=c(-1,2),
-     xlab = expression(log(theta)),main="",
-     ylab = "probability density")
-```
-
-```{r unexpected_prior-solution}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1b.RDS")
-
-num_of_sims <- 100000 # use a subset of simulation from a total of 1 000 000
-
-SS          <- target[1,"TD"]
-SS_prime    <- ref_table[seq_len(num_of_sims),"TD"]
-theta_prime <- ref_table$theta[seq_len(num_of_sims)]
-
-tolerance <- 0.05
-abc_result <- abc(target = SS,
-                  param = theta_prime,
-                  sumstat = SS_prime,
-                  tol = tolerance,
-                  method = "rejection")
-
-theta_prime_accept     <- as.vector(abc_result$unadj.values)
-hist(x = log10(theta_prime_accept),
-     breaks = seq(-2,3,0.05),
-     col = "blue",
-     freq = FALSE,
-     ylim = c(0,1), xlim=c(-1,2),
-     xlab = expression(log(theta)),main="",
-     ylab = "probability density")
-hist(x = log10(theta_prime),
-     breaks = seq(-2,3,0.05),
-     col = "grey", freq=FALSE, add=TRUE )
+plot(ref_table$TD[seq_len(num_of_sims)],
+     ref_table$FLD[seq_len(num_of_sims)],
+     xlab="Tajima's D",ylab="Fu and Li's D")
+points(target$TD,target$FLD,col=c("yellow","orange"))
 ```
 
 
-## Cross-validation
+
+## Evaluation of the method: Cross-validation
+
+
 
 ### Exercise 2
 
@@ -163,32 +102,132 @@ abline(a = 0, b = 1)
 
 ```
 
-## Goodness of fit
 
-```{r prior_checking, exercise=TRUE, exercise.lines=15}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
-num_of_sims <- 10000
 
-PCA_result  <- princomp(ref_table[,c("S","PI","NH","TD","FLD")])
-PCA_target <- predict(PCA_result, target[,c("S","PI","NH","TD","FLD")])
-plot(PCA_result$scores[seq_len(num_of_sims),1],
-     PCA_result$scores[seq_len(num_of_sims),2],
-     xlab="PCA 1",ylab="PCA 2")
-points(PCA_target[,1],PCA_target[,2],col=c("yellow","orange"))
 
-plot(PCA_result$scores[seq_len(num_of_sims),3],
-     PCA_result$scores[seq_len(num_of_sims),4],
-     xlab="PCA 3",ylab="PCA 4")
-points(PCA_target[,3],PCA_target[,4],col=c("yellow","orange"))
 
-plot(ref_table$TD[seq_len(num_of_sims)],
-     ref_table$FLD[seq_len(num_of_sims)],
-     xlab="Tajima's D",ylab="Fu and Li's D")
-points(target$TD,target$FLD,col=c("yellow","orange"))
+
+## Evaluation of the posterior: comparison with prior
+
+Priors can be used to incorporate previous information on the parameters. In the case of our population genetics example, we could imagine to have some information on mutation rates (e.g. from pedigrees) and population sizes (from census). Since $\theta = 2N\mu$, we could draw parameters $N$ and $\mu$ from prior probability distributions and combine them to get the prior of $\theta$. Assuming that our prior knowledge on *octomanati* and *rinocaracol* point us towards mitochondrial mutation rates between $3\times 10^{-6}$ and $10^{-4}$ per bp per generation (sequence length of 100bp) and effective population sizes between $1$ and $30$ million individuals, I have generated a reference table from such priors with the following code:
+
+```{r eval=FALSE, echo=TRUE}
+sample_size = 50
+num_of_sim = 100000
+mu_prime <- 10^runif(num_of_sim,min=-7.5,max=-6)
+N_prime <- 10^runif(num_of_sim,min=6,max=7.5)
+theta_prime <- 2*N_prime*mu_prime
+msout <- ms(nsam = sample_size,
+            opt = "-t tbs",
+            tbs.matrix = cbind(theta_prime))
+msout <- read.ms.output(txt=msout)
+ref_table <- data.frame(theta=theta_prime,
+                        S=S(msout),
+                        PI=PI(msout),
+                        NH=NH(msout),
+                        TD=TajimaD(msout),
+                        FLD=FuLiD(msout))
+saveRDS(ref_table,file="ref_table_1b.RDS")
 ```
 
+
+
+
+### Exercise 3
+
+Using the new reference table, plot the posterior distribution from the ABC analysis [click `Run Code`]. Is the analysis informative about $\theta$? What is the summary statistics used? Is Tajima's $D$, on its own, informative about $\theta$? What is going on? Add to the plot the histogram with the prior probability distribution. 
+
+```{r unexpected_prior, exercise=TRUE, exercise.lines=30}
+target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
+ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1b.RDS")
+
+num_of_sims <- 100000
+
+SS          <- target[1,"TD"]
+SS_prime    <- ref_table[seq_len(num_of_sims),"TD"]
+theta_prime <- ref_table$theta[seq_len(num_of_sims)]
+
+tolerance <- 0.05
+abc_result <- abc(target = SS,
+                  param = theta_prime,
+                  sumstat = SS_prime,
+                  tol = tolerance,
+                  method = "rejection")
+
+theta_prime_accept     <- as.vector(abc_result$unadj.values)
+hist(x = log10(theta_prime_accept),
+     breaks = seq(-2,3,0.05),
+     col = "blue",
+     freq = FALSE,
+     ylim = c(0,1), xlim=c(-1,2),
+     xlab = expression(log(theta)),main="",
+     ylab = "probability density")
+```
+
+
+```{r unexpected_prior-hint}
+target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
+ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1b.RDS")
+
+num_of_sims <- 100000 
+
+SS          <- target[1,"TD"]
+SS_prime    <- ref_table[seq_len(num_of_sims),"TD"]
+theta_prime <- ref_table$theta[seq_len(num_of_sims)]
+
+tolerance <- 0.05
+abc_result <- abc(target = SS,
+                  param = theta_prime,
+                  sumstat = SS_prime,
+                  tol = tolerance,
+                  method = "rejection")
+
+theta_prime_accept     <- as.vector(abc_result$unadj.values)
+hist(log10(theta_prime_accept),
+     breaks = seq(-2,3,0.05),
+     col = "blue",
+     freq = FALSE,
+     ylim = c(0,1), xlim=c(-1,2),
+     xlab = expression(log(theta)),main="",
+     ylab = "probability density")
+hist(_______,
+     breaks = seq(-2,3,0.05),
+     col = "grey", freq=FALSE, add=______ )
+```
+
+
+
+
+```{r unexpected_prior-solution}
+target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
+ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1b.RDS")
+
+num_of_sims <- 100000 
+
+SS          <- target[1,"TD"]
+SS_prime    <- ref_table[seq_len(num_of_sims),"TD"]
+theta_prime <- ref_table$theta[seq_len(num_of_sims)]
+
+tolerance <- 0.05
+abc_result <- abc(target = SS,
+                  param = theta_prime,
+                  sumstat = SS_prime,
+                  tol = tolerance,
+                  method = "rejection")
+
+theta_prime_accept     <- as.vector(abc_result$unadj.values)
+hist(x = log10(theta_prime_accept),
+     breaks = seq(-2,3,0.05),
+     col = "blue",
+     freq = FALSE,
+     ylim = c(0,1), xlim=c(-1,2),
+     xlab = expression(log(theta)),main="",
+     ylab = "probability density")
+hist(x = log10(theta_prime),
+     breaks = seq(-2,3,0.05),
+     col = "grey", freq=FALSE, add=TRUE )
+```
 
 
 
