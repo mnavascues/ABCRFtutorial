@@ -101,7 +101,7 @@ Note: function `flip_coin_likelihood()` has been loaded with `source("coin_toss.
 
 ### Exercise 3
 
-From the likelihood profile we can obtain which is the value of $p$ that explain the best the observed data: the [maximum likelihood estimate](http://en.wikipedia.org/wiki/Maximum_likelihood_estimation). Which is the MLE estimate  of $p$ ($\hat{p}$):
+From the likelihood profile we can obtain which is the value of $p$ that explain the best the observed data: the [maximum likelihood estimate](http://en.wikipedia.org/wiki/Maximum_likelihood_estimation). Which is the MLE estimate  of $p$ ($\hat{p}$)?
 
 
 
@@ -174,7 +174,7 @@ In Bayesian statistics a point estimate of the parameters is often given by the 
 
 ### Exercise 5
 
-Explore the statistical analysis of the coin toss experiment. How does the results change when the prior parameters change? What is the interpretation of the prior? i.e. what is the interpretation of $\alpha$ and $\beta$?
+Practice the Bayesian analysis of the coin toss experiment. How does the results change when the prior parameters change? What is the interpretation of the prior? i.e. what is the interpretation of $\alpha$ and $\beta$?
 
 ```{r explore_binomial_posterior, exercise=TRUE}
 h=4;t=6;a=1;b=1
