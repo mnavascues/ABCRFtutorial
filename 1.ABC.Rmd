@@ -262,14 +262,18 @@ Explore the data (you can use functions `S()`, `NH()`, `PI()`, `TajimaD()` and `
 
 * How many polymorphic sites are there?  How would you apply the rejection algorithm?
 
+
+```{r eval=T, echo=T}
+octomanati_data  <- read.ms.output(file="octomanati.txt")
+rinocaracol_data <- read.ms.output(file="rinocaracol.txt")
+```
+
+
+
 ```{r explore_genetic_data, exercise=TRUE, exercise.lines=6}
-octomanati_data  <- read.ms.output(file="/change/to/your/path/octomanati.txt")
-rinocaracol_data <- read.ms.output(file="/home/miguel/Work/Teaching/ABCRF tutorial/rinocaracol.txt")
 ```
 
 ```{r explore_genetic_data-solution}
-octomanati_data  <- read.ms.output(file="/change/to/your/path/octomanati.txt")
-rinocaracol_data <- read.ms.output(file="/home/miguel/Work/Teaching/ABCRF tutorial/rinocaracol.txt")
 
 cat("octomanati dataset has",S(octomanati_data),"segregating sites")
 cat("rinocaracol dataset has",S(rinocaracol_data),"segregating sites")
@@ -363,15 +367,19 @@ Apply the rejection algorithm using one summary statistic on the *mammollusk* da
 * Start with the number of segregating sites and the number of haplotypes (`S`, `NH`), then try $\pi$ (`PI`). How many simulations are being accepted?
 * Make the same plots as in exercise 4 to help you explore.
 
+```{r eval=T, echo=T}
+target    <- readRDS(file="target.RDS")
+ref_table <- readRDS(file="ref_table_1.RDS")
+```
+
+
+
+
 ```{r rejection_algortihm_sumstats, exercise=TRUE, exercise.lines=35}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
 ```
 
 ```{r rejection_algortihm_sumstats-hint-1}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 target
 head(ref_table)
 ```
@@ -379,9 +387,6 @@ head(ref_table)
 
 
 ```{r rejection_algortihm_sumstats-hint-2}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
-
 num_of_sims <- 10000 # use a subset of simulation from a total of 1 000 000
 
 SS          <- target$S[1]
@@ -408,9 +413,6 @@ cat("This is a sample of the posterior (using PI):")
 
 
 ```{r rejection_algortihm_sumstats-solution}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
-
 num_of_sims <- 10000 # use a subset of simulation from a total of 1 000 000
 
 SS          <- target$PI[1]
@@ -474,10 +476,14 @@ Using function `abc()` (from `abc` package), apply the rejection algorithm using
 * Explore the effect of changing the tolerance level (proportion of simulations kept), try values `0.5` and `0.001`. What would we get as posterior using tolerance values close to `1`?
 * Try with more than one summary statistic. How do you think the distance is being in this case?
 
-```{r rejection_algortihm_tolerance, exercise=TRUE, exercise.lines=35}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+```{r eval=T, echo=T}
+target    <- readRDS(file="target.RDS")
+ref_table <- readRDS(file="ref_table_1.RDS")
+```
 
+
+
+```{r rejection_algortihm_tolerance, exercise=TRUE, exercise.lines=35}
 num_of_sims <- 10000 # use a subset of simulation from a total of 1 000 000
 
 SS          <- target$S[1]

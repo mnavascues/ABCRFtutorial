@@ -43,10 +43,14 @@ Compare the simulations in the reference table with the data from *octomanati* a
 * Compare the summary statistics values between target and simulations. Which are the summary statistics that do not fit? 
 * Propose some other model and discuss why do you think it would solve this problem.
 
-```{r prior_checking, exercise=TRUE, exercise.lines=20}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 
+```{r eval=T, echo=T}
+target    <- readRDS(file="target.RDS")
+ref_table <- readRDS(file="ref_table_1.RDS")
+```
+
+
+```{r prior_checking, exercise=TRUE, exercise.lines=20}
 num_of_sims <- 10000
 
 # Principal Component Analysis
@@ -63,9 +67,6 @@ points(PCA_target[,pc[1]],PCA_target[,pc[2]],col=c("yellow","orange"))
 
 
 ```{r prior_checking-solution}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
-
 num_of_sims <- 10000
 # Principal Component Analysis
 PCA_result  <- princomp(ref_table[,c("S","PI","NH","TD","FLD")])
@@ -99,10 +100,13 @@ Use cross-validation function `cv4abc()` from `abc` package to evaluate the perf
 * Try with a large tolerance value (0.8) or using only Tajima's $D$ as summary statistic.
 * How would you provide an objective comparison (rather than a visual comparison) of the true and estimated values? ([hint](https://en.wikipedia.org/wiki/Estimator))
 
-```{r cross_validation, exercise=TRUE, exercise.lines=25}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+```{r eval=T, echo=T}
+target    <- readRDS(file="target.RDS")
+ref_table <- readRDS(file="ref_table_1.RDS")
+```
 
+
+```{r cross_validation, exercise=TRUE, exercise.lines=25}
 num_of_sims <- 10000
 
 cross_validation <- cv4abc(param = ref_table[seq_len(num_of_sims),"theta"],
@@ -115,9 +119,6 @@ cross_validation <- cv4abc(param = ref_table[seq_len(num_of_sims),"theta"],
 ```
 
 ```{r cross_validation-solution}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
-
 num_of_sims <- 10000
 
 cross_validation <- cv4abc(param = ref_table[seq_len(num_of_sims),"theta"],
@@ -180,10 +181,12 @@ Using the new reference table, plot the posterior distribution from the ABC anal
 * What is the summary statistics used? Is Tajima's $D$, on its own, informative about $\theta$? What is going on?
 * Add to the plot the histogram with the prior probability distribution. 
 
-```{r unexpected_prior, exercise=TRUE, exercise.lines=30}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1b.RDS")
+```{r eval=T, echo=T}
+target    <- readRDS(file="target.RDS")
+ref_table <- readRDS(file="ref_table_1b.RDS")
+```
 
+```{r unexpected_prior, exercise=TRUE, exercise.lines=30}
 num_of_sims <- 100000
 
 SS          <- target[1,"TD"]
@@ -209,9 +212,6 @@ hist(x = log10(theta_prime_accept),
 
 
 ```{r unexpected_prior-hint}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1b.RDS")
-
 num_of_sims <- 100000 
 
 SS          <- target[1,"TD"]
@@ -242,9 +242,6 @@ hist(_______,
 
 
 ```{r unexpected_prior-solution}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1b.RDS")
-
 num_of_sims <- 100000 
 
 SS          <- target[1,"TD"]

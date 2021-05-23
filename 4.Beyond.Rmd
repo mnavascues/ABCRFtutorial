@@ -31,19 +31,17 @@ A [latent variable](https://en.wikipedia.org/wiki/Latent_variable) is a variable
 
 Estimate the TMRCA for *octomanati* and *rinocaracol*. Which model will you use? Why?
 
-```{r latent_variables, exercise=TRUE, exercise.lines=30}
+```{r eval=T, echo=T}
 target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
 ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
+```
 
 
+```{r latent_variables, exercise=TRUE, exercise.lines=30}
 ```
 
 ```{r latent_variables-solution}
-target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
-ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
-
 octomanati_result <- abc(target = target["octomanati",c("S","PI","NH","TD")],
                          param = ref_table_1[,"tmrca"],
                          sumstat = ref_table_1[,c("S","PI","NH","TD")],
@@ -72,18 +70,16 @@ In some cases model choice might not give a clear result of one superior model o
 
 Estimate again the TMRCA for *octomanati* using both models. Does it change substantially from using only one model?
 
-```{r tmrca_from_2_models, exercise=TRUE, exercise.lines=30}
-target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
-ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
+```{r eval=T, echo=T}
+target      <- readRDS(file="target.RDS")
+ref_table_1 <- readRDS(file="ref_table_1.RDS")
+ref_table_2 <- readRDS(file="ref_table_2.RDS")
 ```
 
+```{r tmrca_from_2_models, exercise=TRUE, exercise.lines=30}
+```
 
 ```{r tmrca_from_2_models-solution}
-target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
-ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
-
 ref_table <- rbind(ref_table_1[,c("tmrca","S","PI","NH","TD","FLD")],
                    ref_table_2[,c("tmrca","S","PI","NH","TD","FLD")])
 
@@ -107,19 +103,16 @@ In this exercise we are going to use derived parameters common in the two models
 * Plot the $\hat\theta_t$ against $t$ (use a line plot).
 * Do you need to perform model selection to extract conclusions about the demography of these populations? Can we reject population size change for *octomanati*?
 
+```{r eval=T, echo=T}
+target      <- readRDS(file="target.RDS")
+ref_table_1 <- readRDS(file="ref_table_1.RDS")
+ref_table_2 <- readRDS(file="ref_table_2.RDS")
+```
+
 ```{r skylineplot, exercise=TRUE, exercise.lines=50}
-target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
-ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
-
-
 ```
 
 ```{r skylineplot-solution}
-target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
-ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
-
 ref_table <- rbind(ref_table_1[,c("S","PI","NH","TD","FLD")],
                    ref_table_2[,c("S","PI","NH","TD","FLD")])
 

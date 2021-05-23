@@ -40,11 +40,13 @@ Explore the application of the regression algorithm implemented in `abc()`.
 * Try using $\pi$ and some completely uninformative summary statistic (i.e. generate a fake random summary statistic using `runif()` for both reference table and target data).
 * Do you think a linear regression makes sense in this case? Open the help for `abc()` function and read about the option `method="neuralnet"`.
 
+```{r eval=T, echo=T}
+target    <- readRDS(file="target.RDS")
+ref_table <- readRDS(file="ref_table_1.RDS")
+```
+
+
 ```{r abc_regression, exercise=TRUE, exercise.lines=30}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
-
-
 num_of_sims <- 10000 # use a subset of simulation from a total of 1 000 000
 
 SS          <- target[1,"PI"]
@@ -102,8 +104,6 @@ wtd.hist(x = log10(theta_prime_accept_reg),
 ```
 
 ```{r abc_regression-solution}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ef_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 num_of_sims <- 10000 # use a subset of simulation from a total of 1 000 000
 SS          <- SS <-target[1,c("PI","TD")]
 SS_prime    <- ref_table[seq_len(num_of_sims),c("PI","TD")]
@@ -144,17 +144,19 @@ wtd.hist(x = log10(theta_prime_accept_reg),
 
 Using ABC, estimate $\theta$ for *octomanati* and *rinocaracol*. Provide a measure of the uncertainty of the estimate:
 
-```{r practice_abc, exercise=TRUE, exercise.lines=30}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+```{r eval=T, echo=T}
+target    <- readRDS(file="target.RDS")
+ref_table <- readRDS(file="ref_table_1.RDS")
+```
 
+
+
+
+```{r practice_abc, exercise=TRUE, exercise.lines=30}
 ```
 
 
 ```{r practice_abc-solution}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
-
 octomanati_result <- abc(target = target["octomanati",c("S","PI","NH","TD","FLD")],
                          param = ref_table[,"theta"],
                          sumstat = ref_table[,c("S","PI","NH","TD","FLD")],
@@ -209,17 +211,17 @@ saveRDS(ref_table,file="ref_table_2.RDS")
 
 Explore the goodness of fit for this new model:
 
+```{r eval=T, echo=T}
+target    <- readRDS(file="target.RDS")
+ref_table <- readRDS(file="ref_table_2.RDS")
+```
+
+
+
 ```{r goodness_of_fit_model2, exercise=TRUE, exercise.lines=30}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
-
-
 ```
 
 ```{r goodness_of_fit_model2-solution}
-target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
-
 num_of_sims <- 10000
 
 # Principal Component Analysis
@@ -244,19 +246,16 @@ ABC model choice follows a similar process as parameter inference: references ta
 
 Use function `postpr()` from `abc` package to calculate posterior probabilities for each model for *octomanati* and *rinocaracol*:
 
+```{r eval=T, echo=T}
+target      <- readRDS(file="target.RDS")
+ref_table_1 <- readRDS(file="ref_table_1.RDS")
+ref_table_2 <- readRDS(file="ref_table_2.RDS")
+```
+
 ```{r model_choice, exercise=TRUE, exercise.lines=30}
-target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
-ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
-
-
 ```
 
 ```{r model_choice-solution}
-target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
-ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
-
 num_of_sims <- 10000
 model <- c(rep("constant population size",num_of_sims),rep("population size change",num_of_sims))
 sumstats <- rbind(ref_table_1[seq_len(num_of_sims),c("S","PI","NH","TD","FLD")],
