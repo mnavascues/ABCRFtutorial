@@ -6,11 +6,15 @@ title: "Quick Introduction to Simulation"
 author: "Miguel de Navascués"
 output: learnr::tutorial
 runtime: shiny_prerendered
+bibliography: references.bib
 ---
 
 These learning resources are available at [GitHub](https://github.com/mnavascues/ABCRFtutorial) & [Zenodo](http://doi.org/10.5281/zenodo.1435503).
 
 ## Setup (tl;dr)
+
+This unit uses R packages `learnr` [@Schloerke2020] and `phyclust` [@Chen2011], function to read *ms* output from `readms.output.R` script distributed with `ms` [@Hudson2002], and functions to calculate summary statistics from *ms* simulations in file `ms_sumstats.R` are modified from [@Stadler2009a; @Stadler2009b].
+
 
 ```{r setup, include=TRUE}
 library(learnr)
@@ -78,7 +82,7 @@ rbinom(n=num_of_sim,size=n,prob=p)
 
 ## Simulation of population genetic data
 
-Simulation via the coalescent. For convenience, we will use the R package `phyclust` that includes a version of coalescent simulator `ms` in this tutorial. In practice, use of other simulators (msprime, fastsimcoal or the original implementation of ms) is recommended.
+Simulation via the coalescent. For convenience, we will use the R package `phyclust` [@Chen2011] that includes a version of coalescent simulator `ms` in this tutorial. In practice, use of other simulators (msprime, fastsimcoal or the original implementation of ms) is recommended.
 
 ### Exercise 3
 
@@ -204,4 +208,6 @@ FuLiD(sim_data)
 
 
 
+#   
 
+#### References

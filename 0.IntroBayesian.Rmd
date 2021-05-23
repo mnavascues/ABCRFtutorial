@@ -12,6 +12,8 @@ These learning resources are available at [GitHub](https://github.com/mnavascues
 
 ## Setup (tl;dr)
 
+This unit uses R packages `learnr` [@Schloerke2020].
+
 ```{r setup, include=TRUE}
 library(learnr)
 # function to calculate likelihood for the coin toss experiment

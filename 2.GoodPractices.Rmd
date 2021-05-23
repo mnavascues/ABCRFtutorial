@@ -13,6 +13,11 @@ These learning resources are available at [GitHub](https://github.com/mnavascues
 
 ## Setup (tl;dr)
 
+
+This unit uses R packages `learnr` [@Schloerke2020], `phyclust` [@Chen2011] and `abc` [@Csillery2012].
+
+
+
 ```{r setup, include=TRUE}
 library(learnr)
 # function ms() (Hudson's coalescent simulator)
@@ -269,3 +274,7 @@ hist(x = log10(theta_prime),
 
 
 
+
+#   
+
+#### References

@@ -6,11 +6,16 @@ title: "The Three Approximations in ABC"
 author: "Miguel de Navascués"
 output: learnr::tutorial
 runtime: shiny_prerendered
+bibliography: references.bib
 ---
 
 These learning resources are available at [GitHub](https://github.com/mnavascues/ABCRFtutorial) & [Zenodo](http://doi.org/10.5281/zenodo.1435503).
 
 ## Setup (tl;dr)
+
+This unit uses R packages `learnr` [@Schloerke2020], `phyclust` [@Chen2011] and `abc` [@Csillery2012], function to read *ms* output from `readms.output.R` script distributed with `ms` [@Hudson2002], and functions to calculate summary statistics from *ms* simulations in file `ms_sumstats.R` are modified from [@Stadler2009a; @Stadler2009b].
+
+
 
 ```{r setup, include=TRUE}
 library(learnr)
@@ -509,3 +514,7 @@ hist(x = log10(theta_prime_accept),
 ```
 
 
+
+#   
+
+#### References

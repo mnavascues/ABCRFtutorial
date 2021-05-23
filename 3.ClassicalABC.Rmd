@@ -273,4 +273,6 @@ cat("Model posterior probabilities for octomanati:"); model_choice_octomanati$pr
 cat("Model posterior probabilities for rinocaracol:"); model_choice_rinocaracol$pred
 ```
 
-# References
+#   
+
+#### References
