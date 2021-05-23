@@ -90,7 +90,8 @@ Evaluating the performance of the method can be done by dividing the reference t
 
 Use cross-validation function `cv4abc()` from `abc` package to evaluate the performance of the ABC method. This is a time consuming task, for the purpose of this exercise, use a low cross-validation sample size (e.g. `nval=20`; note that you want a much higher number for real analyses):
 
-* Are the estimates OK?
+* Are the estimates OK? Can they be improved?
+* Try with a large tolerance value (0.8) or using only Tajima's $D$ as summary statistic.
 * How would you provide an objective comparison (rather than a visual comparison) of the true and estimated values? ([hint](https://en.wikipedia.org/wiki/Estimator))
 
 ```{r cross_validation, exercise=TRUE, exercise.lines=25}
@@ -99,11 +100,11 @@ ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1
 
 num_of_sims <- 10000
 
-octomanati_result <- abc(target = target["octomanati",c("S","PI","NH","TD")],
-                         param = ref_table[seq_len(num_of_sims),"theta"],
-                         sumstat = ref_table[seq_len(num_of_sims),c("S","PI","NH","TD")],
-                         tol = 0.1, method = "rejection")
-
+cross_validation <- cv4abc(param = ref_table[seq_len(num_of_sims),"theta"],
+                           sumstat = _______,
+                           nval = 20,
+                           tol =_______,
+                           method = "rejection")
 
 
 ```
@@ -114,16 +115,9 @@ ref_table <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1
 
 num_of_sims <- 10000
 
-octomanati_result <- abc(target = target["octomanati",c("S","PI","NH","TD")],
-                         param = ref_table[seq_len(num_of_sims),"theta"],
-                         sumstat = ref_table[seq_len(num_of_sims),c("S","PI","NH","TD")],
-                         tol = 0.1, method = "rejection")
-
 cross_validation <- cv4abc(param = ref_table[seq_len(num_of_sims),"theta"],
                            sumstat = ref_table[seq_len(num_of_sims),c("S","PI","NH","TD")],
-                           abc.out = octomanati_result,
-                           nval = 20,
-                           tols = 0.1)
+                           nval = 20, tol = 0.1, method = "rejection")
 
 plot(log10(cross_validation$true$P1),
      log10(cross_validation$estim$tol0.1),
