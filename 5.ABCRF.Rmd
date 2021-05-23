@@ -6,7 +6,7 @@ title: "ABC with Random Forests"
 author: "Miguel de Navascués"
 output: learnr::tutorial
 runtime: shiny_prerendered
-bibliography: references.bib
+bibliography: src/references.bib
 ---
 
 These learning resources are available at [GitHub](https://github.com/mnavascues/ABCRFtutorial) & [Zenodo](http://doi.org/10.5281/zenodo.1435503).

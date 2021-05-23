@@ -6,7 +6,7 @@ title: "Classical ABC"
 author: "Miguel de Navascués"
 output: learnr::tutorial
 runtime: shiny_prerendered
-bibliography: references.bib
+bibliography: src/references.bib
 ---
 
 These learning resources are available at [GitHub](https://github.com/mnavascues/ABCRFtutorial) & [Zenodo](http://doi.org/10.5281/zenodo.1435503).
@@ -41,8 +41,8 @@ Explore the application of the regression algorithm implemented in `abc()`.
 * Do you think a linear regression makes sense in this case? Open the help for `abc()` function and read about the option `method="neuralnet"`.
 
 ```{r eval=T, echo=T}
-target    <- readRDS(file="target.RDS")
-ref_table <- readRDS(file="ref_table_1.RDS")
+target    <- readRDS(file="data/target.RDS")
+ref_table <- readRDS(file="data/ref_table_1.RDS")
 ```
 
 
@@ -145,8 +145,8 @@ wtd.hist(x = log10(theta_prime_accept_reg),
 Using ABC, estimate $\theta$ for *octomanati* and *rinocaracol*. Provide a measure of the uncertainty of the estimate:
 
 ```{r eval=T, echo=T}
-target    <- readRDS(file="target.RDS")
-ref_table <- readRDS(file="ref_table_1.RDS")
+target    <- readRDS(file="data/target.RDS")
+ref_table <- readRDS(file="data/ref_table_1.RDS")
 ```
 
 
@@ -204,7 +204,7 @@ ref_table <- data.frame(theta0=theta0,
                         NH=NH(msout),
                         TD=TajimaD(msout),
                         FLD=FuLiD(msout))
-saveRDS(ref_table,file="ref_table_2.RDS")
+saveRDS(ref_table,file="data/ref_table_2.RDS")
 ```
 
 ### Exercise 3
@@ -212,8 +212,8 @@ saveRDS(ref_table,file="ref_table_2.RDS")
 Explore the goodness of fit for this new model:
 
 ```{r eval=T, echo=T}
-target    <- readRDS(file="target.RDS")
-ref_table <- readRDS(file="ref_table_2.RDS")
+target    <- readRDS(file="data/target.RDS")
+ref_table <- readRDS(file="data/ref_table_2.RDS")
 ```
 
 
@@ -247,9 +247,9 @@ ABC model choice follows a similar process as parameter inference: references ta
 Use function `postpr()` from `abc` package to calculate posterior probabilities for each model for *octomanati* and *rinocaracol*:
 
 ```{r eval=T, echo=T}
-target      <- readRDS(file="target.RDS")
-ref_table_1 <- readRDS(file="ref_table_1.RDS")
-ref_table_2 <- readRDS(file="ref_table_2.RDS")
+target      <- readRDS(file="data/target.RDS")
+ref_table_1 <- readRDS(file="data/ref_table_1.RDS")
+ref_table_2 <- readRDS(file="data/ref_table_2.RDS")
 ```
 
 ```{r model_choice, exercise=TRUE, exercise.lines=30}

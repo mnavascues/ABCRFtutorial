@@ -6,7 +6,7 @@ title: "The Three Approximations in ABC"
 author: "Miguel de Navascués"
 output: learnr::tutorial
 runtime: shiny_prerendered
-bibliography: references.bib
+bibliography: src/references.bib
 ---
 
 These learning resources are available at [GitHub](https://github.com/mnavascues/ABCRFtutorial) & [Zenodo](http://doi.org/10.5281/zenodo.1435503).
@@ -24,11 +24,11 @@ library(phyclust, quietly=T)
 # functions for ABC
 suppressMessages(library(abc, quietly=T))
 # functions for the coin toss experiment analysis
-source("coin_toss.R", local = TRUE)
+source("src/coin_toss.R", local = TRUE)
 # function read.ms.output()
-source("readms.output.R", local =T)
+source("src/readms.output.R", local =T)
 # functions to calculate summary statistics from ms output
-source("ms_sumstats.R", local =T)
+source("src/ms_sumstats.R", local =T)
 ```
 
 ## Approximation 1: Simulation
@@ -79,7 +79,7 @@ For this exercise you have two functions available, `flip_coin_likelihood()` and
 
 
 ```{r eval=FALSE, echo=TRUE}
-source("coin_toss.R")
+source("src/coin_toss.R")
 ```
 
 
@@ -264,11 +264,9 @@ Explore the data (you can use functions `S()`, `NH()`, `PI()`, `TajimaD()` and `
 
 
 ```{r eval=T, echo=T}
-octomanati_data  <- read.ms.output(file="octomanati.txt")
-rinocaracol_data <- read.ms.output(file="rinocaracol.txt")
+octomanati_data  <- read.ms.output(file="data/octomanati.txt")
+rinocaracol_data <- read.ms.output(file="data/rinocaracol.txt")
 ```
-
-
 
 ```{r explore_genetic_data, exercise=TRUE, exercise.lines=6}
 ```
@@ -341,7 +339,7 @@ ref_table <- data.frame(theta=theta_prime,
                         NH=NH_prime,
                         TD=TD_prime,
                         FLD=FLD_prime)
-saveRDS(ref_table,file="ref_table_1.RDS")
+saveRDS(ref_table,file="data/ref_table_1.RDS")
 ```
 
 The summary statistics for our two target species has been calculated with the same functions. It has been saved as:
@@ -354,7 +352,7 @@ target <- data.frame(S  = c(50,23),
                      TD = c(0.123358,-2.386268),
                      FLD= c(-1.160349,-4.354524),
                      row.names = c("octomanati","rinocaracol"))
-saveRDS(target,file="target.RDS")
+saveRDS(target,file="data/target.RDS")
 ```
 
 
@@ -368,8 +366,8 @@ Apply the rejection algorithm using one summary statistic on the *mammollusk* da
 * Make the same plots as in exercise 4 to help you explore.
 
 ```{r eval=T, echo=T}
-target    <- readRDS(file="target.RDS")
-ref_table <- readRDS(file="ref_table_1.RDS")
+target    <- readRDS(file="data/target.RDS")
+ref_table <- readRDS(file="data/ref_table_1.RDS")
 ```
 
 
@@ -477,8 +475,8 @@ Using function `abc()` (from `abc` package), apply the rejection algorithm using
 * Try with more than one summary statistic. How do you think the distance is being in this case?
 
 ```{r eval=T, echo=T}
-target    <- readRDS(file="target.RDS")
-ref_table <- readRDS(file="ref_table_1.RDS")
+target    <- readRDS(file="data/target.RDS")
+ref_table <- readRDS(file="data/ref_table_1.RDS")
 ```
 
 

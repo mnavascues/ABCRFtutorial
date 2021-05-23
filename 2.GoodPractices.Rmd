@@ -6,7 +6,7 @@ title: "Good Practices in ABC"
 author: "Miguel de Navascués"
 output: learnr::tutorial
 runtime: shiny_prerendered
-bibliography: references.bib
+bibliography: src/references.bib
 ---
 
 These learning resources are available at [GitHub](https://github.com/mnavascues/ABCRFtutorial) & [Zenodo](http://doi.org/10.5281/zenodo.1435503).
@@ -45,8 +45,8 @@ Compare the simulations in the reference table with the data from *octomanati* a
 
 
 ```{r eval=T, echo=T}
-target    <- readRDS(file="target.RDS")
-ref_table <- readRDS(file="ref_table_1.RDS")
+target    <- readRDS(file="data/target.RDS")
+ref_table <- readRDS(file="data/ref_table_1.RDS")
 ```
 
 
@@ -101,8 +101,8 @@ Use cross-validation function `cv4abc()` from `abc` package to evaluate the perf
 * How would you provide an objective comparison (rather than a visual comparison) of the true and estimated values? ([hint](https://en.wikipedia.org/wiki/Estimator))
 
 ```{r eval=T, echo=T}
-target    <- readRDS(file="target.RDS")
-ref_table <- readRDS(file="ref_table_1.RDS")
+target    <- readRDS(file="data/target.RDS")
+ref_table <- readRDS(file="data/ref_table_1.RDS")
 ```
 
 
@@ -164,7 +164,7 @@ ref_table <- data.frame(theta=theta_prime,
                         NH=NH(msout),
                         TD=TajimaD(msout),
                         FLD=FuLiD(msout))
-saveRDS(ref_table,file="ref_table_1b.RDS")
+saveRDS(ref_table,file="data/ref_table_1b.RDS")
 ```
 
 
@@ -182,8 +182,8 @@ Using the new reference table, plot the posterior distribution from the ABC anal
 * Add to the plot the histogram with the prior probability distribution. 
 
 ```{r eval=T, echo=T}
-target    <- readRDS(file="target.RDS")
-ref_table <- readRDS(file="ref_table_1b.RDS")
+target    <- readRDS(file="data/target.RDS")
+ref_table <- readRDS(file="data/ref_table_1b.RDS")
 ```
 
 ```{r unexpected_prior, exercise=TRUE, exercise.lines=30}

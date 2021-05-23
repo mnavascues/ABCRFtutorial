@@ -6,7 +6,7 @@ title: "Quick Introduction to Simulation"
 author: "Miguel de Navascués"
 output: learnr::tutorial
 runtime: shiny_prerendered
-bibliography: references.bib
+bibliography: src/references.bib
 ---
 
 These learning resources are available at [GitHub](https://github.com/mnavascues/ABCRFtutorial) & [Zenodo](http://doi.org/10.5281/zenodo.1435503).
@@ -21,9 +21,9 @@ library(learnr)
 # function ms() (Hudson's coalescent simulator)
 library(phyclust, quietly=T)
 # function read.ms.output()
-source("readms.output.R", local =T)
+source("src/readms.output.R", local =T)
 # functions to calculate summary statistics from ms output
-source("ms_sumstats.R", local =T)
+source("src/ms_sumstats.R", local =T)
 ```
 
 ## What is a simulation?
@@ -122,7 +122,7 @@ ms(nsam=n,nreps=num_of_sim,opt=paste("-t",theta))
 We can put this text into a more usable form (i.e. matrix of polymorphisms, etc) using a function distributed with the original software `ms` and that we have loaded in the setup with:
 
 ```{r eval=FALSE, echo=TRUE}
-source("readms.output.R")
+source("src/readms.output.R")
 ```
 
 ### Exercise 4
@@ -173,7 +173,7 @@ sim_data$gametes
 Calculate summary statistics (number of segregating sites, number of haplotypes, $\pi$ and Tajima's $D$) for the simulations. Functions `S()`, `NH()`, `PI()`, `TajimaD()` and `FuLiD()` have been loaded using:
 
 ```{r eval=FALSE, echo=TRUE}
-source("ms_sumstats.R")
+source("src/ms_sumstats.R")
 ```
 
 

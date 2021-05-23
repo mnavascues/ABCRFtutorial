@@ -6,7 +6,7 @@ title: "Quick Introduction to Bayesian Statistics"
 author: "Miguel de Navascués"
 output: learnr::tutorial
 runtime: shiny_prerendered
-bibliography: references.bib
+bibliography: src/references.bib
 ---
 
 These learning resources are available at [GitHub](https://github.com/mnavascues/ABCRFtutorial) & [Zenodo](http://doi.org/10.5281/zenodo.1435503).
@@ -18,7 +18,7 @@ This unit uses R packages `learnr` [@Schloerke2020].
 ```{r setup, include=TRUE}
 library(learnr)
 # function to calculate likelihood for the coin toss experiment
-source("coin_toss.R", local = TRUE)
+source("src/coin_toss.R", local = TRUE)
 ```
 
 
@@ -100,7 +100,7 @@ plot(likelihood_profile$p,
      xlab = "p", ylab = "Likelihood", type = "l", col="red")
 ```
 
-Note: function `flip_coin_likelihood()` has been loaded with `source("coin_toss.R")` in the setup and is available for all exercises.
+Note: function `flip_coin_likelihood()` has been loaded with `source("src/coin_toss.R")` in the setup and is available for all exercises.
 
 ### Exercise 3
 

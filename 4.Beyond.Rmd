@@ -6,7 +6,7 @@ title: "Beyond model choice and parameter estimation"
 author: "Miguel de Navascués"
 output: learnr::tutorial
 runtime: shiny_prerendered
-bibliography: references.bib
+bibliography: src/references.bib
 ---
 
 These learning resources are available at [GitHub](https://github.com/mnavascues/ABCRFtutorial) & [Zenodo](http://doi.org/10.5281/zenodo.1435503).
@@ -32,9 +32,9 @@ A [latent variable](https://en.wikipedia.org/wiki/Latent_variable) is a variable
 Estimate the TMRCA for *octomanati* and *rinocaracol*. Which model will you use? Why?
 
 ```{r eval=T, echo=T}
-target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
-ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
+target      <- readRDS(file="data/target.RDS")
+ref_table_1 <- readRDS(file="data/ref_table_1.RDS")
+ref_table_2 <- readRDS(file="data/ref_table_2.RDS")
 ```
 
 
@@ -71,9 +71,9 @@ In some cases model choice might not give a clear result of one superior model o
 Estimate again the TMRCA for *octomanati* using both models. Does it change substantially from using only one model?
 
 ```{r eval=T, echo=T}
-target      <- readRDS(file="target.RDS")
-ref_table_1 <- readRDS(file="ref_table_1.RDS")
-ref_table_2 <- readRDS(file="ref_table_2.RDS")
+target      <- readRDS(file="data/target.RDS")
+ref_table_1 <- readRDS(file="data/ref_table_1.RDS")
+ref_table_2 <- readRDS(file="data/ref_table_2.RDS")
 ```
 
 ```{r tmrca_from_2_models, exercise=TRUE, exercise.lines=30}
@@ -104,9 +104,9 @@ In this exercise we are going to use derived parameters common in the two models
 * Do you need to perform model selection to extract conclusions about the demography of these populations? Can we reject population size change for *octomanati*?
 
 ```{r eval=T, echo=T}
-target      <- readRDS(file="target.RDS")
-ref_table_1 <- readRDS(file="ref_table_1.RDS")
-ref_table_2 <- readRDS(file="ref_table_2.RDS")
+target      <- readRDS(file="data/target.RDS")
+ref_table_1 <- readRDS(file="data/ref_table_1.RDS")
+ref_table_2 <- readRDS(file="data/ref_table_2.RDS")
 ```
 
 ```{r skylineplot, exercise=TRUE, exercise.lines=50}
