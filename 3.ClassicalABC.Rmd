@@ -23,11 +23,18 @@ suppressMessages(library(weights, quietly=T))
 
 ## Regression ABC
 
-An additional local regression step was introduced to the rejection algorithm [@Beaumont2002]. The local regression is between the parameter values and the summary statistics from the simulations accepted in the rejection step. Parameter values from those simulations are then *adjusted* by projection using the regression. The regression algorithm allows to increase the proportion of simulations accepted correcting to some degree the *widening* of the posterior distribution.
+As we have seen in unit 1, there is a trade-off from adding some tolerance to the rejection algorithm: with a big tolerance the results tend to the prior, with a small tolerance the is a loss of precision in the posterior distribution estimate. This problem is partially corrected by an additional local regression step [@Beaumont2002]. The local regression is between the parameter values and the summary statistics from the simulations accepted after the rejection step. Parameter values from those simulations are then *adjusted* by projection using the regression. The regression algorithm allows to increase the proportion of simulations accepted correcting to some degree the *widening* of the posterior distribution.
 
 ### Exercise 1
 
-Explore the application of the regression algorithm implemented in `abc()`. Compare the posterior probability distribution estimated from adjusted and from unadjusted (original) values. Explore how this difference changes with the value of tolerance (for instance `tolerance<-0.8`). Try also with Tajima's $D$ as summary statistic (`TD`). Try using using $\pi$ and Tajima's $D$ (i.e. `SS <-target[1,c("PI","TD")]`) and skip the scatter plot. Try using $\pi$ and some completely uninformative summary statistic (i.e. generate a fake random summary statistic using `runif()` for both reference table and target data). Do you think a linear regression makes sense in this case? Open the help for `abc()` function and read about the option `method="neuralnet"`.
+Explore the application of the regression algorithm implemented in `abc()`.
+
+* Compare the posterior probability distribution estimated from adjusted and from unadjusted (original) values.
+* Explore how this difference changes with the value of tolerance (for instance `tolerance<-0.8`).
+* Try also with Tajima's $D$ as summary statistic (`TD`).
+* Try using using $\pi$ and Tajima's $D$ (i.e. `SS <-target[1,c("PI","TD")]`) and skip the scatter plot.
+* Try using $\pi$ and some completely uninformative summary statistic (i.e. generate a fake random summary statistic using `runif()` for both reference table and target data).
+* Do you think a linear regression makes sense in this case? Open the help for `abc()` function and read about the option `method="neuralnet"`.
 
 ```{r abc_regression, exercise=TRUE, exercise.lines=30}
 target    <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
