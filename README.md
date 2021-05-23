@@ -10,7 +10,7 @@ Tutorial on approximate Bayesian computation. The objective of the tutorial is t
 
 ### Requirements
 
-The code has been tested with R (3.6.3) and RStudio (1.4.1106) on Ubuntu (20.04.2 LTS). It requieres the file `readms.output.R` from the coalescent simulator program [ms](http://home.uchicago.edu/~rhudson1/source/mksamples.html) and the following R packages (tested version on brackets):
+The code has been tested with R (3.6.3) and RStudio (1.4.1106) on Ubuntu (20.04.2 LTS). It requieres the file `readms.output.R` distributed with the coalescent simulator program [ms](http://home.uchicago.edu/~rhudson1/source/mksamples.html) and the following R packages (tested version on brackets):
 
 * abc (2.1)
 * abcrf (1.8.1)
@@ -23,17 +23,20 @@ The code has been tested with R (3.6.3) and RStudio (1.4.1106) on Ubuntu (20.04.
 
 Each learning unit is contained in a RMarkdown file. Opening it with RStudio en clicking on `Run Document` button will generate an interactive file with the lessons and exercises. Currently the are the following units available:
 
-* 0.IntroBayesian.Rmd (Quick Introduction to Bayesian Statistics)
-* 00.Simulation.Rmd (Quick Introduction to Simulation)
-* 1.ABC.Rmd (The Three Approximations in ABC)
-* 2.GoodPractices.Rmd (Good Practices in ABC)
-* 3.ClassicalABC.Rmd (Classical ABC)
-* 4.Beyond.Rmd (Beyond model choice and parameter estimation)
+File | Unit
+---|----------
+0.IntroBayesian.Rmd | Quick Introduction to Bayesian Statistics
+00.Simulation.Rmd | Quick Introduction to Simulation
+1.ABC.Rmd | The Three Approximations in ABC
+2.GoodPractices.Rmd | Good Practices in ABC
+3.ClassicalABC.Rmd | Classical ABC
+4.Beyond.Rmd | Beyond model choice and parameter estimation
+5.ABCRF.Rmd | ABC with Random Forests
 
 (units on ABCRF are in progress)
 
 ### todo
 
-* add references
+* add references on abcrf
 * Version in Python of some materials using msprime as simulator, tskit for calculating summary statistics and ranger for abcrf, maybe in a jupyter notebook
 
