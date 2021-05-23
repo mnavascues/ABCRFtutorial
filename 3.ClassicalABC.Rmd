@@ -13,6 +13,10 @@ These learning resources are available at [GitHub](https://github.com/mnavascues
 
 ## Setup (tl;dr)
 
+
+This unit uses R packages `learnr` [@Schloerke2020], `abc` [@Csillery2012] and `weights` [@Pasek2018].
+
+
 ```{r setup, include=TRUE}
 library(learnr)
 # functions for ABC

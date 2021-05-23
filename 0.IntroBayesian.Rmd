@@ -6,6 +6,7 @@ title: "Quick Introduction to Bayesian Statistics"
 author: "Miguel de Navascués"
 output: learnr::tutorial
 runtime: shiny_prerendered
+bibliography: references.bib
 ---
 
 These learning resources are available at [GitHub](https://github.com/mnavascues/ABCRFtutorial) & [Zenodo](http://doi.org/10.5281/zenodo.1435503).
@@ -212,7 +213,7 @@ lines(p, y = flip_coin_likelihood(p,h,t)$l, col = "red")# likelihood
 
 ## *All models are wrong*
 
-Until this point we have considered that the binomial model describes well the reality of our coin. However, in addition to heads and tails there are other possible outcomes when tossing a coin, e.g. the coin stays on its side, falls into a drainage grate...
+Until this point we have considered that the binomial model describes well the reality of our coin. However, in addition to heads and tails there are other possible outcomes when tossing a coin, e.g. the coin stays on its side, falls into a drainage grate... [see also @Diaconis2007]
 
 ### Exercise 7
 
@@ -224,3 +225,6 @@ h=4;t=6;s=0
 
 
 
+#   
+
+#### References

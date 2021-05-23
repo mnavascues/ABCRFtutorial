@@ -82,7 +82,7 @@ rbinom(n=num_of_sim,size=n,prob=p)
 
 ## Simulation of population genetic data
 
-Simulation via the coalescent. For convenience, we will use the R package `phyclust` [@Chen2011] that includes a version of coalescent simulator `ms` in this tutorial. In practice, use of other simulators (msprime, fastsimcoal or the original implementation of ms) is recommended.
+Simulation via the coalescent. For convenience, we will use the R package `phyclust` [@Chen2011] that includes a version of coalescent simulator `ms` in this tutorial. In practice, use of other simulators (e.g. msprime [@Kelleher2016], SLiM [@Haller2017], fastsimcoal [@Excoffier2011] or the original implementation of ms [@Hudson2002]) is recommended.
 
 ### Exercise 3
 

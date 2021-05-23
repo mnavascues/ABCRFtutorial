@@ -13,6 +13,8 @@ These learning resources are available at [GitHub](https://github.com/mnavascues
 
 ## Setup (tl;dr)
 
+This unit uses R packages `learnr` [@Schloerke2020], `abc` [@Csillery2012] and `weights` [@Pasek2018].
+
 ```{r setup, include=TRUE}
 library(learnr)
 # functions for ABC
@@ -98,9 +100,14 @@ wtd.quantile(octomanati_result$adj.values,
 
 ### Exercise 3
 
-From the primary parameters in the reference table for the two models considered (constant population size and population size change) calculate derived parameters $\theta_t$ for $t\in(0,0.25,0.5,0.75,1,1.25,1.5,1.75,2)$ for each simulation. Estimate those derived parameters for *octomanati* and *rinocaracol*. Plot the $\hat\theta_t$ against $t$ (use a line plot).
+In this exercise we are going to use derived parameters common in the two models to build a ABC skyline plot [@Navascues2017]:
 
-```{r skylineplot, exercise=TRUE, exercise.lines=30}
+* From the primary parameters in the reference table for the two models considered (constant population size and population size change) calculate derived parameters $\theta_t$ for $t\in(0,0.25,0.5,0.75,1,1.25,1.5,1.75,2)$ for each simulation.
+* Estimate those derived parameters for *octomanati* and *rinocaracol*.
+* Plot the $\hat\theta_t$ against $t$ (use a line plot).
+* Do you need to perform model selection to extract conclusions about the demography of these populations? Can we reject population size change for *octomanati*?
+
+```{r skylineplot, exercise=TRUE, exercise.lines=50}
 target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
 ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
 ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
@@ -157,3 +164,7 @@ lines(tt,log10(rinocaracol_skyline[1,]), col="red", lwd=2)
 lines(tt,log10(rinocaracol_skyline[2,]), col="red", lty=2)
 lines(tt,log10(rinocaracol_skyline[3,]), col="red", lty=2)
 ```
+
+#   
+
+#### References

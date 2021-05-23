@@ -13,6 +13,11 @@ These learning resources are available at [GitHub](https://github.com/mnavascues
 
 ## Setup (tl;dr)
 
+
+This unit uses R packages `learnr` [@Schloerke2020], `abcrf` [@Marin2017] and `weights` [@Pasek2018].
+
+
+
 ```{r setup, include=TRUE}
 library(learnr)
 # functions for ABCRF
@@ -34,7 +39,11 @@ The use of Random Forests in ABC (ABCRF) has provided a solution for both proble
 
 ### Exercise on model choice with ABCRF
 
-The function to perform model selection is `abcrf()`, run the code provided to find the best model for *octomanati* and *rinocaracol*. The results contain a confusion matrix that allows to have an evaluation of the performance of the method. What do you think about the performance in this case? How does that compare with the actual posterior probabilities estimated for *octomanati* and *rinocaracol*? Is it worth to repeat the analysis increasing the number of trees in the random forest?
+The function to perform model selection is `abcrf()`, run the code provided to find the best model for *octomanati* and *rinocaracol*.
+
+* The results contain a confusion matrix that allows to have an evaluation of the performance of the method. What do you think about the performance in this case?
+* How does that compare with the actual posterior probabilities estimated for *octomanati* and *rinocaracol*?
+* Is it worth to repeat the analysis increasing the number of trees in the random forest?
 
 ```{r model_choice, exercise=TRUE, exercise.lines=30}
 target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
@@ -70,7 +79,10 @@ model_selection_result_RF <- predict(object= model_RF,
 
 ### Exercise on parameter inference
 
-Estimate parameter $\theta$ from the model of constant population size for *octomanati* using the code provided (it uses function `regAbcrf()`). Increase the number of trees if necessary. Are the estimates very different from the ones obtained with classical regression ABC (unit 3)? The values of $\theta$ from the whole reference table are used to plot the histogram of its posterior probability distribution, why?
+Estimate parameter $\theta$ from the model of constant population size for *octomanati* using the code provided (it uses function `regAbcrf()`).
+
+* Increase the number of trees if necessary.
+* Are the estimates very different from the ones obtained with classical regression ABC (unit 3)? * The values of $\theta$ from the whole reference table are used to plot the histogram of its posterior probability distribution, why?
 
 ```{r parameter_inference, exercise=TRUE, exercise.lines=30}
 target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
@@ -118,3 +130,9 @@ wtd.hist(log10(ref_table$theta),
          weight = posterior_theta_RF$weights);
 
 ```
+
+
+
+#   
+
+#### References
