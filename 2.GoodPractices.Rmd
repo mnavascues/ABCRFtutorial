@@ -13,10 +13,7 @@ These learning resources are available at [GitHub](https://github.com/mnavascues
 
 ## Setup (tl;dr)
 
-
 This unit uses R packages `learnr` [@Schloerke2020], `phyclust` [@Chen2011] and `abc` [@Csillery2012].
-
-
 
 ```{r setup, include=TRUE}
 library(learnr)
@@ -45,8 +42,8 @@ Compare the simulations in the reference table with the data from *octomanati* a
 
 
 ```{r eval=T, echo=T}
-target    <- readRDS(file="data/target.RDS")
-ref_table <- readRDS(file="data/ref_table_1.RDS")
+target      <- readRDS(file="data/target.RDS")
+ref_table_1 <- readRDS(file="data/ref_table_1.RDS")
 ```
 
 
@@ -54,7 +51,7 @@ ref_table <- readRDS(file="data/ref_table_1.RDS")
 num_of_sims <- 10000
 
 # Principal Component Analysis
-PCA_result  <- princomp(ref_table[,c("S","PI","NH","TD","FLD")])
+PCA_result  <- princomp(ref_table_1[,c("S","PI","NH","TD","FLD")])
 pc<-c(1,2) 
 plot(PCA_result$scores[seq_len(num_of_sims),pc[1]],
      PCA_result$scores[seq_len(num_of_sims),pc[2]],
@@ -69,7 +66,7 @@ points(PCA_target[,pc[1]],PCA_target[,pc[2]],col=c("yellow","orange"))
 ```{r prior_checking-solution}
 num_of_sims <- 10000
 # Principal Component Analysis
-PCA_result  <- princomp(ref_table[,c("S","PI","NH","TD","FLD")])
+PCA_result  <- princomp(ref_table_1[,c("S","PI","NH","TD","FLD")])
 pc<-c(1,2) 
 plot(PCA_result$scores[seq_len(num_of_sims),pc[1]],
      PCA_result$scores[seq_len(num_of_sims),pc[2]],
@@ -78,8 +75,8 @@ plot(PCA_result$scores[seq_len(num_of_sims),pc[1]],
 PCA_target <- predict(PCA_result, target[,c("S","PI","NH","TD","FLD")])
 points(PCA_target[,pc[1]],PCA_target[,pc[2]],col=c("yellow","orange"))
 
-plot(ref_table$TD[seq_len(num_of_sims)],
-     ref_table$FLD[seq_len(num_of_sims)],
+plot(ref_table_1$TD[seq_len(num_of_sims)],
+     ref_table_1$FLD[seq_len(num_of_sims)],
      xlab="Tajima's D",ylab="Fu and Li's D",
      xlim=c(-3,4),ylim=c(-5,3))
 points(target$TD,target$FLD,col=c("yellow","orange"))
@@ -101,15 +98,15 @@ Use cross-validation function `cv4abc()` from `abc` package to evaluate the perf
 * How would you provide an objective comparison (rather than a visual comparison) of the true and estimated values? ([hint](https://en.wikipedia.org/wiki/Estimator))
 
 ```{r eval=T, echo=T}
-target    <- readRDS(file="data/target.RDS")
-ref_table <- readRDS(file="data/ref_table_1.RDS")
+target      <- readRDS(file="data/target.RDS")
+ref_table_1 <- readRDS(file="data/ref_table_1.RDS")
 ```
 
 
 ```{r cross_validation, exercise=TRUE, exercise.lines=25}
 num_of_sims <- 10000
 
-cross_validation <- cv4abc(param = ref_table[seq_len(num_of_sims),"theta"],
+cross_validation <- cv4abc(param = ref_table_1[seq_len(num_of_sims),"theta"],
                            sumstat = _______,
                            nval = 20,
                            tol =_______,
@@ -121,8 +118,8 @@ cross_validation <- cv4abc(param = ref_table[seq_len(num_of_sims),"theta"],
 ```{r cross_validation-solution}
 num_of_sims <- 10000
 
-cross_validation <- cv4abc(param = ref_table[seq_len(num_of_sims),"theta"],
-                           sumstat = ref_table[seq_len(num_of_sims),c("S","PI","NH","TD")],
+cross_validation <- cv4abc(param = ref_table_1[seq_len(num_of_sims),"theta"],
+                           sumstat = ref_table_1[seq_len(num_of_sims),c("S","PI","NH","TD")],
                            nval = 20, tol = 0.1, method = "rejection")
 
 plot(log10(cross_validation$true$P1),
@@ -150,9 +147,9 @@ This is important because priors can be used to incorporate previous information
 
 ```{r eval=FALSE, echo=TRUE}
 sample_size = 50
-num_of_sim = 100000
-mu_prime <- 10^runif(num_of_sim,min=-7.5,max=-6)
-N_prime <- 10^runif(num_of_sim,min=6,max=7.5)
+num_of_sims = 100000
+mu_prime <- 10^runif(num_of_sims,min=-7.5,max=-6)
+N_prime <- 10^runif(num_of_sims,min=6,max=7.5)
 theta_prime <- 2*N_prime*mu_prime
 msout <- ms(nsam = sample_size,
             opt = "-t tbs",
@@ -182,16 +179,16 @@ Using the new reference table, plot the posterior distribution from the ABC anal
 * Add to the plot the histogram with the prior probability distribution. 
 
 ```{r eval=T, echo=T}
-target    <- readRDS(file="data/target.RDS")
-ref_table <- readRDS(file="data/ref_table_1b.RDS")
+target       <- readRDS(file="data/target.RDS")
+ref_table_1b <- readRDS(file="data/ref_table_1b.RDS")
 ```
 
 ```{r unexpected_prior, exercise=TRUE, exercise.lines=30}
 num_of_sims <- 100000
 
 SS          <- target[1,"TD"]
-SS_prime    <- ref_table[seq_len(num_of_sims),"TD"]
-theta_prime <- ref_table$theta[seq_len(num_of_sims)]
+SS_prime    <- ref_table_1b[seq_len(num_of_sims),"TD"]
+theta_prime <- ref_table_1b$theta[seq_len(num_of_sims)]
 
 tolerance <- 0.05
 abc_result <- abc(target = SS,
@@ -215,8 +212,8 @@ hist(x = log10(theta_prime_accept),
 num_of_sims <- 100000 
 
 SS          <- target[1,"TD"]
-SS_prime    <- ref_table[seq_len(num_of_sims),"TD"]
-theta_prime <- ref_table$theta[seq_len(num_of_sims)]
+SS_prime    <- ref_table_1b[seq_len(num_of_sims),"TD"]
+theta_prime <- ref_table_1b$theta[seq_len(num_of_sims)]
 
 tolerance <- 0.05
 abc_result <- abc(target = SS,
@@ -245,8 +242,8 @@ hist(_______,
 num_of_sims <- 100000 
 
 SS          <- target[1,"TD"]
-SS_prime    <- ref_table[seq_len(num_of_sims),"TD"]
-theta_prime <- ref_table$theta[seq_len(num_of_sims)]
+SS_prime    <- ref_table_1b[seq_len(num_of_sims),"TD"]
+theta_prime <- ref_table_1b$theta[seq_len(num_of_sims)]
 
 tolerance <- 0.05
 abc_result <- abc(target = SS,

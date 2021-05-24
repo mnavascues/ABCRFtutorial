@@ -41,8 +41,8 @@ Explore the application of the regression algorithm implemented in `abc()`.
 * Do you think a linear regression makes sense in this case? Open the help for `abc()` function and read about the option `method="neuralnet"`.
 
 ```{r eval=T, echo=T}
-target    <- readRDS(file="data/target.RDS")
-ref_table <- readRDS(file="data/ref_table_1.RDS")
+target      <- readRDS(file="data/target.RDS")
+ref_table_1 <- readRDS(file="data/ref_table_1.RDS")
 ```
 
 
@@ -50,8 +50,8 @@ ref_table <- readRDS(file="data/ref_table_1.RDS")
 num_of_sims <- 10000 # use a subset of simulation from a total of 1 000 000
 
 SS          <- target[1,"PI"]
-SS_prime    <- ref_table[seq_len(num_of_sims),"PI"]
-theta_prime <- ref_table$theta[seq_len(num_of_sims)]
+SS_prime    <- ref_table_1[seq_len(num_of_sims),"PI"]
+theta_prime <- ref_table_1$theta[seq_len(num_of_sims)]
 
 tolerance <- 0.2
 abc_result <- abc(target = SS,
@@ -106,8 +106,8 @@ wtd.hist(x = log10(theta_prime_accept_reg),
 ```{r abc_regression-solution}
 num_of_sims <- 10000 # use a subset of simulation from a total of 1 000 000
 SS          <- SS <-target[1,c("PI","TD")]
-SS_prime    <- ref_table[seq_len(num_of_sims),c("PI","TD")]
-theta_prime <- ref_table$theta[seq_len(num_of_sims)]
+SS_prime    <- ref_table_1[seq_len(num_of_sims),c("PI","TD")]
+theta_prime <- ref_table_1$theta[seq_len(num_of_sims)]
 tolerance <- 0.1
 abc_result <- abc(target = SS,
                   param = theta_prime,
@@ -145,25 +145,31 @@ wtd.hist(x = log10(theta_prime_accept_reg),
 Using ABC, estimate $\theta$ for *octomanati* and *rinocaracol*. Provide a measure of the uncertainty of the estimate:
 
 ```{r eval=T, echo=T}
-target    <- readRDS(file="data/target.RDS")
-ref_table <- readRDS(file="data/ref_table_1.RDS")
+target      <- readRDS(file="data/target.RDS")
+ref_table_1 <- readRDS(file="data/ref_table_1.RDS")
 ```
 
 
 
 
 ```{r practice_abc, exercise=TRUE, exercise.lines=30}
+octomanati_result <- abc(_____)
+
+______(octomanati_result$adj.values,
+             weights = octomanati_result$weights,
+             probs = c(0.5, 0.025, 0.975))        
+        
 ```
 
 
 ```{r practice_abc-solution}
 octomanati_result <- abc(target = target["octomanati",c("S","PI","NH","TD","FLD")],
-                         param = ref_table[,"theta"],
-                         sumstat = ref_table[,c("S","PI","NH","TD","FLD")],
+                         param = ref_table_1[,"theta"],
+                         sumstat = ref_table_1[,c("S","PI","NH","TD","FLD")],
                          tol = 0.01,transf = "log",method = "loclinear")
 rinocaracol_result <- abc(target = target["rinocaracol",c("S","PI","NH","TD","FLD")],
-                          param = ref_table[,"theta"],
-                          sumstat = ref_table[,c("S","PI","NH","TD","FLD")],
+                          param = ref_table_1[,"theta"],
+                          sumstat = ref_table_1[,c("S","PI","NH","TD","FLD")],
                           tol = 0.01,transf = "log",method = "loclinear")
 
 cat("theta estimate (point estimate and 95%CI) for octomanati")
@@ -185,10 +191,10 @@ We are going to consider two models. A constant size model with parameter $\thet
 
 ```{r eval=FALSE, echo=TRUE}
 sample_size <- 50
-num_of_sim <- 100000
-theta0 <- 10^runif(num_of_sim,min=-1,max=2)
-theta1 <- 10^runif(num_of_sim,min=-1,max=2)
-tau    <- runif(num_of_sim,min=0,max=2)
+num_of_sims <- 100000
+theta0 <- 10^runif(num_of_sims,min=-1,max=2)
+theta1 <- 10^runif(num_of_sims,min=-1,max=2)
+tau    <- runif(num_of_sims,min=0,max=2)
 msout <- ms(nsam = sample_size,
             opt = "-t tbs -eN tbs tbs -T",
             tbs.matrix = cbind(theta0, tau/theta0, theta1/theta0))
@@ -212,20 +218,31 @@ saveRDS(ref_table,file="data/ref_table_2.RDS")
 Explore the goodness of fit for this new model:
 
 ```{r eval=T, echo=T}
-target    <- readRDS(file="data/target.RDS")
-ref_table <- readRDS(file="data/ref_table_2.RDS")
+target      <- readRDS(file="data/target.RDS")
+ref_table_2 <- readRDS(file="data/ref_table_2.RDS")
 ```
 
 
 
 ```{r goodness_of_fit_model2, exercise=TRUE, exercise.lines=30}
+num_of_sims <- 10000
+
+# Principal Component Analysis
+PCA_result  <- princomp(ref_table_2[,c("S","PI","NH","TD","FLD")])
+pc<-c(1,2) 
+plot(PCA_result$scores[seq_len(num_of_sims),pc[1]],
+     PCA_result$scores[seq_len(num_of_sims),pc[2]],
+     xlab=paste("PCA",pc[1]),ylab=paste("PCA",pc[2]))
+PCA_target <- predict(____)
+
+plot(____)
 ```
 
 ```{r goodness_of_fit_model2-solution}
 num_of_sims <- 10000
 
 # Principal Component Analysis
-PCA_result  <- princomp(ref_table[,c("S","PI","NH","TD","FLD")])
+PCA_result  <- princomp(ref_table_2[,c("S","PI","NH","TD","FLD")])
 pc<-c(1,2) 
 plot(PCA_result$scores[seq_len(num_of_sims),pc[1]],
      PCA_result$scores[seq_len(num_of_sims),pc[2]],
@@ -234,8 +251,8 @@ plot(PCA_result$scores[seq_len(num_of_sims),pc[1]],
 PCA_target <- predict(PCA_result, target[,c("S","PI","NH","TD","FLD")])
 points(PCA_target[,pc[1]],PCA_target[,pc[2]],col=c("yellow","orange"))
 
-plot(ref_table$TD[seq_len(num_of_sims)],
-     ref_table$FLD[seq_len(num_of_sims)],
+plot(ref_table_2$TD[seq_len(num_of_sims)],
+     ref_table_2$FLD[seq_len(num_of_sims)],
      xlab="Tajima's D", ylab="Fu and Li's D")
 points(target$TD, target$FLD, col=c("yellow","orange"))
 ```
@@ -253,6 +270,12 @@ ref_table_2 <- readRDS(file="data/ref_table_2.RDS")
 ```
 
 ```{r model_choice, exercise=TRUE, exercise.lines=30}
+num_of_sims <- 10000
+model <- c(rep("constant population size",num_of_sims),rep("population size change",num_of_sims))
+sumstats <- rbind(ref_table_1[seq_len(num_of_sims),c("S","PI","NH","TD","FLD")],
+                  ref_table_2[seq_len(num_of_sims),c("S","PI","NH","TD","FLD")])
+
+
 ```
 
 ```{r model_choice-solution}

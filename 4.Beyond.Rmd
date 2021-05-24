@@ -39,6 +39,15 @@ ref_table_2 <- readRDS(file="data/ref_table_2.RDS")
 
 
 ```{r latent_variables, exercise=TRUE, exercise.lines=30}
+octomanati_result <- abc(____)
+  
+rinocaracol_result <- abc(____)  
+
+wtd.quantile(octomanati_result$____,_____)
+
+wtd.quantile(rinocaracol_result$____,_____)
+
+
 ```
 
 ```{r latent_variables-solution}
@@ -77,6 +86,10 @@ ref_table_2 <- readRDS(file="data/ref_table_2.RDS")
 ```
 
 ```{r tmrca_from_2_models, exercise=TRUE, exercise.lines=30}
+ref_table <- rbind(ref_table_1[,c("tmrca","S","PI","NH","TD","FLD")],
+                   ref_table_2[,c("tmrca","S","PI","NH","TD","FLD")])
+
+octomanati_result <- abc(______)
 ```
 
 ```{r tmrca_from_2_models-solution}
@@ -110,6 +123,11 @@ ref_table_2 <- readRDS(file="data/ref_table_2.RDS")
 ```
 
 ```{r skylineplot, exercise=TRUE, exercise.lines=50}
+ref_table <- rbind(ref_table_1[,c("S","PI","NH","TD","FLD")],
+                   ref_table_2[,c("S","PI","NH","TD","FLD")])
+
+tt <- seq(0,2,0.25) 
+___________
 ```
 
 ```{r skylineplot-solution}

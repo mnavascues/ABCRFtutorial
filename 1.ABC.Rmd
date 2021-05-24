@@ -45,25 +45,25 @@ For the coin toss experiment, estimate the likelihood of $p=0.5$ for $h=4$ and $
 ```{r simulation_coin_toss_rbinom, exercise=TRUE}
 h = 4; t = 6; p = 0.5
 n <- h+t
-num_of_sim = _____
-h_prime <- rbinom(n=num_of_sim,size=n,prob=p)
+num_of_sims = _____
+h_prime <- rbinom(n=num_of_sims,size=n,prob=p)
 _____
 ```
 
 ```{r simulation_coin_toss_rbinom-hint}
 h = 4; t = 6; p = 0.5
 n <- h+t
-num_of_sim = 100
-h_prime <- rbinom(n=num_of_sim,size=n,prob=p)
+num_of_sims = 100
+h_prime <- rbinom(n=num_of_sims,size=n,prob=p)
 _____(h_prime==h)/_____
 ```
 
 ```{r simulation_coin_toss_rbinom-solution}
 h = 4; t = 6; p = 0.5
 n <- h+t
-num_of_sim = 100
-h_prime <- rbinom(n=num_of_sim,size=n,prob=p)
-sum(h_prime==h)/num_of_sim
+num_of_sims = 100
+h_prime <- rbinom(n=num_of_sims,size=n,prob=p)
+sum(h_prime==h)/num_of_sims
 ```
 
 
@@ -84,10 +84,10 @@ source("src/coin_toss.R")
 
 
 ```{r likelihood_function, exercise=TRUE}
-h = 4; t = 6; num_of_sim = 1000
+h = 4; t = 6; num_of_sims = 1000
 p = seq(0,1,0.01)
 l_profile_true   <- flip_coin_likelihood(p,h,t)
-l_profile_approx <- flip_coin_likelihood_approx(p,h,t,num_of_sim)
+l_profile_approx <- flip_coin_likelihood_approx(p,h,t,num_of_sims)
 plot(l_profile_approx$p, l_profile_approx$l,
      xlab = "p", ylab = "Likelihood", type = "l", col = "red", lwd=2)
 lines(l_profile_true$p, l_profile_true$l,
@@ -119,7 +119,7 @@ Obtain a sample from the posterior probability distribution with the rejection a
 
 ```{r exact_rejection_sampling, exercise=TRUE, exercise.lines=8}
 h=4; t=6
-a=1; b=1; num_of_sim=1000
+a=1; b=1; num_of_sims=1000
 p_prime <- _____ # sample from prior distribution (use a beta)
 d_prime <- _____ # simulate coin tosses (with binomial)
 p_prime_accept <- _____ # keep the values that are equal to the observed data
@@ -128,8 +128,8 @@ p_prime_accept
 
 ```{r exact_rejection_sampling-hint-1}
 h=4; t=6
-a=1; b=1; num_of_sim=1000
-p_prime <- rbeta(num_of_sim,a,b)
+a=1; b=1; num_of_sims=1000
+p_prime <- rbeta(num_of_sims,a,b)
 d_prime <- _____ # simulate coin tosses (with binomial)
 p_prime_accept <- _____ # keep the values that are equal to the observed data
 p_prime_accept
@@ -137,9 +137,9 @@ p_prime_accept
 
 ```{r exact_rejection_sampling-hint-2}
 h=4; t=6
-a=1; b=1; num_of_sim=1000
-p_prime <- rbeta(num_of_sim,a,b)
-d_prime <- rbinom(n    = num_of_sim,
+a=1; b=1; num_of_sims=1000
+p_prime <- rbeta(num_of_sims,a,b)
+d_prime <- rbinom(n    = num_of_sims,
                   size = h+t,
                   prob = p_prime)
 p_prime_accept <- _____ # keep the values that are equal to the observed data
@@ -149,9 +149,9 @@ p_prime_accept
 
 ```{r exact_rejection_sampling-solution}
 h=4; t=6
-a=1; b=1; num_of_sim=1000
-p_prime <- rbeta(num_of_sim,a,b)
-d_prime <- rbinom(n    = num_of_sim,
+a=1; b=1; num_of_sims=1000
+p_prime <- rbeta(num_of_sims,a,b)
+d_prime <- rbinom(n    = num_of_sims,
                   size = h+t,
                   prob = p_prime)
 p_prime_accept <- p_prime[which(d_prime==h)]
@@ -168,14 +168,14 @@ Use `flip_coin_posterior_approx()` function to crate a sample from the posterior
 
 
 ```{r plot_posterior_approx, exercise=TRUE, exercise.lines=20, exercise.setup="flip_coin_posterior_approx"}
-h=4;t=6;a=1;b=1;num_of_sim=1000
-res <- flip_coin_posterior_approx(h,t,a,b,num_of_sim)
+h=4;t=6;a=1;b=1;num_of_sims=1000
+res <- flip_coin_posterior_approx(h,t,a,b,num_of_sims)
 
 ```
 
 ```{r plot_posterior_approx-hint}
-h=4;t=6;a=1;b=1;num_of_sim=1000
-res <- flip_coin_posterior_approx(h,t,a,b,num_of_sim)
+h=4;t=6;a=1;b=1;num_of_sims=1000
+res <- flip_coin_posterior_approx(h,t,a,b,num_of_sims)
 plot(res$p_prime,res$d_prime,
      xlab = expression(italic(p)*"'"),
      ylab = expression(italic(D)*"'"))
@@ -187,8 +187,8 @@ points(res$p_prime_accept, res$d_prime_accept, col = "blue")
 
 
 ```{r plot_posterior_approx-solution}
-h=4;t=6;a=1;b=1;num_of_sim=1000
-res <- flip_coin_posterior_approx(h,t,a,b,num_of_sim)
+h=4;t=6;a=1;b=1;num_of_sims=1000
+res <- flip_coin_posterior_approx(h,t,a,b,num_of_sims)
 plot(res$p_prime,res$d_prime,
      xlab = expression(italic(p)*"'"),
      ylab = expression(italic(D)*"'"))
@@ -218,16 +218,16 @@ Get a point estimate and the 95% credibility interval (CI).
 
 
 ```{r coin_toss_credibility_interval, exercise=TRUE, exercise.setup="flip_coin_posterior_approx"}
-h=4;t=6;a=1;b=1;num_of_sim=1000
-res <- flip_coin_posterior_approx(h,t,a,b,num_of_sim)
+h=4;t=6;a=1;b=1;num_of_sims=1000
+res <- flip_coin_posterior_approx(h,t,a,b,num_of_sims)
 p_hat  <- _____
 p_95CI <- _____
 p_hat; p_95CI
 ```
 
 ```{r coin_toss_credibility_interval-hint}
-h=4;t=6;a=1;b=1;num_of_sim=1000
-res <- flip_coin_posterior_approx(h,t,a,b,num_of_sim)
+h=4;t=6;a=1;b=1;num_of_sims=1000
+res <- flip_coin_posterior_approx(h,t,a,b,num_of_sims)
 p_hat  <- _____(res$p_prime_accept)
 p_95CI <- quantile(_____,probs=c(0.025,0.975))
 p_hat; p_95CI
@@ -236,8 +236,8 @@ p_hat; p_95CI
 
 
 ```{r coin_toss_credibility_interval-solution}
-h=4;t=6;a=1;b=1;num_of_sim=1000
-res <- flip_coin_posterior_approx(h,t,a,b,num_of_sim)
+h=4;t=6;a=1;b=1;num_of_sims=1000
+res <- flip_coin_posterior_approx(h,t,a,b,num_of_sims)
 p_hat  <- median(res$p_prime_accept)
 p_95CI <- quantile(res$p_prime_accept,probs=c(0.025,0.975))
 p_hat; p_95CI
@@ -269,10 +269,11 @@ rinocaracol_data <- read.ms.output(file="data/rinocaracol.txt")
 ```
 
 ```{r explore_genetic_data, exercise=TRUE, exercise.lines=6}
+_____(octomanati_data)
+_____(rinocaracol_data)
 ```
 
 ```{r explore_genetic_data-solution}
-
 cat("octomanati dataset has",S(octomanati_data),"segregating sites")
 cat("rinocaracol dataset has",S(rinocaracol_data),"segregating sites")
 ```
@@ -304,8 +305,8 @@ Simulate sequence data with `ms` (from `phyclust` package) using the standard co
 
 ```{r simulation_coalescent, exercise=TRUE}
 sample_size = 50
-num_of_sim = 10
-theta_prime <- 10^runif(num_of_sim,min=-1,max=2)
+num_of_sims = 10
+theta_prime <- 10^runif(num_of_sims,min=-1,max=2)
 cat("theta values are:");theta_prime
 msout <- ms(nsam = sample_size,
             opt = "-t tbs",
@@ -319,8 +320,8 @@ Simulation can be very time consuming, for the following exercises we will be us
 
 ```{r eval=FALSE, echo=TRUE}
 sample_size = 50
-num_of_sim = 100000
-theta_prime <- 10^runif(num_of_sim,min=-1,max=2)
+num_of_sims = 100000
+theta_prime <- 10^runif(num_of_sims,min=-1,max=2)
 msout <- ms(nsam = sample_size,
             opt = "-t tbs -T",
             tbs.matrix = cbind(theta_prime))
@@ -374,18 +375,12 @@ ref_table <- readRDS(file="data/ref_table_1.RDS")
 
 
 ```{r rejection_algortihm_sumstats, exercise=TRUE, exercise.lines=35}
-
-```
-
-```{r rejection_algortihm_sumstats-hint-1}
 target
 head(ref_table)
 ```
 
-
-
-```{r rejection_algortihm_sumstats-hint-2}
-num_of_sims <- 10000 # use a subset of simulation from a total of 1 000 000
+```{r rejection_algortihm_sumstats-hint}
+num_of_sims <- 10000 # use a subset of simulation from a total of 100000
 
 SS          <- target$S[1]
 SS_prime    <- ref_table$S[seq_len(num_of_sims)]
@@ -411,7 +406,7 @@ cat("This is a sample of the posterior (using PI):")
 
 
 ```{r rejection_algortihm_sumstats-solution}
-num_of_sims <- 10000 # use a subset of simulation from a total of 1 000 000
+num_of_sims <- 10000 # use a subset of simulation from a total of 100000
 
 SS          <- target$PI[1]
 SS_prime    <- ref_table$PI[seq_len(num_of_sims)]
@@ -482,7 +477,7 @@ ref_table <- readRDS(file="data/ref_table_1.RDS")
 
 
 ```{r rejection_algortihm_tolerance, exercise=TRUE, exercise.lines=35}
-num_of_sims <- 10000 # use a subset of simulation from a total of 1 000 000
+num_of_sims <- 10000 # use a subset of simulation from a total of 100000
 
 SS          <- target$S[1]
 SS_prime    <- ref_table$S[seq_len(num_of_sims)]

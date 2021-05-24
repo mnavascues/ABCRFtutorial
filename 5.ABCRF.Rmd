@@ -45,11 +45,13 @@ The function to perform model selection is `abcrf()`, run the code provided to f
 * How does that compare with the actual posterior probabilities estimated for *octomanati* and *rinocaracol*?
 * Is it worth to repeat the analysis increasing the number of trees in the random forest?
 
-```{r model_choice, exercise=TRUE, exercise.lines=30}
-target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
-ref_table_2 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_2.RDS")
+```{r eval=T, echo=T}
+target      <- readRDS(file="data/target.RDS")
+ref_table_1 <- readRDS(file="data/ref_table_1.RDS")
+ref_table_2 <- readRDS(file="data/ref_table_2.RDS")
+```
 
+```{r model_choice, exercise=TRUE, exercise.lines=30}
 num_of_sims <- 10000
 
 model <- c(rep("constant population size",num_of_sims),rep("population size change",num_of_sims))
@@ -84,10 +86,12 @@ Estimate parameter $\theta$ from the model of constant population size for *octo
 * Increase the number of trees if necessary.
 * Are the estimates very different from the ones obtained with classical regression ABC (unit 3)? * The values of $\theta$ from the whole reference table are used to plot the histogram of its posterior probability distribution, why?
 
-```{r parameter_inference, exercise=TRUE, exercise.lines=30}
-target      <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/target.RDS")
-ref_table_1 <- readRDS(file="/home/miguel/Work/Teaching/ABCRF tutorial/ref_table_1.RDS")
+```{r eval=T, echo=T}
+target      <- readRDS(file="data/target.RDS")
+ref_table_1 <- readRDS(file="data/ref_table_1.RDS")
+```
 
+```{r parameter_inference, exercise=TRUE, exercise.lines=30}
 num_of_sims <- 10000
 ref_table <- ref_table_1[seq_len(num_of_sims),c("theta","S","PI","NH","TD","FLD")]
 

@@ -67,15 +67,15 @@ Simulate directly the number of heads ($h'$) using `rbinom(_____)`:
 ```{r simulation_coin_toss_rbinom, exercise=TRUE}
 n <- 10
 p <- 0.5
-num_of_sim = 1
+num_of_sims = 1
 rbinom(n=_____,size=_____,prob=_____)
 ```
 
 ```{r simulation_coin_toss_rbinom-solution}
 n <- 10
 p <- 0.5
-num_of_sim = 1
-rbinom(n=num_of_sim,size=n,prob=p)
+num_of_sims = 1
+rbinom(n=num_of_sims,size=n,prob=p)
 ```
 
 
@@ -93,7 +93,7 @@ n<-10
 l<-10000
 N<-10000
 u<-1e-8
-num_of_sim<-1
+num_of_sims<-1
 _____
 ms(nsam=_____,nreps=_____,opt=_____)
 ```
@@ -103,7 +103,7 @@ n<-10
 l<-10000
 N<-10000
 u<-1e-8
-num_of_sim<-1
+num_of_sims<-1
 theta <- _____
 ms(nsam=_____,nreps=_____,opt=paste("-t",theta))
 ```
@@ -114,9 +114,9 @@ n<-10
 l<-10000
 N<-10000
 u<-1e-8
-num_of_sim<-1
+num_of_sims<-1
 theta <- 2*N*u*l 
-ms(nsam=n,nreps=num_of_sim,opt=paste("-t",theta))
+ms(nsam=n,nreps=num_of_sims,opt=paste("-t",theta))
 ```
 
 We can put this text into a more usable form (i.e. matrix of polymorphisms, etc) using a function distributed with the original software `ms` and that we have loaded in the setup with:
@@ -134,9 +134,9 @@ n<-10
 l<-10000
 N<-10000
 u<-1e-8
-num_of_sim<-1
+num_of_sims<-1
 theta <- 2*N*u*l 
-msout <- ms(nsam=n,nreps=num_of_sim,opt=paste("-t",theta))
+msout <- ms(nsam=n,nreps=num_of_sims,opt=paste("-t",theta))
 sim_data <- read.ms.output(____)
 _____
 ```
@@ -146,9 +146,9 @@ n<-10
 l<-10000
 N<-10000
 u<-1e-8
-num_of_sim<-1
+num_of_sims<-1
 theta <- 2*N*u*l 
-msout <- ms(nsam=n,nreps=num_of_sim,opt=paste("-t",theta))
+msout <- ms(nsam=n,nreps=num_of_sims,opt=paste("-t",theta))
 sim_data <- read.ms.output(txt=msout)
 sim_data$_____
 ```
@@ -160,9 +160,9 @@ n<-10
 l<-10000
 N<-10000
 u<-1e-8
-num_of_sim<-1
+num_of_sims<-1
 theta <- 2*N*u*l
-msout <- ms(nsam=n,nreps=num_of_sim,opt=paste("-t",theta))
+msout <- ms(nsam=n,nreps=num_of_sims,opt=paste("-t",theta))
 sim_data <- read.ms.output(txt=msout)
 sim_data$gametes
 ```
@@ -182,9 +182,9 @@ n<-10
 l<-10000
 N<-10000
 u<-1e-8
-num_of_sim <- 10
+num_of_sims <- 10
 theta <- 2*N*u*l
-msout <- ms(nsam=n,nreps=num_of_sim,opt=paste("-t",theta))
+msout <- ms(nsam=n,nreps=num_of_sims,opt=paste("-t",theta))
 sim_data <- read.ms.output(txt=msout)
 
 ```
@@ -194,9 +194,9 @@ n<-10
 l<-10000
 N<-10000
 u<-1e-8
-num_of_sim <- 10
+num_of_sims <- 10
 theta <- 2*N*u*l
-msout <- ms(nsam=n,nreps=num_of_sim,opt=paste("-t",theta))
+msout <- ms(nsam=n,nreps=num_of_sims,opt=paste("-t",theta))
 sim_data <- read.ms.output(txt=msout)
 
 S(sim_data)
