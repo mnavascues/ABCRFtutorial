@@ -97,5 +97,65 @@ for (i in 1:100){
                  add=T,cex=1.5,col=7,lwd=1)
 }
 
+# note that in random forest random sub-sampling of the total reference table
+# is for simulations and for summary statistics (i.e. rows AND columns)
+# this is called Boostrap-AGGgregatING (=BAGGING)
+# (bootstrap for the random resampling; aggregating for the averaging among models/trees)
 
+num_of_sims <- 10000
+
+model <- c(rep("constant",num_of_sims),rep("size change",num_of_sims))
+sumstats <- rbind(ref_table_1[seq_len(num_of_sims),c("S","PI","NH","TD","FLD")],
+                  ref_table_2[seq_len(num_of_sims),c("S","PI","NH","TD","FLD")])
+ref_table <-cbind(model,sumstats)
+
+model_RF <- abcrf(formula = model~.,
+                  data    = ref_table,
+                  lda     = F,
+                  ntree   = 1000,
+                  paral   = T)
+# Variable Importance plot
+plot(model_RF, training=ref_table)
+
+# We get an equivalent of cross-validation from this:
+# Prior error rate and confusion matrix
+model_RF$prior.err
+model_RF$model.rf$confusion.matrix
+
+# can the error rate be improved by increasing the number of trees?
+err.abcrf(model_RF, training = ref_table, paral = T)
+
+# How are these errors calculated? OUT-OF-BAG
+# For each simulation, there is a subset of trees from the forest that have been grown
+# without the information from that simulation. These trees are used to estimate the model
+# for that simulation. This is the out-of-bag (OOB) estimate.
+
+# out-of-bag estimates:
+model_RF$model.rf$predictions[1:20]
+# true model:
+model[1:20]
+
+
+# model estimates for octomanati and rinocaracol
+model_selection_result_RF <- predict(object= model_RF,
+                                     obs = target,
+                                     training = ref_table,
+                                     ntree = 1000,
+                                     paral = T,
+                                     paral.predict = T)
+(model_selection_result_RF)
+ 
+# What are the votes?
+# Why does the posterior probability differ from the proportion of votes?
+# Not all trees are equally good, nor all branches of the trees are equally good.
+# Proportion of votes is a good for revealing the best model, but it is a bad measure
+# of the uncertainty of the decision.
+# 
+# We can calculate the "local" error (classification error for each simulation) and
+# we can grow a second random forest which will learn the relationship
+# between the “local” error rate and the summary statistics. The probability
+# of a correct classification (posterior probability) is one minus the probability
+# of an incorrect classification (error rate). This second random forest allows to
+# estimate the posterior probability of the chosen model.
+  
 
