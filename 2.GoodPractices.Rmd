@@ -21,6 +21,11 @@ library(learnr)
 library(phyclust, quietly=T)
 # functions for ABC
 suppressMessages(library(abc, quietly=T))
+
+# load data and reference table
+target       <- readRDS(file="data/target.RDS")
+ref_table_1  <- readRDS(file="data/ref_table_1.RDS")
+ref_table_1b <- readRDS(file="data/ref_table_1b.RDS")
 ```
 
 ## Evaluation of the model and prior: Goodness of fit
@@ -67,7 +72,7 @@ points(PCA_target[,pc[1]],PCA_target[,pc[2]],col=c("yellow","orange"))
 num_of_sims <- 10000
 # Principal Component Analysis
 PCA_result  <- princomp(ref_table_1[,c("S","PI","NH","TD","FLD")])
-pc<-c(1,2) 
+pc<-c(3,4) 
 plot(PCA_result$scores[seq_len(num_of_sims),pc[1]],
      PCA_result$scores[seq_len(num_of_sims),pc[2]],
      xlab=paste("PCA",pc[1]),ylab=paste("PCA",pc[2]))

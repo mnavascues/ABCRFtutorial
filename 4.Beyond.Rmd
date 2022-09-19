@@ -21,6 +21,11 @@ library(learnr)
 suppressMessages(library(abc, quietly=T))
 # function for weighted histogram
 suppressMessages(library(weights, quietly=T))
+
+# load data and reference table
+target      <- readRDS(file="data/target.RDS")
+ref_table_1 <- readRDS(file="data/ref_table_1.RDS")
+ref_table_2 <- readRDS(file="data/ref_table_2.RDS")
 ```
 
 ## Latent variables

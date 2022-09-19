@@ -23,6 +23,11 @@ library(learnr)
 suppressMessages(library(abc, quietly=T))
 # function for weighted histogram
 suppressMessages(library(weights, quietly=T))
+
+# load data and reference table
+target      <- readRDS(file="data/target.RDS")
+ref_table_1 <- readRDS(file="data/ref_table_1.RDS")
+ref_table_2 <- readRDS(file="data/ref_table_2.RDS")
 ```
 
 ## Regression ABC
@@ -139,6 +144,8 @@ wtd.hist(x = log10(theta_prime_accept_reg),
 
 
 ## Practice classical ABC
+
+
 
 ### Exercise 2
 
@@ -294,10 +301,29 @@ model_choice_rinocaracol <- postpr(target=target["rinocaracol",],
                                   sumstat=sumstats,
                                   tol=0.1,
                                   method="mnlogistic")
+# Calculate Bayes Factor (with prior probability 0.5 for each model)
+octomanati_K  <- model_choice_octomanati$pred[2]/model_choice_octomanati$pred[1]
+rinocaracol_K <- model_choice_rinocaracol$pred[2]/model_choice_rinocaracol$pred[1]
 
 cat("Model posterior probabilities for octomanati:"); model_choice_octomanati$pred
+cat("Corresponding Bayes factor is:"); octomanati_K
+
 cat("Model posterior probabilities for rinocaracol:"); model_choice_rinocaracol$pred
+cat("Corresponding Bayes factor is:"); rinocaracol_K
 ```
+
+In Bayesian statistics the support of one model over the alternative is quantified using the [Bayes factor (K)](https://en.wikipedia.org/wiki/Bayes_factor). The strength of the support is often evaluated following Jeffrey's scale of interpretation:
+
+K    | Strength of evidence for Model 1
+-----|--------------------------------
+$<10^0$ | Support for the Model 2
+$10^0$ to $10^{0.5}$ | Weak
+$10^{0.5}$ to $10^{1}$ | Substantial
+$10^1$ to $10^{1.5}$ | Strong
+$10^{1.5}$ to $10^2$ | Very strong
+$>10^2$ | Decisive
+
+
 
 #   
 

@@ -29,6 +29,12 @@ source("src/coin_toss.R", local = TRUE)
 source("src/readms.output.R", local =T)
 # functions to calculate summary statistics from ms output
 source("src/ms_sumstats.R", local =T)
+
+# load data and reference table 
+octomanati_data  <- read.ms.output(file="data/octomanati.txt")
+rinocaracol_data <- read.ms.output(file="data/rinocaracol.txt")
+target           <- readRDS(file="data/target.RDS")
+ref_table        <- readRDS(file="data/ref_table_1.RDS")
 ```
 
 ## Approximation 1: Simulation
@@ -263,7 +269,7 @@ Explore the data (you can use functions `S()`, `NH()`, `PI()`, `TajimaD()` and `
 * How many polymorphic sites are there?  How would you apply the rejection algorithm?
 
 
-```{r eval=T, echo=T}
+```{r read_data, eval=TRUE, echo=TRUE}
 octomanati_data  <- read.ms.output(file="data/octomanati.txt")
 rinocaracol_data <- read.ms.output(file="data/rinocaracol.txt")
 ```
