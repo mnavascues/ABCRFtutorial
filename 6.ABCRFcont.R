@@ -43,7 +43,7 @@ partition.tree(regression_tree,
 ################################
 
 num_of_sims <- 10000
-model <- c(rep("constant population size",num_of_sims),rep("population size change",num_of_sims))
+model <- as.factor(c(rep("constant",num_of_sims),rep("change",num_of_sims)))
 sumstats <- rbind(ref_table_1[seq_len(num_of_sims),c("S","PI","NH","TD","FLD")],
                   ref_table_2[seq_len(num_of_sims),c("S","PI","NH","TD","FLD")])
 ref_table <-cbind(model,sumstats)
@@ -53,13 +53,13 @@ classification_tree <- tree(model ~ TD + FLD, data=ref_table)
 plot(classification_tree)
 text(classification_tree,cex=0.75)
 
-plot(ref_table$TD[which(model=="population size change")],
-     ref_table$FLD[which(model=="population size change")],
+plot(ref_table$TD[which(model=="change")],
+     ref_table$FLD[which(model=="change")],
      xlab="Tajima's D",
      ylab="Fu and Li's D",
      pch=20)
-points(ref_table$TD[which(model=="constant population size")],
-       ref_table$FLD[which(model=="constant population size")],
+points(ref_table$TD[which(model=="constant")],
+       ref_table$FLD[which(model=="constant")],
        col="grey",pch=20)
 partition.tree(classification_tree,
                ordvars=c("TD","FLD"),
@@ -104,7 +104,7 @@ for (i in 1:100){
 
 num_of_sims <- 10000
 
-model <- c(rep("constant",num_of_sims),rep("size change",num_of_sims))
+model <- as.factor(c(rep("constant",num_of_sims),rep("change",num_of_sims)))
 sumstats <- rbind(ref_table_1[seq_len(num_of_sims),c("S","PI","NH","TD","FLD")],
                   ref_table_2[seq_len(num_of_sims),c("S","PI","NH","TD","FLD")])
 ref_table <-cbind(model,sumstats)

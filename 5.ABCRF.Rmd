@@ -59,7 +59,7 @@ ref_table_2 <- readRDS(file="data/ref_table_2.RDS")
 ```{r model_choice, exercise=TRUE, exercise.lines=30}
 num_of_sims <- 10000
 
-model <- c(rep("constant population size",num_of_sims),rep("population size change",num_of_sims))
+model <- as.factor(c(rep("constant",num_of_sims),rep("change",num_of_sims)))
 sumstats <- rbind(ref_table_1[seq_len(num_of_sims),c("S","PI","NH","TD","FLD")],
                   ref_table_2[seq_len(num_of_sims),c("S","PI","NH","TD","FLD")])
 ref_table <-cbind(model,sumstats)
